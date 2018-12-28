@@ -1,0 +1,43 @@
+{
+  "name": "ionjs",
+  "version": "0.1.0",
+  "description": "Yet another QQ bot framework based on CQHTTP & CoolQ.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest --coverage --verbose",
+    "prepare": "npm run build"
+  },
+  "files": [
+    "LICENSE",
+    "package.json",
+    "dist/"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ionjs-dev/ionjs.git"
+  },
+  "author": "ionjs-dev",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ionjs-dev/ionjs/issues"
+  },
+  "homepage": "https://github.com/ionjs-dev/ionjs",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "debug": "^4.1.1",
+    "koa": "^2.6.2",
+    "koa-body": "^4.0.6"
+  },
+  "devDependencies": {
+    "@types/debug": "^0.0.31",
+    "@types/jest": "^23.3.10",
+    "@types/koa": "^2.0.47",
+    "@types/node": "^10.12.15",
+    "jest": "^23.6.0",
+    "source-map-support": "^0.5.9",
+    "ts-jest": "^23.10.5",
+    "typescript": "^3.2.1"
+  }
+}
