@@ -6,7 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "test": "jest --coverage --verbose",
+    "test": "jest --coverage --verbose --config=jest.config.json",
     "prepare": "npm run build"
   },
   "files": [
