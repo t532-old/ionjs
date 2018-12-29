@@ -4,7 +4,7 @@ import Debug from 'debug'
 /** debug loggers for class MessageStream */
 const debug = {
     get: Debug('verbose-ionjs: MessageStream: get'),
-    getSuccess: Debug('ionjs: MessageStream: get => _listener'),
+    getSuccess: Debug('verbose-ionjs: MessageStream: get => _listener'),
     getFailed: Debug('verbose-ionjs: MessageStream: get => _listener'),
     timeout: Debug('verbose-ionjs: FlowMessageStream: timeout'),
 }
