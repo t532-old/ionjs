@@ -1,15 +1,17 @@
 import { split } from './split'
+import { IParameters, IArguments, TExtraneousProcessor } from './definition'
 import Debug from 'debug'
 const debug = {
     parse: Debug('verbose-ionjs: Command: parse'),
     constructor: Debug('ionjs: Command: constructor')
 }
+export class CommandParseError extends Error {}
 /** A class that represents a shell-like-command and is able to parse commands */
 export class Command {
     /** The raw declaration of the command instance */
     private readonly _raw: string
     /** The delcared parameters */
-    private readonly _parameters: { aliases: any, defaults: any, ordered: string[], required: string[] } = {
+    private readonly _parameters: IParameters = {
         /** The keys are the aliases and the values are param names  */
         aliases: {},
         /** The keys are param names and the values are default values */
@@ -18,11 +20,15 @@ export class Command {
         ordered: [],
         /** An array of required params */
         required: [],
+        /** Description of parameters */
+        description: {},
     }
     /** An array of declared options */
     private readonly _options: string[] = []
     /** The command's name */
     private readonly _name: string
+    /** The command's extraneous processor */
+    private readonly _processor: TExtraneousProcessor
     /**
      * Check if a command matches the name
      * @param command the command for checking
@@ -31,24 +37,29 @@ export class Command {
     /** Regexps for parsing declarations and commands */
     private static readonly _REGEXES = {
         /** A regexp that matches a parameter in the declaration */
-        PARAMETER: /^([<\[])(\?)?(.+?)(?:\((.+?)\))?(?:=(.+?))?([>\]])$/,
+        PARAMETER: /^([<\[])(\?)?(.+?)(?:\((.+?)\))?([>\]])(?:\:(.+?))?(?:=(.+?))?$/,
         /** A regexp that matches a key-value pair in a command */
         KEY_VALUE: /^(.+?)=(.+)$/,
     }
-    /** @param declaration The command declaration */
-    constructor(declaration: string) {
+    /** 
+     * @param declaration The command declaration 
+     * @param processor An extraneous processor of arguments
+     */
+    constructor(declaration: string, processor: TExtraneousProcessor = args => args) {
         debug.constructor(`construction started: ${declaration}`)
         this._raw = declaration
+        this._processor = processor
         const command = split(declaration)
         this._name = command.shift()
         debug.constructor(`declared command name: ${this._name}`)
         for (const i of command) {
             const matched = i.match(Command._REGEXES.PARAMETER)
             if (matched) {
-                const [, required, unordered, name, alias, defaultVal, requiredPair] = matched
+                const [, required, unordered, name, alias, requiredPair, description, defaultVal] = matched
                 if (required === '<') this._parameters.required.push(name)
                 if (!unordered) this._parameters.ordered.push(name)
                 if (alias) this._parameters.aliases[name] = alias
+                if (description) this._parameters.description[name] = description
                 if (defaultVal) this._parameters.defaults[name] = defaultVal
                 debug.constructor(`declared parameter: ${required} ${unordered || ''} ${name} (${alias || '_noAlias'}) = ${defaultVal || '_noDefault'} ${requiredPair}`)
             } else {
@@ -64,7 +75,7 @@ export class Command {
      * Parse a command
      * @param command The command for parsing
      */
-    parse(command: string) {
+    parse(command: string): IArguments {
         debug.parse(`parsing started: ${command}`)
         let rawArgs = split(command)
         if (rawArgs[0] !== this._name) throw new Error('Wrong command name')
@@ -115,8 +126,9 @@ export class Command {
                 debug.parse(`defaultArg: ${param} => ${this._parameters.defaults[param]}`)
                 args.arguments[param] = this._parameters.defaults[param]
             }
+        this._processor(args, { parameters: this._parameters, options: this._options })
         for (const param of this._parameters.required)
-            if (!(param in args.arguments)) throw new Error('No enough required arguments')
+            if (!(param in args.arguments)) throw new CommandParseError('No enough required arguments')
         debug.parse(`parsing finished`)
         return args
     }  
