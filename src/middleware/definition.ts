@@ -1,0 +1,1 @@
+export type TMiddleware = (ctx: any, next: () => Promise<void>, halt: () => void) => void
