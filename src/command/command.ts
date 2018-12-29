@@ -45,7 +45,7 @@ export class Command {
      * @param declaration The command declaration 
      * @param processor An extraneous processor of arguments
      */
-    constructor(declaration: string, processor: TExtraneousProcessor = args => args) {
+    constructor(declaration: string, processor: TExtraneousProcessor = () => {}) {
         debug.constructor(`construction started: ${declaration}`)
         this._raw = declaration
         this._processor = processor
