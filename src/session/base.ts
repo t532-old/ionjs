@@ -2,7 +2,6 @@ import { IBehavior } from './behavior'
 import Debug from 'debug'
 const debug = {
     addBehavior: Debug('ionjs: SessionManager: addBehavior'),
-    removeBehavior: Debug('ionjs: SessionManager: removeBehavior'),
 }
 /** The base class that represents an object that stores Behaviors */
 export abstract class SessionManager {
