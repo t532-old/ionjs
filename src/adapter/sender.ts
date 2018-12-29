@@ -14,17 +14,18 @@ const debug = {
 export class SenderError extends Error {}
 
 export class Sender {
-    private _context: any = {}
+    private readonly _context: any
     private readonly _sendURL: string
     private readonly _token?: string
-    constructor(sendURL: string, token?: string) {
+    constructor(sendURL: string, token?: string, context: any = {}) {
         this._sendURL = sendURL
         this._token = token
+        this._context = context
     }
     to(context) {
-        debug.to('set context')
-        this._context = context
-        return this
+        debug.to('create new Sender instance with context: %o', context)
+        const next = new Sender(this._sendURL, this._token, context)
+        return next
     }
     private async _post({ api, params = [] }: { api: string, params?: string[] }, args?: any) {
         const url = new URL(api, this._sendURL).toString()
