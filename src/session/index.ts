@@ -1,4 +1,4 @@
 export { ConcurrentSessionManager } from './concurrent'
 export { SingleSessionManager } from './single'
 export { MessageStream } from './stream'
-export { IBehavior } from './behavior'
+export { TSessionFn, TMatcher } from './definition'
