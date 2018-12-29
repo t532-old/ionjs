@@ -3,11 +3,11 @@ import { MessageStream } from './stream'
 import { IBehavior } from './behavior'
 import Debug from 'debug'
 const debug = {
-    constructor: Debug('ionjs: Multi: constructor'),
-    streamDeleter: Debug('verbose-ionjs: Multi: streamDeleter'),
-    streamGetter: Debug('verbose-ionjs: Multi: streamGetter'),
-    streamSetter: Debug('verbose-ionjs: Multi: streamSetter'),
-    push: Debug('verbose-ionjs: Multi: push'),
+    constructor: Debug('ionjs: ConcurrentSessionManager: constructor'),
+    streamDeleter: Debug('verbose-ionjs: ConcurrentSessionManager: streamDeleter'),
+    streamGetter: Debug('verbose-ionjs: ConcurrentSessionManager: streamGetter'),
+    streamSetter: Debug('verbose-ionjs: ConcurrentSessionManager: streamSetter'),
+    push: Debug('verbose-ionjs: ConcurrentSessionManager: push'),
 }
 /** A session manager that allows multi processes */
 export class ConcurrentSessionManager extends SessionManager {

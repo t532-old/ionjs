@@ -2,11 +2,11 @@ import { SessionManager } from './base'
 import { MessageStream } from './stream'
 import Debug from 'debug'
 const debug = {
-    constructor: Debug('ionjs: Single: constructor'),
-    streamDeleter: Debug('verbose-ionjs: Single: streamDeleter'),
-    streamGetter: Debug('verbose-ionjs: Single: streamGetter'),
-    streamSetter: Debug('verbose-ionjs: Single: streamSetter'),
-    push: Debug('verbose-ionjs: Single: push'),
+    constructor: Debug('ionjs: SingleSessionManager: constructor'),
+    streamDeleter: Debug('verbose-ionjs: SingleSessionManager: streamDeleter'),
+    streamGetter: Debug('verbose-ionjs: SingleSessionManager: streamGetter'),
+    streamSetter: Debug('verbose-ionjs: SingleSessionManager: streamSetter'),
+    push: Debug('verbose-ionjs: SingleSessionManager: push'),
 }
 /** A session manager that is single-process for each user */
 export class SingleSessionManager extends SessionManager {
