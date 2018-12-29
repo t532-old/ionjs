@@ -1,34 +1,20 @@
-import { IBehavior } from './behavior'
-import Debug from 'debug'
-const debug = {
-    addBehavior: Debug('ionjs: SessionManager: addBehavior'),
-}
+import { ISessionTemplate } from './definition'
 /** The base class that represents an object that stores Behaviors */
-export abstract class SessionManager {
+export abstract class SessionStore {
     /** The list of the stored behaviors */
-    protected readonly _behaviors: IBehavior[] = []
+    protected readonly _templates: (ISessionTemplate&any)[] = []
     /** Generates a session id for a context */
     protected readonly _identifier: (ctx: any) => any
     /** @param identifier A function that generates a session id for a context */
     constructor(identifier: (ctx: any) => any) { this._identifier = identifier }
     /**
-     * Will be called before the behavior is pushed into the list
-     * @param behavior the behavior
-     */
-    protected abstract _onAddBehavior(behavior: IBehavior): void
-    /**
      * Push a behavior into the list
      * @param behavior the behavior
      */
-    addBehavior(behavior: IBehavior) {
-        debug.addBehavior('added new behavior')
-        this._onAddBehavior(behavior)
-        this._behaviors.push(behavior)
-        return this
-    }
+    abstract use(...params: any[]): void
     /**
      * Pass a context to sessions
      * @param ctx the context that'll be passed
      */
-    abstract push(ctx: any): void
+    abstract run(ctx: any): void
 }

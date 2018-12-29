@@ -1,33 +1,37 @@
-import { SessionManager } from './base'
+import { SessionStore } from './base'
 import { MessageStream } from './stream'
-import { IBehavior } from './behavior'
+import { TSessionFn, TMatcher } from './definition'
 import Debug from 'debug'
 const debug = {
-    constructor: Debug('ionjs: ConcurrentSessionManager: constructor'),
+    addBehavior: Debug('ionjs: ConcurrentSessionManager: addBehavior'),
     streamDeleter: Debug('verbose-ionjs: ConcurrentSessionManager: streamDeleter'),
     streamGetter: Debug('verbose-ionjs: ConcurrentSessionManager: streamGetter'),
     streamSetter: Debug('verbose-ionjs: ConcurrentSessionManager: streamSetter'),
     push: Debug('verbose-ionjs: ConcurrentSessionManager: push'),
 }
 /** A session manager that allows multi processes */
-export class ConcurrentSessionManager extends SessionManager {
+export class ConcurrentSessionManager extends SessionStore {
     /** Stores streams of active sessions */
     private readonly _streams: Map<symbol, Map<any, MessageStream>> = new Map()
     /**
      * set an empty Stream Map and the symbol when new behavior is added
-     * @param behavior the behavior
+     * @param session the function for generating sessions
+     * @param match determines whether the session should be created or not
      */
-    _onAddBehavior(behavior: IBehavior) {
-        behavior.symbol = Symbol()
-        this._streams.set(behavior.symbol, new Map())
+    use(session: TSessionFn, match: TMatcher) {
+        debug.addBehavior('added new behavior')
+        const symbol = Symbol()
+        this._streams.set(symbol, new Map())
+        this._templates.push({ session, match, symbol })
+        return this
     }
     /**
      * Pass a context to every active session that matches the session id
      * Or create sessions if the context matches the conditions of them
      * @param ctx the context
      */
-    push(ctx: any) {
-        for (const behavior of this._behaviors) {
+    run(ctx: any) {
+        for (const behavior of this._templates) {
             const behaviorSymbol = behavior.symbol,
                   msgId = this._identifier(ctx)
             const getter = () => {
