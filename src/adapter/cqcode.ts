@@ -16,10 +16,10 @@ export const CQCode = {
     Share(url: string, title: string, content?: string, image?: string) { return { type: 'share', data: { url, title, content, image } } },
     isCQCodeObject(obj: any) { return typeof obj === 'object' && typeof obj.type === 'string' && typeof obj.data === 'object' && obj.data },
     isRealCQCodeObject(obj: any) { return CQCode.isCQCodeObject(obj) && obj.type !== 'text' },
-    encodePlainText(str: string) { return str.replace('&', '&amp;').replace('[', '&#91;').replace(']', '&#93;') },
-    decodePlainText(str: string) { return str.replace('&amp;', '&').replace('&#91;', '[').replace('&#93;', ']') },
-    encodeCQCodeText(str: string) { return CQCode.encodePlainText(str).replace(',', '&#44;') },
-    decodeCQCodeText(str: string) { return CQCode.decodePlainText(str).replace('&#44;', ',') },
+    encodePlainText(str: string) { return str.replace(/&/g, '&amp;').replace(/\[/g, '&#91;').replace(/\]/g, '&#93;') },
+    decodePlainText(str: string) { return str.replace(/&amp;/g, '&').replace(/&#91;/g, '[').replace(/&#93;/g, ']') },
+    encodeCQCodeText(str: string) { return CQCode.encodePlainText(str).replace(/,/g, '&#44;') },
+    decodeCQCodeText(str: string) { return CQCode.decodePlainText(str).replace(/&#44;/g, ',') },
     arrayToString(message: any[]) {
         let converted = ''
         for (let i of message) {
