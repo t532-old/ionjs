@@ -78,7 +78,7 @@ export class Command {
     parse(command: string): IArguments {
         debug.parse(`parsing started: ${command}`)
         let rawArgs = split(command)
-        if (rawArgs[0] !== this._name) throw new Error('Wrong command name')
+        if (rawArgs[0] !== this._name) throw new CommandParseError('Wrong command name')
         debug.parse(`OK has command name`)
         rawArgs = rawArgs.slice(1)
         const args = {
