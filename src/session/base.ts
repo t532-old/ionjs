@@ -28,20 +28,6 @@ export abstract class SessionManager {
         return this
     }
     /**
-     * Will be called before the behavior is removed
-     * @param behavior the behavior
-     */
-    protected abstract _onRemoveBehavior(behavior: IBehavior): void
-    /** Remove a behavior from the list */
-    removeBehavior(behavior: IBehavior) {
-        debug.removeBehavior('deleted behavior')
-        const pos = this._behaviors.indexOf(behavior)
-        if (pos < 0) throw new Error('Behavior doesn\'t exist')
-        this._onRemoveBehavior(behavior)
-        this._behaviors.splice(pos, 1)
-        return this
-    }
-    /**
      * Pass a context to sessions
      * @param ctx the context that'll be passed
      */

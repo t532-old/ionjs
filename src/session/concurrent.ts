@@ -22,11 +22,6 @@ export class ConcurrentSessionManager extends SessionManager {
         this._streams.set(behavior.symbol, new Map())
     }
     /**
-     * Delete the Stream Map when a behavior is deleted
-     * @param behavior the behavior
-     */
-    _onRemoveBehavior(behavior: IBehavior) { this._streams.delete(behavior.symbol) }
-    /**
      * Pass a context to every active session that matches the session id
      * Or create sessions if the context matches the conditions of them
      * @param ctx the context

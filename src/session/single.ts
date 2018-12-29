@@ -13,7 +13,6 @@ export class SingleSessionManager extends SessionManager {
     /** Stores streams of active sessions */
     private readonly streams: Map<any, MessageStream> = new Map()
     _onAddBehavior() {}
-    _onRemoveBehavior() {}
     /**
      * Pass a context to current active session
      * If no existing ones, check which session can be created, last ones has higher priority
