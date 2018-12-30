@@ -22,7 +22,7 @@ export class MessageStream extends PassThrough {
      * if there is an object in the stream, it'll be directly resolved;
      * else it'll be resolved when a new object is pushed into the stream.
      */
-    get(condition: (ctx: any) => boolean = () => true) {
+    get(condition: (ctx: any) => boolean = () => true): any {
         function _recursiveHandler(resolve) {
             debug.get('get a message')
             const result = this.read()
