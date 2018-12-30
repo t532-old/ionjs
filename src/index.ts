@@ -32,7 +32,7 @@ export function init({ receivePort = 8080, receiveSecret, sendURL = 'http://127.
     _config.self = self
     receiver.on('message', async ctx => {
         await _middlewareManager.run(ctx)
-        for (const i in _session) {
+        for (const i in _sessionManagers) {
             _sessionManagers[i].single.run(ctx)
             _sessionManagers[i].concurrent.run(ctx)
         }
@@ -41,7 +41,7 @@ export function init({ receivePort = 8080, receiveSecret, sendURL = 'http://127.
 
 export function start() { receiver.listen(this._receivePort) }
 
-export function useMiddleware(middleware: Middleware.TMiddleware) { _middlewareMnanager.use(middleware) }
+export function useMiddleware(middleware: Middleware.TMiddleware) { _middlewareManager.use(middleware) }
 
 // TODO: function useSession()
 
