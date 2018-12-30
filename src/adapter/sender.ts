@@ -3,7 +3,7 @@ import Debug from 'debug'
 import assert from 'assert'
 import { URL } from 'url'
 import { CQHTTP_API } from './api'
-import { CQCode } from './cqcode'
+import { CQCode, ICQCode } from './cqcode'
 import * as Result from './result'
 
 const debug = {
@@ -43,7 +43,7 @@ export class Sender {
         for (const key of keys)
             assert(this._context[key])
    }
-    send(...message: (string|{ type: string, data: any })[]): Promise<Result.ISend> {
+    send(...message: (string|ICQCode)[]): Promise<Result.ISend> {
         this._checkContext('message_type')
         const parsed = []
         for (const i of message) {

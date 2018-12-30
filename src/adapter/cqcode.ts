@@ -1,3 +1,8 @@
+export interface ICQCode {
+    type: string
+    data: any
+}
+
 export const CQCode = {
     Text(text: string) { return { type: 'text', data: { text } } },
     Face(id: number) { return { type: 'face', data: { id } } },
@@ -14,7 +19,7 @@ export const CQCode = {
     PlatformMusic(type: 'qq'|'163'|'xiami', id: number) { return { type: 'music', data: { type, id } } },
     CustomMusic(url: string, audio: string, title: string, content?: string, image?: string) { return { type: 'music', data: { type: 'custom', url, audio, title, content, image } } },
     Share(url: string, title: string, content?: string, image?: string) { return { type: 'share', data: { url, title, content, image } } },
-    isCQCodeObject(obj: any) { return typeof obj === 'object' && typeof obj.type === 'string' && typeof obj.data === 'object' && obj.data },
+    isCQCodeObject(obj: any): obj is ICQCode { return typeof obj === 'object' && typeof obj.type === 'string' && typeof obj.data === 'object' && obj.data },
     isRealCQCodeObject(obj: any) { return CQCode.isCQCodeObject(obj) && obj.type !== 'text' },
     encodePlainText(str: string) { return str.replace(/&/g, '&amp;').replace(/\[/g, '&#91;').replace(/\]/g, '&#93;') },
     decodePlainText(str: string) { return str.replace(/&amp;/g, '&').replace(/&#91;/g, '[').replace(/&#93;/g, ']') },
