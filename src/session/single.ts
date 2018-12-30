@@ -32,8 +32,8 @@ export class SingleSessionManager extends SessionStore {
      * Additionally, override templates will take over even when there's a session running
      * @param ctx the context
      */
-    run(ctx: any) {
-        const msgId = this._identifier(ctx)
+    async run(ctx: any) {
+        const msgId = await this._identifier(ctx)
         const getter = () => {
             debug.streamGetter(`get stream: ${msgId}`)
             return this._streams.get(msgId)
@@ -46,7 +46,7 @@ export class SingleSessionManager extends SessionStore {
         }
         let finalBehavior
         for (const template of this._templates)
-            if (template.match(ctx) && (!getter() || template.override))
+            if (await template.match(ctx) && (!getter() || template.override))
                 finalBehavior = template
         if (finalBehavior) {
             debug.run('create new stream for message: %o', ctx)

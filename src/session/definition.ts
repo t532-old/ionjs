@@ -1,6 +1,6 @@
 import { MessageStream } from './stream'
 
-export type TSessionFn = (stream: MessageStream) => Promise<void>
+export type TSessionFn = (stream: MessageStream) => void
 
 export type TMatcher = (ctx: any) => boolean
 

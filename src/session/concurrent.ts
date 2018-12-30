@@ -30,10 +30,10 @@ export class ConcurrentSessionManager extends SessionStore {
      * Or create sessions if the context matches the conditions of them
      * @param ctx the context
      */
-    run(ctx: any) {
+    async run(ctx: any) {
         for (const template of this._templates) {
             const templateSymbol = template.symbol,
-                  msgId = this._identifier(ctx)
+                  msgId = await this._identifier(ctx)
             const getter = () => {
                 debug.streamGetter(`get stream: ${msgId}`)
                 return this._streams.get(templateSymbol).get(msgId)
@@ -48,7 +48,7 @@ export class ConcurrentSessionManager extends SessionStore {
                 debug.run('run message to an existing stream: %o', ctx)
                 if (!getter().write(ctx)) 
                     getter().once('drain', () => getter().write(ctx))
-            } else if (template.match(ctx)) {
+            } else if (await template.match(ctx)) {
                 debug.run('create new stream for message: %o', ctx)
                 setter()
                 getter().write(ctx)
