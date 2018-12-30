@@ -82,7 +82,7 @@ export class Command {
      * Parse a command
      * @param command The command for parsing
      */
-    async parse(command: string): Promise<IArguments> {
+    async parse(command: string, ...extraArgs: any[]): Promise<IArguments> {
         debug.parse(`parsing started: ${command}`)
         let rawArgs = split(command, this._chars)
         if (rawArgs[0] !== this._name) throw new CommandParseError('Wrong command name')
@@ -133,7 +133,7 @@ export class Command {
                 debug.parse(`defaultArg: ${param} => ${this._parameters.defaults[param]}`)
                 args.arguments[param] = this._parameters.defaults[param]
             }
-        await this._processor(args, { parameters: this._parameters, options: this._options })
+        await this._processor(args, { parameters: this._parameters, options: this._options }, ...extraArgs)
         for (const param of this._parameters.required)
             if (!(param in args.arguments)) throw new CommandParseError('No enough required arguments')
         debug.parse(`parsing finished`)

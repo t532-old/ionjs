@@ -23,4 +23,4 @@ export interface IArguments {
 }
 
 /** An extraneous processor for arguments */
-export type TExtraneousProcessor = (args: IArguments, params: { parameters: IParameters, options: string[] }) => void
+export type TExtraneousProcessor = (args: IArguments, params: { parameters: IParameters, options: string[] }, ...extraArgs: any[]) => void
