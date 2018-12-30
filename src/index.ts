@@ -31,5 +31,6 @@ export function init({ receivePort = 8080, receiveSecret, sendURL = 'http://127.
 export const when = new When()
 export { start }
 export { sender, receiver }
+export { runMiddleware, runSession }
 export { useMiddleware, useSession }
 export const Classes = { Adapter, Command, Middleware, Session }
