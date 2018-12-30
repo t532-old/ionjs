@@ -2,7 +2,7 @@ import { MessageStream } from './stream'
 
 export type TSessionFn = (stream: MessageStream) => void
 
-export type TMatcher = (ctx: any) => boolean
+export type TMatcher = (ctx: any) => boolean|Promise<boolean>
 
 export interface ISessionTemplate {
     /**
