@@ -1,5 +1,5 @@
-import Koa from 'koa'
-import koaBody from 'koa-body'
+import Koa = require('koa')
+import koaBody = require('koa-body')
 import Debug from 'debug'
 import { createHmac } from 'crypto'
 import { EventEmitter } from 'events'
