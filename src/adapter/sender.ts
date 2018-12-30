@@ -43,7 +43,7 @@ export class Sender {
         for (const key of keys)
             assert(this._context[key])
    }
-    send(...message: (string|ICQCode)[]): Promise<Result.ISend> {
+    send(...message: (string|ICQCode)[]): Promise<Result.ISendResult> {
         this._checkContext('message_type')
         const parsed = []
         for (const i of message) {
@@ -52,45 +52,45 @@ export class Sender {
         }
         return this._post(CQHTTP_API.send[this._context.message_type], { message })
     }
-    'delete'(message_id: string): Promise<Result.INone> { return this._post(CQHTTP_API.delete, { message_id }) }
-    sendLike(times: number): Promise<Result.INone> { return this._post(CQHTTP_API.sendLike, { times }) }
-    kick(reject_add_request: boolean = false): Promise<Result.INone> { return this._post(CQHTTP_API.kick, { reject_add_request }) }
-    ban(duration: number = 30 * 60): Promise<Result.INone> { 
+    'delete'(message_id: string): Promise<Result.INoneResult> { return this._post(CQHTTP_API.delete, { message_id }) }
+    sendLike(times: number): Promise<Result.INoneResult> { return this._post(CQHTTP_API.sendLike, { times }) }
+    kick(reject_add_request: boolean = false): Promise<Result.INoneResult> { return this._post(CQHTTP_API.kick, { reject_add_request }) }
+    ban(duration: number = 30 * 60): Promise<Result.INoneResult> { 
         if (this._context.anonymous) return this._post(CQHTTP_API.ban.anonymous, duration)
         else return this._post(CQHTTP_API.ban.member, { duration })
     }
-    unban(): Promise<Result.INone> { return this._post(CQHTTP_API.unban, { duration: 0 }) }
-    wholeBan(): Promise<Result.INone> { return this._post(CQHTTP_API.wholeBan, { enable: true }) }
-    wholeUnban(): Promise<Result.INone> { return this._post(CQHTTP_API.wholeUnban, { enable: false }) }
-    setAdmin(): Promise<Result.INone> { return this._post(CQHTTP_API.setAdmin, { enable: true }) }
-    unsetAdmin(): Promise<Result.INone> { return this._post(CQHTTP_API.unsetAdmin, { enable: false }) }
-    enableAnonymous(): Promise<Result.INone> { return this._post(CQHTTP_API.enableAnonymous, { enable: true }) }
-    disableAnonymous(): Promise<Result.INone> { return this._post(CQHTTP_API.disableAnonymous, { enable: false }) }
-    setCard(card: string = ''): Promise<Result.INone> { return this._post(CQHTTP_API.setCard, { card }) }
-    deleteCard(): Promise<Result.INone> { return this._post(CQHTTP_API.deleteCard, { card: '' }) }
-    setSpecialTitle(title: string = ''): Promise<Result.INone> { return this._post(CQHTTP_API.setSpecialTitle, { title }) }
-    deleteSpecialTitle(): Promise<Result.INone> { return this._post(CQHTTP_API.setSpecialTitle, { title: '' }) }
-    leave(is_dismiss: boolean = false): Promise<Result.INone> { 
+    unban(): Promise<Result.INoneResult> { return this._post(CQHTTP_API.unban, { duration: 0 }) }
+    wholeBan(): Promise<Result.INoneResult> { return this._post(CQHTTP_API.wholeBan, { enable: true }) }
+    wholeUnban(): Promise<Result.INoneResult> { return this._post(CQHTTP_API.wholeUnban, { enable: false }) }
+    setAdmin(): Promise<Result.INoneResult> { return this._post(CQHTTP_API.setAdmin, { enable: true }) }
+    unsetAdmin(): Promise<Result.INoneResult> { return this._post(CQHTTP_API.unsetAdmin, { enable: false }) }
+    enableAnonymous(): Promise<Result.INoneResult> { return this._post(CQHTTP_API.enableAnonymous, { enable: true }) }
+    disableAnonymous(): Promise<Result.INoneResult> { return this._post(CQHTTP_API.disableAnonymous, { enable: false }) }
+    setCard(card: string = ''): Promise<Result.INoneResult> { return this._post(CQHTTP_API.setCard, { card }) }
+    deleteCard(): Promise<Result.INoneResult> { return this._post(CQHTTP_API.deleteCard, { card: '' }) }
+    setSpecialTitle(title: string = ''): Promise<Result.INoneResult> { return this._post(CQHTTP_API.setSpecialTitle, { title }) }
+    deleteSpecialTitle(): Promise<Result.INoneResult> { return this._post(CQHTTP_API.setSpecialTitle, { title: '' }) }
+    leave(is_dismiss: boolean = false): Promise<Result.INoneResult> { 
         this._checkContext('message_type')
         return this._post(CQHTTP_API.leave[this._context.message_type], { is_dismiss })
     }
-    solveRequest(approve: boolean = true, remarkOrReason: string = ''): Promise<Result.INone> {
+    solveRequest(approve: boolean = true, remarkOrReason: string = ''): Promise<Result.INoneResult> {
         this._checkContext('request_type')
         return this._post(CQHTTP_API.solveRequest[this._context.request_type], { approve, remark: remarkOrReason })
     }
-    getSelfInfo(): Promise<Result.ISelfInfo> { return this._post(CQHTTP_API.getSelfInfo) }
-    getInfo(no_cache: boolean = false): Promise<Result.IStrangerInfo|Result.IMemberInfo> {
+    getSelfInfo(): Promise<Result.ISelfInfoResult> { return this._post(CQHTTP_API.getSelfInfo) }
+    getInfo(no_cache: boolean = false): Promise<Result.IStrangerInfoResult|Result.IMemberInfoResult> {
         if (this._context.group_id) return this._post(CQHTTP_API.getInfo.member, { no_cache })
         else return this._post(CQHTTP_API.getInfo.stranger, { no_cache })
     }
-    getGroupList(no_cache: boolean = false): Promise<Result.IGroupList> { return this._post(CQHTTP_API.getGroupList, { no_cache }) }
-    getMemberList(): Promise<Result.IMemberInfoList> { return this._post(CQHTTP_API.getMemberList, { }) }
-    getCredentials(): Promise<Result.ICredentials> { return this._post(CQHTTP_API.getCredentials, { })}
-    getRecord(): Promise<Result.IRecord> { return this._post(CQHTTP_API.getRecord, {}) }
-    getPluginStatus(): Promise<Result.IPluginStatus> { return this._post(CQHTTP_API.getPluginStatus, { }) }
-    getPluginVersionInfo(): Promise<Result.IPluginVersionInfo> { return this._post(CQHTTP_API.getPluginVersionInfo, { }) }
-    restart(clean_log: boolean = true, clean_cache: boolean = true, clean_event: boolean = true): Promise<Result.INone> { return this._post(CQHTTP_API.restart, { clean_log, clean_cache, clean_event }) }
-    restartPlugin(delay: number = 0): Promise<Result.INone> { return this._post(CQHTTP_API.restartPlugin, { delay }) }
-    cleanDataDir(data_dir: string): Promise<Result.INone> { return this._post(CQHTTP_API.cleanDataDir, { data_dir }) }
-    cleanPluginLog(): Promise<Result.INone> { return this._post(CQHTTP_API.cleanPluginLog, { }) } 
+    getGroupList(no_cache: boolean = false): Promise<Result.IGroupListResult> { return this._post(CQHTTP_API.getGroupList, { no_cache }) }
+    getMemberList(): Promise<Result.IMemberInfoListResult> { return this._post(CQHTTP_API.getMemberList, { }) }
+    getCredentials(): Promise<Result.ICredentialsResult> { return this._post(CQHTTP_API.getCredentials, { })}
+    getRecord(): Promise<Result.IRecordResult> { return this._post(CQHTTP_API.getRecord, {}) }
+    getPluginStatus(): Promise<Result.IPluginStatusResult> { return this._post(CQHTTP_API.getPluginStatus, { }) }
+    getPluginVersionInfo(): Promise<Result.IPluginVersionInfoResult> { return this._post(CQHTTP_API.getPluginVersionInfo, { }) }
+    restart(clean_log: boolean = true, clean_cache: boolean = true, clean_event: boolean = true): Promise<Result.INoneResult> { return this._post(CQHTTP_API.restart, { clean_log, clean_cache, clean_event }) }
+    restartPlugin(delay: number = 0): Promise<Result.INoneResult> { return this._post(CQHTTP_API.restartPlugin, { delay }) }
+    cleanDataDir(data_dir: string): Promise<Result.INoneResult> { return this._post(CQHTTP_API.cleanDataDir, { data_dir }) }
+    cleanPluginLog(): Promise<Result.INoneResult> { return this._post(CQHTTP_API.cleanPluginLog, { }) } 
 }

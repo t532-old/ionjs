@@ -1,21 +1,21 @@
-export interface IBase {
+export interface IBaseResult {
     status: 'ok'|'async'|'failed'
     retcode: number
     data?: object
 }
-export interface INone extends IBase {
+export interface INoneResult extends IBaseResult {
     data: null
 }
-export interface ISend extends IBase {
+export interface ISendResult extends IBaseResult {
     data: { message_id: number }
 }
-export interface ISelfInfo extends IBase {
+export interface ISelfInfoResult extends IBaseResult {
     data: {
         user_id: number,
         nickname: string,
     }
 }
-export interface IStrangerInfo extends IBase {
+export interface IStrangerInfoResult extends IBaseResult {
     data: {
         user_id: number,
         nickname: string,
@@ -23,7 +23,7 @@ export interface IStrangerInfo extends IBase {
         age: number,
     }
 }
-export interface IMemberInfo extends IBase {
+export interface IMemberInfoResult extends IBaseResult {
     data: {
         user_id: number,
         nickname: string,
@@ -41,25 +41,25 @@ export interface IMemberInfo extends IBase {
         card_changeable: boolean,
     }
 }
-export interface IGroupList extends IBase {
+export interface IGroupListResult extends IBaseResult {
     data: {
         group_id: number,
         group_name: string,
     }[]
 }
-export interface IMemberInfoList extends IBase {
-    data: IMemberInfo[]
+export interface IMemberInfoListResult extends IBaseResult {
+    data: IMemberInfoResult[]
 }
-export interface ICredentials extends IBase {
+export interface ICredentialsResult extends IBaseResult {
     data: {
         cookies: string,
         csrf_token: number,
     }
 }
-export interface IRecord extends IBase {
+export interface IRecordResult extends IBaseResult {
     data: { file: string }
 }
-export interface IPluginStatus extends IBase {
+export interface IPluginStatusResult extends IBaseResult {
     data: {
         app_initialized: boolean,
         app_enabled: boolean,
@@ -69,7 +69,7 @@ export interface IPluginStatus extends IBase {
         good: boolean,
     }
 }
-export interface IPluginVersionInfo extends IBase {
+export interface IPluginVersionInfoResult extends IBaseResult {
     data: {
         coolq_directory: string,
         coolq_edition: 'air'|'pro',
