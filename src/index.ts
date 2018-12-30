@@ -3,10 +3,10 @@ import * as Command from './command'
 import * as Middleware from './middleware'
 import * as Session from './session'
 
-const _middleware = new Middleware.MiddlewareManager()
+const _middlewareManager = new Middleware.MiddlewareManager()
 
 function _defaultIdentifier(ctx) { return `${ctx.user_id}${ctx.message_type[0]}${ctx._union_id}` }
-const _session: any = { default: { single: new Session.SingleSessionManager(_defaultIdentifier), concurrent: new Session.ConcurrentSessionManager(_defaultIdentifier) } }
+const _sessionManagers: any = { default: { single: new Session.SingleSessionManager(_defaultIdentifier), concurrent: new Session.ConcurrentSessionManager(_defaultIdentifier) } }
 
 const _config: { operators?: number[], prefixes?: string[], self?: number } = {}
 
@@ -31,17 +31,17 @@ export function init({ receivePort = 8080, receiveSecret, sendURL = 'http://127.
     _config.prefixes = prefixes
     _config.self = self
     receiver.on('message', async ctx => {
-        await _middleware.run(ctx)
+        await _middlewareManager.run(ctx)
         for (const i in _session) {
-            _session[i].single.run(ctx)
-            _session[i].multi.run(ctx)
+            _sessionManagers[i].single.run(ctx)
+            _sessionManagers[i].concurrent.run(ctx)
         }
     })
 }
 
 export function start() { receiver.listen(this._receivePort) }
 
-export function useMiddleware(middleware: Middleware.TMiddleware) { _middleware.use(middleware) }
+export function useMiddleware(middleware: Middleware.TMiddleware) { _middlewareMnanager.use(middleware) }
 
 // TODO: function useSession()
 
