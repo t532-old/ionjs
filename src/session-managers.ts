@@ -20,7 +20,7 @@ export interface ISessionContext {
     question(...prompt: (string|ICQCode)[]): Promise<any>
 }
 
-export function use(when: When, { override = false, identifier = 'default', concurrent = false }) {
+export function use(when: When, { override = false, identifier = 'default', concurrent = false } = {}) {
     return function useHandler(session: (ctx: ISessionContext) => void) {
         const manager = concurrent ? managers[identifier].concurrent : managers[identifier].single
         if ((!concurrent && manager instanceof SingleSessionManager) ||
@@ -37,7 +37,7 @@ export function use(when: When, { override = false, identifier = 'default', conc
                     }
                     await session({ init: { raw, command }, sender: sender.to(raw), stream, get, reply, question })
                 },
-                when.validate,
+                when.validate.bind(when),
                 override
             )
         } else throw new Error(`Session manager '${identifier}' does not exist`)

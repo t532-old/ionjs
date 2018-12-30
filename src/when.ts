@@ -53,15 +53,17 @@ export class When {
         return await this._validator(ctx)
     }
     async parse(ctx: any, stream: MessageStream) {
-        const str = CQCode.arrayToString(ctx.message)
-        let command: Command
-        for (const i of this._commands) 
-            if (i.is(CQCode.arrayToString(ctx.message))) {
-                command = i
-                break
-            }
-        if (!command) throw new Error(`No command matches message ${str}`)
-        return await command.parse(str, ctx, stream)
+        if (this._commands.length) {
+            const str = CQCode.arrayToString(ctx.message)
+            let command: Command
+            for (const i of this._commands) 
+                if (i.is(CQCode.arrayToString(ctx.message))) {
+                    command = i
+                    break
+                }
+            if (!command) throw new Error(`No command matches message ${str}`)
+            return await command.parse(str, ctx, stream)
+        } else return null
     }
     ever() { return new When() }
     command(names: string|string[], params: string, withPrefixes: boolean = true) {

@@ -1,7 +1,7 @@
 import axios from 'axios'
 import Debug from 'debug'
-import assert from 'assert'
 import { URL } from 'url'
+import { ok as assert } from 'assert'
 import { CQHTTP_API } from './api'
 import { CQCode, ICQCode } from './cqcode'
 import * as Result from './result'
@@ -43,12 +43,12 @@ export class Sender {
         for (const key of keys)
             assert(this._context[key])
    }
-    send(...message: (string|ICQCode)[]): Promise<Result.ISendResult> {
+    send(...mixedMessage: (string|ICQCode)[]): Promise<Result.ISendResult> {
         this._checkContext('message_type')
-        const parsed = []
-        for (const i of message) {
-            if (typeof i === 'string') parsed.push(CQCode.Text(i))
-            else parsed.push(i)
+        const message = []
+        for (const i of mixedMessage) {
+            if (typeof i === 'string') message.push(CQCode.Text(i))
+            else message.push(i)
         }
         return this._post(CQHTTP_API.send[this._context.message_type], { message })
     }
