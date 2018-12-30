@@ -63,9 +63,7 @@ export class When {
         if (!command) throw new Error(`No command matches message ${str}`)
         return await command.parse(str, ctx, stream)
     }
-    ever() {
-        return new When({})
-    }
+    ever() { return new When() }
     command(names: string|string[], params: string, withPrefixes: boolean = true) {
         names = names instanceof Array ? names : [names]
         if (withPrefixes) {

@@ -3,7 +3,7 @@ import * as Command from './command'
 import * as Middleware from './middleware'
 import * as Session from './session'
 
-import { init as initWhen } from './when'
+import { init as initWhen, When } from './when'
 import { init as initSender, sender } from './sender'
 import { init as initReceiver, start, receiver } from './receiver'
 import { use as useSession, run as runSession } from './session-managers'
@@ -28,6 +28,7 @@ export function init({ receivePort = 8080, receiveSecret, sendURL = 'http://127.
         runSession(ctx)
     })
 }
+export const when = new When()
 export { start }
 export { sender, receiver }
 export { useMiddleware, useSession }
