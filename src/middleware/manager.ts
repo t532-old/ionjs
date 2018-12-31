@@ -1,4 +1,3 @@
-import { generateHalter, MiddlewareHaltError } from './halt'
 import { generateNextExecutor } from './next'
 import { TMiddleware } from './definition'
 import Debug from 'debug'
@@ -10,14 +9,14 @@ const debug = {
 /** A middleware manager */
 export class MiddlewareManager {
     /** The list of middlewares */
-    middlewares: TMiddleware[] = []
+    private _middlewares: TMiddleware[] = []
     /**
      * add a middleware to the middleware list
      * @param middleware the middleware
      */
     use(middleware: TMiddleware) {
-        this.middlewares = [...(this.middlewares || []), middleware]
-        debug.use(`add new middleware, current size ${this.middlewares.length}`)
+        this._middlewares = [...(this._middlewares || []), middleware]
+        debug.use(`add new middleware, current size ${this._middlewares.length}`)
         return this
     }
     /**
@@ -26,15 +25,7 @@ export class MiddlewareManager {
      */
     async run(ctx: any) {
         debug.run('start (ctx %o)', ctx)
-        const executed = this.middlewares.map(() => false)
-        for (let mw in this.middlewares)
-            if (!executed[mw]) {
-                try { await this.middlewares[mw](ctx, generateNextExecutor(this.middlewares, parseInt(mw) + 1, ctx, executed), generateHalter()) }
-                catch (err) {
-                    if (err instanceof MiddlewareHaltError) break
-                    else throw err
-                }
-            }
+        if (this._middlewares.length) await this._middlewares[0](ctx, generateNextExecutor(this._middlewares, 1, ctx))
         debug.run('end (ctx %o)', ctx)
     }
 }
