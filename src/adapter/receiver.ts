@@ -11,6 +11,11 @@ declare module 'koa' {
 }
 
 const debug = Debug('ionjs: Receiver')
+export function contextTypeOf(ctx: any) {
+    const events: string[] = ['post', ctx.post_type, `${ctx.post_type}/${ctx.message_type || ctx.request_type || ctx.notice_type || ctx.meta_event_type}`]
+    if (ctx.sub_type) events.push(`${ctx.post_type}/${ctx.message_type || ctx.request_type || ctx.notice_type || ctx.meta_event_type}/${ctx.sub_type}`)
+    return events
+}
 export class Receiver extends EventEmitter {
     private readonly _server = new Koa()
     constructor(secret?: string) {
@@ -28,10 +33,8 @@ export class Receiver extends EventEmitter {
         this._server.use(async ctx => {
             const msg = ctx.request.body
             debug(`received: %o`, msg)
-            let events: string[] = ['post', msg.post_type, `${msg.post_type}/${msg.message_type || msg.request_type || msg.notice_type || msg.meta_event_type}`]
-            msg._union_id = msg.group_id || msg.discuss_id || msg.user_id
-            if (msg.sub_type) events.push(`${msg.post_type}/${msg.message_type || msg.request_type || msg.notice_type || msg.meta_event_type}/${msg.sub_type}`)
-            debug(`emit event: ${events.toString()}`)
+            const events = contextTypeOf(msg)
+            debug(`emit event: ${events.join(', ')}`)
             for (const event of events) thisRef.emit(event, msg)
         })
         debug.extend(' constructor')('server ready')
