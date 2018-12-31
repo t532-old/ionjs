@@ -1,4 +1,4 @@
-import { IMemberInfoResult, CQCode, ICQCode } from './adapter'
+import { IMemberInfoResult, CQCode, contextTypeOf } from './adapter'
 import { MessageStream } from './session'
 import { Command } from './command'
 import { sender } from './sender'
@@ -9,16 +9,19 @@ export class When {
     private _commands: Command[]
     private _validator: (ctx: any) => boolean|Promise<boolean>
     private _permissionLevel: 0|1|2|3
+    private _contextTypes: string[]
     private _onlyAt: boolean
-    constructor({ commands = [], validator = () => true, permissionLevel = 'everyone', onlyAt = false }: {
+    constructor({ commands = [], validator = () => true, permissionLevel = 0, contextTypes = ['message'], onlyAt = false }: {
         commands?: Command[],
         validator?: (ctx: any) => boolean|Promise<boolean>,
-        permissionLevel?: 'everyone'|'admin'|'owner'|'operator',
+        permissionLevel?: 0|1|2|3,
+        contextTypes?: string[],
         onlyAt?: boolean,
     } = {}) {
         this._commands = commands
         this._validator = validator
-        this._permissionLevel = ['everyone', 'admin', 'owner', 'operator'].indexOf(permissionLevel) as 0|1|2|3
+        this._permissionLevel = permissionLevel
+        this._contextTypes = contextTypes
         this._onlyAt = onlyAt
     }
     async validate(ctx: any) {
@@ -39,6 +42,15 @@ export class When {
                 }
             if (!commandMatched) return false
         }
+        // type
+        const contextTypes = contextTypeOf(ctx)
+        let typeMatched = false
+        for (const i of contextTypes)
+            if (this._contextTypes.includes(i)) {
+                typeMatched = true
+                break
+            }
+        if (!typeMatched) return false
         // permission
         let permissionLevel: number
         if (config.operators.includes(ctx.user_id)) permissionLevel = 3
@@ -95,7 +107,8 @@ export class When {
         return new When({
             commands,
             validator: this._validator,
-            permissionLevel: ['everyone', 'admin', 'owner', 'operator'][this._permissionLevel] as 'everyone'|'admin'|'owner'|'operator',
+            permissionLevel: this._permissionLevel,
+            contextTypes: this._contextTypes,
             onlyAt: this._onlyAt,
         })
     }
@@ -103,7 +116,8 @@ export class When {
         return new When({
             commands: this._commands,
             validator,
-            permissionLevel: ['everyone', 'admin', 'owner', 'operator'][this._permissionLevel] as 'everyone'|'admin'|'owner'|'operator',
+            permissionLevel: this._permissionLevel,
+            contextTypes: this._contextTypes,
             onlyAt: this._onlyAt,
         })
     }
@@ -111,7 +125,17 @@ export class When {
         return new When({
             commands: this._commands,
             validator: this._validator,
-            permissionLevel: level,
+            permissionLevel: ['everyone', 'admin', 'owner', 'operator'].indexOf(level) as 0|1|2|3,
+            contextTypes: this._contextTypes,
+            onlyAt: this._onlyAt,
+        })
+    }
+    type(type: string|string[]) {
+        return new When({
+            commands: this._commands,
+            validator: this._validator,
+            permissionLevel: this._permissionLevel,
+            contextTypes: type instanceof Array ? type : [type],
             onlyAt: this._onlyAt,
         })
     }
@@ -119,7 +143,8 @@ export class When {
         return new When({
             commands: this._commands,
             validator: this._validator,
-            permissionLevel: ['everyone', 'admin', 'owner', 'operator'][this._permissionLevel] as 'everyone'|'admin'|'owner'|'operator',
+            permissionLevel: this._permissionLevel,
+            contextTypes: this._contextTypes,
             onlyAt: true,
         })
     }
@@ -127,7 +152,8 @@ export class When {
         return new When({
             commands: this._commands,
             validator: this._validator,
-            permissionLevel: ['everyone', 'admin', 'owner', 'operator'][this._permissionLevel] as 'everyone'|'admin'|'owner'|'operator',
+            permissionLevel: this._permissionLevel,
+            contextTypes: this._contextTypes,
             onlyAt: false,
         })
     }
