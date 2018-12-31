@@ -68,7 +68,7 @@ export class Command {
                 if (alias) this._parameters.aliases[name] = alias
                 if (description) this._parameters.description[name] = description
                 if (defaultVal) this._parameters.defaults[name] = defaultVal
-                debug.constructor(`declared parameter: ${required} ${unordered || ''} ${name} (${alias || '_noAlias'}) = ${defaultVal || '_noDefault'} ${requiredPair}`)
+                debug.constructor(`declared parameter: ${required} ${unordered || ''}${name} (${alias || '_noAlias'}) ${requiredPair}: ${description || '_noDescription'} = ${defaultVal || '_noDefault'}`)
             } else {
                 this._options.push(i)
                 debug.constructor(`declared option: ${i}`)
