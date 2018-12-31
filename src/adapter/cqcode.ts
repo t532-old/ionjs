@@ -54,7 +54,8 @@ export const CQCode = {
         return converted
     },
     filterType(message: ICQCode[], type: string) {
-        if (type === 'string') return CQCode.arrayToString(message)
+        if (type === 'raw') return CQCode.arrayToString(message)
+        else if (type === 'string') return CQCode.decodePlainText(CQCode.arrayToString(message))
         else if (type === 'array') return message
         else if (type === 'any') return message[0]
         else return message.find(i => i.type === type).data
