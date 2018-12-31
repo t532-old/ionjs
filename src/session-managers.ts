@@ -1,5 +1,5 @@
 import { SingleSessionManager, ConcurrentSessionManager, MessageStream } from './session'
-import { Sender, ICQCode, INoneResult } from './adapter'
+import { Sender, ICQCode, ISendResult } from './adapter'
 import { IArguments } from './command'
 import { sender } from './sender'
 import { When } from './when'
@@ -16,7 +16,7 @@ export interface ISessionContext {
     sender: Sender
     stream: MessageStream
     get(condition?: (ctx: any) => boolean): Promise<any>
-    reply(...message: (string|ICQCode)[]): Promise<INoneResult> 
+    reply(...message: (string|ICQCode)[]): Promise<ISendResult> 
     question(...prompt: (string|ICQCode)[]): Promise<any>
 }
 
@@ -29,15 +29,16 @@ export function use(when: When, { override = false, identifier = 'default', conc
                 async function wrapper(stream) {
                     const raw = await stream.get(),
                           command = await when.parse(raw, stream)
+                    const boundSender = sender.to(raw)
                     function get(condition: (ctx: any) => boolean = () => true) { return stream.get(condition) }
-                    function reply(...message: (string|ICQCode)[]) { return this.sender.send(...message) }
+                    function reply(...message: (string|ICQCode)[]) { return boundSender.send(...message) }
                     async function question(...prompt: (string|ICQCode)[]) {
-                        await this.reply(...prompt)
-                        return this.get()
+                        await reply(...prompt)
+                        return get()
                     }
-                    await session({ init: { raw, command }, sender: sender.to(raw), stream, get, reply, question })
+                    await session({ init: { raw, command }, sender, stream, get, reply, question })
                 },
-                when.validate.bind(when),
+                ctx => when.validate(ctx),
                 override
             )
         } else throw new Error(`Session manager '${identifier}' does not exist`)
