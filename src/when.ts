@@ -23,14 +23,12 @@ export class When {
     }
     async validate(ctx: any) {
         // onlyAt
-        if (ctx.message[0].type !== 'at' || ctx.message[0].data.qq !== config.self.toString()) {
+        if (!ctx.message[0] || ctx.message[0].type !== 'at' || ctx.message[0].data.qq !== config.self.toString()) {
             if (this._onlyAt) return false
         } else {
             ctx.message.shift()
             if (ctx.message[0].type === 'text' && ctx.message[0].data.text.startsWith(' ')) ctx.message[0].data.text = ctx.message[0].data.text.slice(1)
         }
-        
-
         // command
         if (this._commands.length) {
             let commandMatched = false
@@ -41,14 +39,12 @@ export class When {
                 }
             if (!commandMatched) return false
         }
-
         // permission
         let permissionLevel: number
         if (config.operators.includes(ctx.user_id)) permissionLevel = 3
         else if (ctx.message_type !== 'group') permissionLevel = ['member', 'admin', 'owner'].indexOf((await sender.to(ctx).getInfo() as IMemberInfoResult).data.role)
         else permissionLevel = 2
         if (permissionLevel < this._permissionLevel) return false
-
         // validator
         return await this._validator(ctx)
     }
@@ -57,7 +53,7 @@ export class When {
             const str = CQCode.arrayToString(ctx.message)
             let command: Command
             for (const i of this._commands) 
-                if (i.is(CQCode.arrayToString(ctx.message))) {
+                if (i.is(str)) {
                     command = i
                     break
                 }
@@ -73,38 +69,27 @@ export class When {
             for (const i of config.prefixes)
                 for (const j of names)
                     prefixedNames.push(`${i}${j}`)
-            names = [...names, ...prefixedNames]
+            names = prefixedNames
         }
         const commands = []
         for (const name of names) {
             commands.push(new Command(`"${name}" ${params}`, {
-                async processor(args, { parameters: params }, rawMessage: any, stream: MessageStream) {
-                    const descriptions = {}
-                    for (const i in params.description) {
-                        const description = params.description[i].split(',')
-                        descriptions[i] = { type: description[0], prompt: description[1] || `Enter '${i}'${description[0] ? `(include ${description[0]})` : ''}:` }
-                    }
-                    const keys = Object.keys(args.arguments)
-                    for (const i of params.required)
-                        if (!keys.includes(i)) {
-                            await sender.to(rawMessage).send(descriptions[i].prompt)
-                            args.arguments[i] = (await stream.get()).message
+                async processor({ arguments: args }, { parameters: params }, rawMessage: any, stream: MessageStream) {
+                    const paramList = [...params.required, ...Object.keys(args)].reduce((acc, val) => acc.includes(val) ? acc : [...acc, val], [])
+                    for (const i of paramList) {
+                        const rawDescription: string[] = (params.description[i] || '').split(',').reduce((acc, val) => {
+                            if (acc.length >= 2) return [acc[0], acc[1] + val]
+                            else return [...acc, val]
+                        }, [])
+                        const description = { type: rawDescription[0] || 'string', prompt: rawDescription[1] || `Enter '${i}'${rawDescription[0] ? `(include ${rawDescription[0]})` : ''}:` }
+                        let result = CQCode.filterType(args[i] || [], description.type)
+                        while (!result) {
+                            await sender.to(rawMessage).send(description.prompt)
+                            result = CQCode.filterType((await stream.get()).message, description.type)
                         }
-                    for (const i in args.arguments)
-                        if (!(args.arguments[i] instanceof Array)) 
-                            args.arguments[i] = CQCode.stringToArray(args.arguments[i])
-                    for (const i in args.arguments) {
-                        if (descriptions[i] && descriptions[i].type) {
-                            let result = args.arguments[i].find((code: ICQCode) => code.type === descriptions[i].type)
-                            while (!result) {
-                                await sender.to(rawMessage).send(descriptions[i].prompt)
-                                result = (await stream.get()).message.find((code: ICQCode) => code.type === descriptions[i].type)
-                            }
-                            args.arguments[i] = result.data
-                        } else args.arguments[i] = CQCode.arrayToString(args.arguments[i])
+                        args[i] = result
                     }
                 },
-                delimiters: [['[', ']']],
             }))
         }
         return new When({

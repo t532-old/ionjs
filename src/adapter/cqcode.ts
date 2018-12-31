@@ -25,11 +25,13 @@ export const CQCode = {
     decodePlainText(str: string) { return str.replace(/&amp;/g, '&').replace(/&#91;/g, '[').replace(/&#93;/g, ']') },
     encodeCQCodeText(str: string) { return CQCode.encodePlainText(str).replace(/,/g, '&#44;') },
     decodeCQCodeText(str: string) { return CQCode.decodePlainText(str).replace(/&#44;/g, ',') },
-    arrayToString(message: any[]) {
+    arrayToString(message: (ICQCode|string)[]) {
         let converted = ''
-        for (let i of message) {
-            if (CQCode.isRealCQCodeObject(i)) converted += `[CQ:${i.type}${Object.keys(i.data).length ? ',' : ''}${Object.keys(i.data).map(key => `${key}=${CQCode.encodeCQCodeText(i.data[key])}`).join(',')}]`
-            else if (CQCode.isCQCodeObject(i)) converted += CQCode.encodePlainText(i.data.text)
+        for (const i of message) {
+            if (CQCode.isCQCodeObject(i)) {
+                if (CQCode.isRealCQCodeObject(i)) converted += `[CQ:${i.type}${Object.keys(i.data).length ? ',' : ''}${Object.keys(i.data).map(key => `${key}=${CQCode.encodeCQCodeText((i as ICQCode).data[key])}`).join(',')}]`
+                else converted += CQCode.encodePlainText(i.data.text)
+            }
             else converted += CQCode.encodePlainText(i.toString())
         }
         return converted
@@ -51,4 +53,10 @@ export const CQCode = {
         }
         return converted
     },
+    filterType(message: ICQCode[], type: string) {
+        if (type === 'string') return CQCode.arrayToString(message)
+        else if (type === 'array') return message
+        else if (type === 'any') return message[0]
+        else return message.find(i => i.type === type).data
+    }
 }
