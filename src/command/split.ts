@@ -12,33 +12,35 @@ export function split(string: string, { separators = [' '], delimiters = ['\'', 
     debug(`splitting started: ${string}`)
     const result: string[] = []
     const lastItem = () => result.length - 1
-    let inStr = ''
+    let inStr = '', escape = false
     for (const i of string) {
-        if (!inStr) {
-            if (separators.includes(i)) {
-                if (result[lastItem()]) {
-                    result.push('')
-                    debug(`(char '${i}') new item`)
-                }
-            } else if (preDelimiters.includes(i)) {
-                inStr = i
-                debug(`(char '${i}') in string`)
+        let regular = false
+        if (!escape) {
+            if (i === '\\') escape = true
+            else if (!inStr) {
+                if (separators.includes(i)) {
+                    if (result[lastItem()]) {
+                        result.push('')
+                        debug(`(char '${i}') new item`)
+                    }
+                } else if (preDelimiters.includes(i)) {
+                    inStr = i
+                    debug(`(char '${i}') in string`)
+                } else regular = true
             } else {
-                if (lastItem() >= 0) result[lastItem()] += i
-                else result.push(i)
-                debug(`(char '${i}') add to last item`)
+                const preDelimitersPos = preDelimiters.map((char, pos) => ({ char, pos })).filter(item => item.char === inStr).map(i => i.pos),
+                      postDelimitersPos = postDelimiters.map((char, pos) => ({ char, pos })).filter(item => item.char === i).map(i => i.pos)
+                if (preDelimitersPos.some(i => postDelimitersPos.includes(i))) { 
+                    inStr = ''
+                    debug(`(char '${i}') out string`)
+                } else regular = true
             }
-        } else {
-            const preDelimitersPos = preDelimiters.map((char, pos) => ({ char, pos })).filter(item => item.char === inStr).map(i => i.pos),
-                  postDelimitersPos = postDelimiters.map((char, pos) => ({ char, pos })).filter(item => item.char === i).map(i => i.pos)
-            if (preDelimitersPos.some(i => postDelimitersPos.includes(i))) {
-                inStr = ''
-                debug(`(char '${i}') out string`)
-            } else {
-                if (lastItem() >= 0) result[lastItem()] += i
-                else result.push(i)
-                debug(`(char '${i}') add to last item`)
-            }
+        } else regular = true
+        if (regular) {
+            if (lastItem() >= 0) result[lastItem()] += i
+            else result.push(i)
+            escape = false
+            debug(`(char '${i}') add to last item`)
         }
     }
     debug('splitting finished')
