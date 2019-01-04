@@ -3,6 +3,7 @@ import { Sender, ICQCode, ISendResult } from './adapter'
 import { ICommandArguments } from './command'
 import { sender } from './sender'
 import { When } from './when'
+import { copyFile } from 'fs';
 
 function defaultIdentifier(ctx) { return `${ctx.user_id}${ctx.message_type[0]}${ctx._union_id}` }
 
@@ -29,7 +30,10 @@ export function use(when: When, { override = false, identifier = 'default', conc
                     const raw = await stream.get(),
                           command = await when.parse(raw, stream)
                     const boundSender = sender.to(raw)
-                    function get(condition: (ctx: any) => boolean = () => true) { return stream.get(condition) }
+                    async function get(condition: (ctx: any) => boolean = () => true) {
+                        const original = await stream.get(condition) 
+                        return Object.keys(original).reduce((acc, val) => acc[val] = original[val], {})
+                    }
                     function reply(...message: (string|ICQCode)[]) { return boundSender.send(...message) }
                     async function question(...prompt: (string|ICQCode)[]) {
                         await reply(...prompt)
