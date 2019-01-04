@@ -1,6 +1,6 @@
 import { IMemberInfoResult, CQCode, contextTypeOf } from './adapter'
 import { MessageStream } from './session'
-import { Command } from './command'
+import { Command, ICommandArguments } from './command'
 import { sender } from './sender'
 
 const config: { operators?: number[], prefixes?: string[], self?: number, atSelf?: string } = {}
@@ -57,7 +57,7 @@ export class When {
     }
     async parse(ctx: any, stream: MessageStream) {
         if (this._commands.length) {
-            let str = CQCode.arrayToString(ctx.message)
+            let str = CQCode.arrayToString(ctx.message.map(i => i.type === 'text' ? { type: 'text', data: { text: i.data.text.replace('=', '\\=') } } : i))
             if (str.startsWith(`[CQ:at,qq:${config.self}]`)) str = str.slice()
             let command: Command
             for (const i of this._commands) 
