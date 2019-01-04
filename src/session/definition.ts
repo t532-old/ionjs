@@ -2,14 +2,14 @@ import { MessageStream } from './stream'
 
 export type TSessionFn = (stream: MessageStream) => void
 
-export type TMatcher = (ctx: any) => boolean|Promise<boolean>
+export type TSessionMatcher = (ctx: any) => boolean|Promise<boolean>
 
 export interface ISessionTemplate {
     /**
      * determines whether the session should be created or not
      * @param ctx the context
      */
-    match: TMatcher
+    match: TSessionMatcher
     /**
      * the function for generating sessions
      * @param stream the stream for contexts matches the session id

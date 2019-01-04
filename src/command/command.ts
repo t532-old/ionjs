@@ -1,5 +1,5 @@
 import { split } from './split'
-import { IParameters, IArguments, TExtraneousProcessor } from './definition'
+import { ICommandParameters, ICommandArguments, TExtraneousProcessor } from './definition'
 import Debug from 'debug'
 const debug = {
     parse: Debug('verbose-ionjs: Command: parse'),
@@ -11,7 +11,7 @@ export class Command {
     /** The raw declaration of the command instance */
     private readonly _raw: string
     /** The delcared parameters */
-    private readonly _parameters: IParameters = {
+    private readonly _parameters: ICommandParameters = {
         /** The keys are the aliases and the values are param names  */
         aliases: {},
         /** The keys are param names and the values are default values */
@@ -75,7 +75,7 @@ export class Command {
      * Parse a command
      * @param command The command for parsing
      */
-    async parse(command: string, ...extraArgs: any[]): Promise<IArguments> {
+    async parse(command: string, ...extraArgs: any[]): Promise<ICommandArguments> {
         debug.parse(`parsing started: ${command}`)
         let rawArgs = split(command)
         if (rawArgs[0] !== this._name) throw new CommandParseError('Wrong command name')

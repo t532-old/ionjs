@@ -1,6 +1,6 @@
 import { SessionStore } from './base'
 import { MessageStream } from './stream'
-import { TSessionFn, TMatcher } from './definition'
+import { TSessionFn, TSessionMatcher } from './definition'
 import Debug from 'debug'
 const debug = {
     use: Debug('ionjs: ConcurrentSessionManager: use'),
@@ -21,7 +21,7 @@ export class SingleSessionManager extends SessionStore {
      *                 whether to force end the previous session (true) 
      *                 or ignore this context (false or not determined) 
      */
-    use(session: TSessionFn, match: TMatcher, override: boolean = false) {
+    use(session: TSessionFn, match: TSessionMatcher, override: boolean = false) {
         debug.use('added new template')
         this._templates.push({ session, match, override })
         return this

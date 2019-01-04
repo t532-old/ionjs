@@ -1,5 +1,5 @@
 /** A list of delcared parameters */
-export interface IParameters {
+export interface ICommandParameters {
     /** The keys are the aliases and the values are param names  */
     aliases: any
     /** The keys are param names and the values are default values */
@@ -13,7 +13,7 @@ export interface IParameters {
 }
 
 /** A list of given arguments */
-export interface IArguments {
+export interface ICommandArguments {
     /** The specified options */
     options: any[]
     /** The specified arguments */
@@ -23,4 +23,4 @@ export interface IArguments {
 }
 
 /** An extraneous processor for arguments */
-export type TExtraneousProcessor = (args: IArguments, params: { parameters: IParameters, options: string[] }, ...extraArgs: any[]) => void
+export type TExtraneousProcessor = (args: ICommandArguments, params: { parameters: ICommandParameters, options: string[] }, ...extraArgs: any[]) => void

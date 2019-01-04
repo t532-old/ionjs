@@ -1,6 +1,6 @@
 import { SessionStore } from './base'
 import { MessageStream } from './stream'
-import { TSessionFn, TMatcher } from './definition'
+import { TSessionFn, TSessionMatcher } from './definition'
 import Debug from 'debug'
 const debug = {
     use: Debug('ionjs: ConcurrentSessionManager: use'),
@@ -18,7 +18,7 @@ export class ConcurrentSessionManager extends SessionStore {
      * @param session the function for generating sessions
      * @param match determines whether the session should be created or not
      */
-    use(session: TSessionFn, match: TMatcher) {
+    use(session: TSessionFn, match: TSessionMatcher) {
         debug.use('added new template')
         const symbol = Symbol()
         this._streams.set(symbol, new Map())
