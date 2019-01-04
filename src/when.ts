@@ -1,10 +1,15 @@
-import { IMemberInfoResult, CQCode, contextTypeOf } from './adapter'
+import { IMemberInfoResult, CQCode, contextTypeOf, ICQCode } from './adapter'
 import { MessageStream } from './session'
 import { Command, ICommandArguments } from './command'
 import { sender } from './sender'
 
 const config: { operators?: number[], prefixes?: string[], self?: number, atSelf?: string } = {}
 
+export function parseCommandString(msg: ICQCode[]) {
+    let str = CQCode.arrayToString(msg.map(i => i.type === 'text' ? { type: 'text', data: { text: i.data.text.replace('=', '\\=') } } : i)).trim()
+    if (str.startsWith(config.atSelf)) str = str.slice(config.atSelf.length).trim()
+    return str
+}
 export class When {
     private _commands: Command[]
     private _validator: (ctx: any) => boolean|Promise<boolean>
@@ -26,12 +31,12 @@ export class When {
     }
     async validate(ctx: any) {
         // onlyAt
-        if ((!ctx.message[0] || ctx.message[0].type !== 'at' || ctx.message[0].data.qq !== config.self.toString()) && this._onlyAt) return false
+        if (this._onlyAt && !CQCode.arrayToString(ctx.message).startsWith(config.atSelf)) return false
         // command
         if (this._commands.length) {
             let commandMatched = false
             for (const i of this._commands) 
-                if (i.is(CQCode.arrayToString(ctx.message))) {
+                if (i.is(parseCommandString(ctx.message))) {
                     commandMatched = true
                     break
                 }
@@ -57,8 +62,7 @@ export class When {
     }
     async parse(ctx: any, stream: MessageStream) {
         if (this._commands.length) {
-            let str = CQCode.arrayToString(ctx.message.map(i => i.type === 'text' ? { type: 'text', data: { text: i.data.text.replace('=', '\\=') } } : i))
-            if (str.startsWith(`[CQ:at,qq:${config.self}]`)) str = str.slice()
+            const str = parseCommandString(ctx.message)
             let command: Command
             for (const i of this._commands) 
                 if (i.is(str)) {
