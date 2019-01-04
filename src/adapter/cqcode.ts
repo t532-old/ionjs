@@ -29,7 +29,7 @@ export const CQCode = {
         let converted = ''
         for (const i of message) {
             if (CQCode.isCQCodeObject(i)) {
-                if (CQCode.isRealCQCodeObject(i)) converted += `[CQ:${i.type}${Object.keys(i.data).length ? ',' : ''}${Object.keys(i.data).map(key => `${key}=${CQCode.encodeCQCodeText((i as ICQCode).data[key])}`).join(',')}]`
+                if (CQCode.isRealCQCodeObject(i)) converted += `[CQ:${i.type}${Object.keys(i.data).length ? ',' : ''}${Object.keys(i.data).map(key => `${key}=${CQCode.encodeCQCodeText((i as ICQCode).data[key].toString())}`).join(',')}]`
                 else converted += CQCode.encodePlainText(i.data.text)
             }
             else converted += CQCode.encodePlainText(i.toString())
