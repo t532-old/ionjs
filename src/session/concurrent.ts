@@ -2,13 +2,10 @@ import { SessionStore } from './base'
 import { MessageStream } from './stream'
 import { TSessionFn, TSessionMatcher } from './definition'
 import Debug from 'debug'
-const debug = {
-    use: Debug('ionjs: ConcurrentSessionManager: use'),
-    streamDeleter: Debug('verbose-ionjs: ConcurrentSessionManager: streamDeleter'),
-    streamGetter: Debug('verbose-ionjs: ConcurrentSessionManager: streamGetter'),
-    streamSetter: Debug('verbose-ionjs: ConcurrentSessionManager: streamSetter'),
-    run: Debug('verbose-ionjs: ConcurrentSessionManager: run'),
-}
+const debug = Debug('ionjs:session'),
+      debugVerbose = Debug('verbose-ionjs:session'),
+      debugExVerbose = Debug('ex-verbose-ionjs:session')
+
 /** A session manager that allows multi processes */
 export class ConcurrentSessionManager extends SessionStore {
     /** Stores streams of active sessions */
@@ -19,10 +16,10 @@ export class ConcurrentSessionManager extends SessionStore {
      * @param match determines whether the session should be created or not
      */
     use(session: TSessionFn, match: TSessionMatcher) {
-        debug.use('added new template')
         const symbol = Symbol()
         this._streams.set(symbol, new Map())
         this._templates.push({ session, match, symbol })
+        debug('use (+%d)', this._templates.length)
         return this
     }
     /**
@@ -31,29 +28,24 @@ export class ConcurrentSessionManager extends SessionStore {
      * @param ctx the context
      */
     async run(ctx: any) {
+        debugVerbose('start %o', ctx)
         for (const template of this._templates) {
             const templateSymbol = template.symbol,
                   msgId = await this._identifier(ctx)
-            const getter = () => {
-                debug.streamGetter(`get stream: ${msgId}`)
-                return this._streams.get(templateSymbol).get(msgId)
-            },    setter = () => {
-                debug.streamSetter(`set stream: ${msgId}`)
-                return this._streams.get(templateSymbol).set(msgId, new MessageStream(deleter))
-            },    deleter = () => {
-                debug.streamDeleter(`delete stream: ${msgId}`)
-                return this._streams.get(templateSymbol).delete(msgId)
-            }
+                  const getter = () => this._streams.get(templateSymbol).get(msgId),
+                        setter = () => this._streams.get(templateSymbol).set(msgId, new MessageStream(deleter.bind(this))),
+                        deleter = () => this._streams.get(templateSymbol).delete(msgId)
             if (getter() && getter().writable) {
-                debug.run('run message to an existing stream: %o', ctx)
+                debugExVerbose('next (new)')
                 if (!getter().write(ctx)) 
                     getter().once('drain', () => getter().write(ctx))
             } else if (await template.match(ctx)) {
-                debug.run('create new stream for message: %o', ctx)
+                debugExVerbose('next (exist)')
                 setter()
                 getter().write(ctx)
                 template.session(getter()).then(deleter)
             }
         }
+        debugVerbose('finish')
     }
 }

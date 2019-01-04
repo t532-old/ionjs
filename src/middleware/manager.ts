@@ -1,10 +1,8 @@
 import { generateNextExecutor } from './next'
 import { TMiddleware } from './definition'
 import Debug from 'debug'
-const debug = {
-    use: Debug('ionjs: MiddlewareManager: use'),
-    run: Debug('verbose-ionjs: MiddlewareManager: run'),
-}
+const debug = Debug('ionjs:middleware'),
+      debugVerbose = Debug('verbose-ionjs:middleware')
 
 /** A middleware manager */
 export class MiddlewareManager {
@@ -16,7 +14,7 @@ export class MiddlewareManager {
      */
     use(middleware: TMiddleware) {
         this._middlewares = [...(this._middlewares || []), middleware]
-        debug.use(`add new middleware, current size ${this._middlewares.length}`)
+        debug('use (+%d)', this._middlewares.length)
         return this
     }
     /**
@@ -24,8 +22,8 @@ export class MiddlewareManager {
      * @param ctx the context
      */
     async run(ctx: any) {
-        debug.run('start (ctx %o)', ctx)
+        debugVerbose('start %o', ctx)
         if (this._middlewares.length) await this._middlewares[0](ctx, generateNextExecutor(this._middlewares, 1, ctx))
-        debug.run('end (ctx %o)', ctx)
+        debugVerbose('finish')
     }
 }

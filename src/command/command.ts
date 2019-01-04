@@ -1,10 +1,9 @@
 import { split } from './split'
 import { ICommandParameters, ICommandArguments, TExtraneousProcessor } from './definition'
 import Debug from 'debug'
-const debug = {
-    parse: Debug('verbose-ionjs: Command: parse'),
-    constructor: Debug('ionjs: Command: constructor')
-}
+const debug = Debug('ionjs:command'),
+      debugVerbose = Debug('verbose-ionjs:command')
+
 export class CommandParseError extends Error {}
 /** A class that represents a shell-like-command and is able to parse commands */
 export class Command {
@@ -46,12 +45,11 @@ export class Command {
      * @param processor An extraneous processor for parsed args
      */
     constructor(declaration: string, processor: TExtraneousProcessor = () => {}) {
-        debug.constructor(`construction started: ${declaration}`)
+        debug('init %s', declaration)
         this._raw = declaration
         this._processor = processor
         const command = split(declaration)
         this._name = command.shift()
-        debug.constructor(`declared command name: ${this._name}`)
         for (const i of command) {
             const matched = i.match(Command._REGEXES.PARAMETER)
             if (matched) {
@@ -61,13 +59,10 @@ export class Command {
                 if (alias) this._parameters.aliases[name] = alias
                 if (description) this._parameters.description[name] = description
                 if (defaultVal) this._parameters.defaults[name] = defaultVal
-                debug.constructor(`declared parameter: ${required} ${unordered || ''}${name} (${alias || '_noAlias'}) ${requiredPair}: ${description || '_noDescription'} = ${defaultVal || '_noDefault'}`)
             } else {
                 this._options.push(i)
-                debug.constructor(`declared option: ${i}`)
             }
         }
-        debug.constructor('construction finished')
     }
     /** Reloaded version of toString() that returns the raw declaration */
     toString() { return this._raw }
@@ -76,10 +71,8 @@ export class Command {
      * @param command The command for parsing
      */
     async parse(command: string, ...extraArgs: any[]): Promise<ICommandArguments> {
-        debug.parse(`parsing started: ${command}`)
         let rawArgs = split(command)
         if (rawArgs[0] !== this._name) throw new CommandParseError('Wrong command name')
-        debug.parse(`OK has command name`)
         rawArgs = rawArgs.slice(1)
         const args = {
             options: [],
@@ -87,17 +80,14 @@ export class Command {
             rest: [],
         }
         const unusedParams = Array.from(this._parameters.ordered)
-        debug.parse(`generated args list`)
         for (const arg of rawArgs) {
             let specialArg = false
             if (this._options.includes(arg)) {
-                debug.parse(`arg/option: ${arg}`)
                 args.options.push(arg)
                 specialArg = true
             }
             for (const param in this._parameters.aliases)
                 if (arg.startsWith(this._parameters.aliases[param])) {
-                    debug.parse(`arg/aliasNamedArg: ${param}(${this._parameters.aliases[param]}) => ${arg}`)
                     args.arguments[param] = arg.slice(this._parameters.aliases[param].length)
                     const indexOfParam = unusedParams.indexOf(param)
                     if (indexOfParam >= 0) unusedParams.splice(indexOfParam, 1)
@@ -105,7 +95,6 @@ export class Command {
                 }
             const keyValue = arg.match(Command._REGEXES.KEY_VALUE)
             if (keyValue) {
-                debug.parse(`arg/namedArg: ${keyValue[1]} => ${keyValue[2]}`)
                 args.arguments[keyValue[1]] = keyValue[2]
                 const indexOfParam = unusedParams.indexOf(keyValue[1])
                 if (indexOfParam >= 0) unusedParams.splice(indexOfParam, 1)
@@ -113,23 +102,20 @@ export class Command {
             }
             if (!specialArg) {
                 if (unusedParams.length) {
-                    debug.parse(`arg/normalArg: ${arg}`)
                     args.arguments[unusedParams.shift()] = arg
                 } else {
-                    debug.parse(`arg/restArg: ${arg}`)
                     args.rest.push(arg)
                 }
             }
         }
         for (const param in this._parameters.defaults)
             if (!(param in args.arguments)) {
-                debug.parse(`defaultArg: ${param} => ${this._parameters.defaults[param]}`)
                 args.arguments[param] = this._parameters.defaults[param]
             }
         await this._processor(args, { parameters: this._parameters, options: this._options }, ...extraArgs)
         for (const param of this._parameters.required)
             if (!(param in args.arguments)) throw new CommandParseError('No enough required arguments')
-        debug.parse(`parsing finished`)
+        debugVerbose('finish %s %o', command, args)
         return args
     }  
 }

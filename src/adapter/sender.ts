@@ -6,10 +6,9 @@ import { CQHTTP_API } from './api'
 import { CQCode, ICQCode } from './cqcode'
 import * as Result from './result'
 
-const debug = {
-    to: Debug('verbose-ionjs: Sender: to'),
-    _post: Debug('ionjs: Sender: _anyMethod => _post'),
-}
+const debug = Debug('ionjs:sender'), 
+      debugVerbose = Debug('verbose-ionjs:sender'), 
+      debugExVerbose = Debug('ex-verbose-ionjs:sender')
 
 export class SenderError extends Error {}
 
@@ -18,23 +17,22 @@ export class Sender {
     private readonly _sendURL: string
     private readonly _token?: string
     constructor(sendURL: string, token?: string, context: any = {}) {
+        debugVerbose('init')
+        debugExVerbose(`set ${sendURL}(Token ${token || null}) %o`, context)
         this._sendURL = sendURL
         this._token = token
         this._context = context
     }
     to(context) {
-        debug.to('create new Sender instance with context: %o', context)
         const next = new Sender(this._sendURL, this._token, context)
         return next
     }
     private async _post({ api, params = [] }: { api: string, params?: string[] }, args?: any) {
         const url = new URL(api, this._sendURL).toString()
         for (const param of params)
-            if (!(param in args)) {
-                if (param in this._context) args[param] = this._context[param]
-                else throw new Error(`No parameter '${param}' in current context`)
-            }
-        debug._post('post message: %s %o', url, args)
+            if (!(param in args)) 
+                args[param] = this._context[param]
+        debug('post %s %o', url, args)
         const result = (await axios.post(url, args, { headers: this._token ? { 'Authorization': `Token ${this._token}` } : {} })).data
         if (result.status === 'failed') throw new SenderError(`Error when trying to send ${JSON.stringify(args)} to ${url}, retcode: ${result.retcode}`)
         else return result

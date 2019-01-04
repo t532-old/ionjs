@@ -2,13 +2,10 @@ import { SessionStore } from './base'
 import { MessageStream } from './stream'
 import { TSessionFn, TSessionMatcher } from './definition'
 import Debug from 'debug'
-const debug = {
-    use: Debug('ionjs: ConcurrentSessionManager: use'),
-    streamDeleter: Debug('verbose-ionjs: SingleSessionManager: streamDeleter'),
-    streamGetter: Debug('verbose-ionjs: SingleSessionManager: streamGetter'),
-    streamSetter: Debug('verbose-ionjs: SingleSessionManager: streamSetter'),
-    run: Debug('verbose-ionjs: SingleSessionManager: run'),
-}
+const debug = Debug('ionjs:session'),
+      debugVerbose = Debug('verbose-ionjs:session'),
+      debugExVerbose = Debug('ex-verbose-ionjs:session')
+
 /** A session manager that is single-process for each user */
 export class SingleSessionManager extends SessionStore {
     /** Stores streams of active sessions */
@@ -22,8 +19,8 @@ export class SingleSessionManager extends SessionStore {
      *                 or ignore this context (false or not determined) 
      */
     use(session: TSessionFn, match: TSessionMatcher, override: boolean = false) {
-        debug.use('added new template')
         this._templates.push({ session, match, override })
+        debug('use (+%d)', this._templates.length)
         return this
     }
     /**
@@ -33,30 +30,25 @@ export class SingleSessionManager extends SessionStore {
      * @param ctx the context
      */
     async run(ctx: any) {
+        debugVerbose('start %o', ctx)
         const msgId = await this._identifier(ctx)
-        const getter = () => {
-            debug.streamGetter(`get stream: ${msgId}`)
-            return this._streams.get(msgId)
-        },    setter = () => {
-            debug.streamSetter(`set stream: ${msgId}`)
-            return this._streams.set(msgId, new MessageStream(deleter.bind(this)))
-        },    deleter = () => {
-            debug.streamDeleter(`delete stream: ${msgId}`)
-            return this._streams.delete(msgId)
-        }
+        const getter = () => this._streams.get(msgId),
+              setter = () => this._streams.set(msgId, new MessageStream(deleter.bind(this))),
+              deleter = () => this._streams.delete(msgId)
         let finalBehavior
         for (const template of this._templates)
             if (await template.match(ctx) && (!getter() || template.override))
                 finalBehavior = template
         if (finalBehavior) {
-            debug.run('create new stream for message: %o', ctx)
+            debugExVerbose('next (new)')
             setter()
             getter().write(ctx)
             finalBehavior.session(getter()).then(() => getter().free())
         } else if (getter()) {
-            debug.run('push message to an existing stream: %o', ctx)
+            debugExVerbose('next (exist)')
             if (!getter().write(ctx)) 
                 getter().once('drain', () => getter().write(ctx))
         }
+        debugVerbose('finish')
     }
 }

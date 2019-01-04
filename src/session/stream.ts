@@ -1,13 +1,6 @@
 import { PassThrough } from 'stream'
 import Debug from 'debug'
-
-/** debug loggers for class MessageStream */
-const debug = {
-    get: Debug('verbose-ionjs: MessageStream: get'),
-    getSuccess: Debug('verbose-ionjs: MessageStream: get => _listener'),
-    getFailed: Debug('verbose-ionjs: MessageStream: get => _listener'),
-    timeout: Debug('verbose-ionjs: FlowMessageStream: timeout'),
-}
+const debugExVerbose = Debug('ex-verbose-ionjs:session')
 
 /** A class that extends PassThrough stream, supports async message fetching */
 export class MessageStream extends PassThrough {
@@ -24,13 +17,13 @@ export class MessageStream extends PassThrough {
      */
     get(condition: (ctx: any) => boolean = () => true): any {
         function _recursiveHandler(resolve) {
-            debug.get('get a message')
+            debugExVerbose('get:attempt')
             const result = this.read()
             if (result && !!condition(result)) {
-                debug.getSuccess('get message succesfully: %o', result)
+                debugExVerbose('get:success')
                 resolve(result)
             } else {
-                debug.getFailed('get message failed, keep listening')
+                debugExVerbose('get:failing')
                 this.once('readable', _recursiveHandler.bind(this, resolve))
             }
         }

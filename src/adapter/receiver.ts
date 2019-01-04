@@ -9,8 +9,9 @@ declare module 'koa' {
         rawBody: string;
     }
 }
-
-const debug = Debug('ionjs: Receiver')
+const debug = Debug('ionjs:receiver'),
+      debugVerbose = Debug('verbose-ionjs:receiver')
+      
 export function contextTypeOf(ctx: any) {
     const events: string[] = ['post', ctx.post_type, `${ctx.post_type}/${ctx.message_type || ctx.request_type || ctx.notice_type || ctx.meta_event_type}`]
     if (ctx.sub_type) events.push(`${ctx.post_type}/${ctx.message_type || ctx.request_type || ctx.notice_type || ctx.meta_event_type}/${ctx.sub_type}`)
@@ -27,20 +28,21 @@ export class Receiver extends EventEmitter {
                 ctx.assert(ctx.request.headers['x-signature'] !== undefined, 401);
                 const sig = createHmac('sha1', secret).update(ctx.request.rawBody).digest('hex')
                 ctx.assert(ctx.request.headers['x-signature'] === `sha1=${sig}`, 403)
+                debugVerbose('validate')
                 await next()
             })
         }
         this._server.use(async ctx => {
             const msg = ctx.request.body
-            debug(`received: %o`, msg)
             const events = contextTypeOf(msg)
-            debug(`emit event: ${events.join(', ')}`)
+            debug('receive %o', msg)
+            debug('emit %o', events)
             for (const event of events) thisRef.emit(event, msg)
         })
-        debug.extend(' constructor')('server ready')
+        debug('init')
     }
     listen(port: number) {
         this._server.listen(port)
-        debug.extend(' listener')('server started')
+        debug('listen')
     }
 }
