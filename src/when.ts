@@ -3,7 +3,7 @@ import { MessageStream } from './session'
 import { Command } from './command'
 import { sender } from './sender'
 
-const config: { operators?: number[], prefixes?: string[], self?: number } = {}
+const config: { operators?: number[], prefixes?: string[], self?: number, atSelf?: string } = {}
 
 export class When {
     private _commands: Command[]
@@ -26,12 +26,7 @@ export class When {
     }
     async validate(ctx: any) {
         // onlyAt
-        if (!ctx.message[0] || ctx.message[0].type !== 'at' || ctx.message[0].data.qq !== config.self.toString()) {
-            if (this._onlyAt) return false
-        } else {
-            ctx.message.shift()
-            if (ctx.message[0].type === 'text' && ctx.message[0].data.text.startsWith(' ')) ctx.message[0].data.text = ctx.message[0].data.text.slice(1)
-        }
+        if ((!ctx.message[0] || ctx.message[0].type !== 'at' || ctx.message[0].data.qq !== config.self.toString()) && this._onlyAt) return false
         // command
         if (this._commands.length) {
             let commandMatched = false
@@ -62,7 +57,8 @@ export class When {
     }
     async parse(ctx: any, stream: MessageStream) {
         if (this._commands.length) {
-            const str = CQCode.arrayToString(ctx.message)
+            let str = CQCode.arrayToString(ctx.message)
+            if (str.startsWith(`[CQ:at,qq:${config.self}]`)) str = str.slice()
             let command: Command
             for (const i of this._commands) 
                 if (i.is(str)) {
@@ -167,4 +163,5 @@ export function init({ operators, prefixes, self }: {
     config.operators = operators
     config.prefixes = prefixes
     config.self = self
+    config.atSelf = `[CQ:at,qq:${self}]`
 }
