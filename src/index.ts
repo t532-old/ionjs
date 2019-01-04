@@ -4,6 +4,10 @@ import { init as initReceiver, start, receiver } from './receiver'
 import { use as useSession, run as runSession, create as createSessionManager } from './session-managers'
 import { use as useMiddleware, run as runMiddleware } from './middleware-manager'
 
+/**
+ * Initialize the bot
+ * @param config the bot's configuration
+ */
 export function init({ receivePort = 8080, receiveSecret, sendURL = 'http://127.0.0.1:5700', sendToken, operators = [], prefixes = [], self }: {
     receivePort: number, 
     receiveSecret?: string, 
@@ -21,6 +25,7 @@ export function init({ receivePort = 8080, receiveSecret, sendURL = 'http://127.
         runSession(ctx)
     })
 }
+/** An object for determining when should a session start */
 export const when = new When()
 export { start }
 export { sender, receiver }
