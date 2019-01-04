@@ -29,11 +29,6 @@ export class Command {
     private readonly _name: string
     /** The command's extraneous processor */
     private readonly _processor: TExtraneousProcessor
-    /** The separators and delimiters for split() */
-    private readonly _chars: { separators: string[], delimiters: (string[]|string)[] } = {
-        separators: [' '],
-        delimiters: ['\'', '"', '‘', '“', '’', '”', ['‘', '’'], ['’', '‘'], ['“', '”'], ['”', '“']],
-    }
     /**
      * Check if a command matches the name
      * @param command the command for checking
@@ -44,18 +39,16 @@ export class Command {
         /** A regexp that matches a parameter in the declaration */
         PARAMETER: /^([<\[])(\?)?(.+?)(?:\((.+?)\))?([>\]])(?:\:(.+?))?(?:=(.+?))?$/,
         /** A regexp that matches a key-value pair in a command */
-        KEY_VALUE: /^(.+?)=(.+)$/,
+        KEY_VALUE: /^(.+?)\\=(.+)$/,
     }
     /** 
      * @param declaration The command declaration 
-     * @param config A set of extra configuration for the parser
+     * @param processor An extraneous processor for parsed args
      */
-    constructor(declaration: string, { processor = () => {}, separators = [], delimiters = [] }: { processor?: TExtraneousProcessor, separators?: string[], delimiters?: (string[]|string)[] } = {}) {
+    constructor(declaration: string, processor: TExtraneousProcessor = () => {}) {
         debug.constructor(`construction started: ${declaration}`)
         this._raw = declaration
         this._processor = processor
-        this._chars.separators = [...this._chars.separators, ...separators]
-        this._chars.delimiters = [...this._chars.delimiters, ...delimiters]
         const command = split(declaration)
         this._name = command.shift()
         debug.constructor(`declared command name: ${this._name}`)
@@ -84,7 +77,7 @@ export class Command {
      */
     async parse(command: string, ...extraArgs: any[]): Promise<IArguments> {
         debug.parse(`parsing started: ${command}`)
-        let rawArgs = split(command, this._chars)
+        let rawArgs = split(command)
         if (rawArgs[0] !== this._name) throw new CommandParseError('Wrong command name')
         debug.parse(`OK has command name`)
         rawArgs = rawArgs.slice(1)

@@ -81,23 +81,21 @@ export class When {
         }
         const commands = []
         for (const name of names) {
-            commands.push(new Command(`"${name}" ${params}`, {
-                async processor({ arguments: args }, { parameters: params }, rawMessage: any, stream: MessageStream) {
-                    const paramList = [...params.required, ...Object.keys(args)].reduce((acc, val) => acc.includes(val) ? acc : [...acc, val], [])
-                    for (const i of paramList) {
-                        const rawDescription: string[] = (params.description[i] || '').split(',').reduce((acc, val) => {
-                            if (acc.length >= 2) return [acc[0], acc[1] + val]
-                            else return [...acc, val]
-                        }, [])
-                        const description = { type: rawDescription[0] || 'string', prompt: rawDescription[1] || `Enter '${i}'${rawDescription[0] ? `(include ${rawDescription[0]})` : ''}:` }
-                        let result = CQCode.filterType(args[i] || [], description.type)
-                        while (!result) {
-                            await sender.to(rawMessage).send(description.prompt)
-                            result = CQCode.filterType((await stream.get()).message, description.type)
-                        }
-                        args[i] = result
+            commands.push(new Command(`"${name}" ${params}`, async function processor({ arguments: args }, { parameters: params }, rawMessage: any, stream: MessageStream) {
+                const paramList = [...params.required, ...Object.keys(args)].reduce((acc, val) => acc.includes(val) ? acc : [...acc, val], [])
+                for (const i of paramList) {
+                    const rawDescription: string[] = (params.description[i] || '').split(',').reduce((acc, val) => {
+                        if (acc.length >= 2) return [acc[0], acc[1] + val]
+                        else return [...acc, val]
+                    }, [])
+                    const description = { type: rawDescription[0] || 'string', prompt: rawDescription[1] || `Enter '${i}'${rawDescription[0] ? `(include ${rawDescription[0]})` : ''}:` }
+                    let result = CQCode.filterType(args[i] || [], description.type)
+                    while (!result) {
+                        await sender.to(rawMessage).send(description.prompt)
+                        result = CQCode.filterType((await stream.get()).message, description.type)
                     }
-                },
+                    args[i] = result
+                }
             }))
         }
         return new When({
