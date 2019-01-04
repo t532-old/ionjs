@@ -44,7 +44,8 @@ export function use(when: When, { override = false, identifier = 'default', conc
     return function useHandler(session: (ctx: ISessionContext) => void) {
         const manager = concurrent ? managers[identifier].concurrent : managers[identifier].single
         async function wrapper(stream) {
-            const raw = await stream.get(),
+            const originalRaw = await stream.get()
+            const raw = Object.keys(originalRaw).reduce((acc, val) => acc[val] = originalRaw[val], {}),
                   command = await when.parse(raw, stream)
             const boundSender = sender.to(raw)
             async function get(condition: (ctx: any) => boolean = () => true) {
