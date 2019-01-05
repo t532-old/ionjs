@@ -3,7 +3,6 @@ import { Sender, ICQCode, ISendResult } from './adapter'
 import { ICommandArguments } from './command'
 import { sender } from './sender'
 import { When } from './when'
-import { copyFile } from 'fs';
 
 function defaultIdentifier(ctx) { return `${ctx.user_id}${ctx.message_type[0]}${ctx._union_id}` }
 function groupIdentifier(ctx) { return `${ctx.group_id || ctx.discuss_id}` }

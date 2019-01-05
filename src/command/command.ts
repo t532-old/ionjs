@@ -53,7 +53,7 @@ export class Command {
         for (const i of command) {
             const matched = i.match(Command._REGEXES.PARAMETER)
             if (matched) {
-                const [, required, unordered, name, alias, requiredPair, description, defaultVal] = matched
+                const [, required, unordered, name, alias, , description, defaultVal] = matched
                 if (required === '<') this._parameters.required.push(name)
                 if (!unordered) this._parameters.ordered.push(name)
                 if (alias) this._parameters.aliases[name] = alias
