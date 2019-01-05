@@ -38,6 +38,7 @@ export class Receiver extends EventEmitter {
             debug('receive %o', msg)
             debug('emit %o', events)
             for (const event of events) thisRef.emit(event, msg)
+            ctx.status = 200
         })
         debug('init')
     }
