@@ -5,8 +5,8 @@ import { createHmac } from 'crypto'
 import { EventEmitter } from 'events'
 declare module 'koa' {
     interface Request {
-        body: any;
-        rawBody: string;
+        body: any
+        rawBody: string
     }
 }
 const debug = Debug('ionjs:receiver'),
@@ -25,7 +25,7 @@ export class Receiver extends EventEmitter {
         this._server.use(koaBody())
         if (secret) {
             this._server.use(async (ctx, next) => {
-                ctx.assert(ctx.request.headers['x-signature'] !== undefined, 401);
+                ctx.assert(ctx.request.headers['x-signature'] !== undefined, 401)
                 const sig = createHmac('sha1', secret).update(ctx.request.rawBody).digest('hex')
                 ctx.assert(ctx.request.headers['x-signature'] === `sha1=${sig}`, 403)
                 debugVerbose('validate')
