@@ -1,6 +1,6 @@
 environment:
   nodejs_version: "10"
-  CODECOV_TOKEN: "12152787-32ad-4227-9eab-4f6af07035f8"
+  CODECOV_TOKEN: "7628da08-1b43-47a1-accb-d38df3827f81"
 
 install:
   - ps: Install-Product node $env:nodejs_version
