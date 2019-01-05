@@ -19,6 +19,7 @@ test('Use Middlewares', () => {
 })
 
 test('Run Middlewares', async () => {
+    expect.assertions(4)
     const first = { i: 2, finished: false }, second = { i: 1, finished: false }
     await manager.run(first)
     expect(first.i).toBe(1)

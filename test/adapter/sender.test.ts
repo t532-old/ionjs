@@ -24,6 +24,7 @@ test('Create Sender', () => {
 })
 
 test(`Send ill-formed message`, async () => {
+    expect.assertions(1)
     try { await sender.setSpecialTitle('__test_fail__') }
     catch (err) { expect(err).not.toBeUndefined() }
 })
@@ -46,6 +47,7 @@ const post = {
 for (const i of Object.getOwnPropertyNames(Sender.prototype))
     if (!special.includes(i))
         test(`Send ${i}`, async () => {
+            expect.assertions(1)
             const result = await sender.to(ctx)[i](...(post[i] || []))
             expect(result.status).toBe('success')
         })
