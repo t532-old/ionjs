@@ -1,3 +1,4 @@
+/// <reference types="jest" />
 import { Receiver } from '../../src/adapter/receiver'
 import axios from 'axios'
 import { createHmac } from 'crypto'

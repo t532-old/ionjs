@@ -1,3 +1,4 @@
+/// <reference types="jest" />
 import { CQCode } from '../../src/adapter/cqcode'
 
 for (const i in CQCode)
