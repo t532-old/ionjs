@@ -34,6 +34,15 @@ export interface ISessionContext {
     question(...prompt: (string|ICQCode)[]): Promise<any>
 }
 
+
+function deepCopy(obj: any) {
+    const newObj = {}
+    for (const i in obj) {
+        if (typeof obj[i] === 'object' && obj[i] && obj[i] !== obj) newObj[i] = deepCopy(obj[i])
+        else newObj[i] = obj[i]
+    }
+    return newObj
+}
 /**
  * Use a session templace
  * @param when when to start the session
@@ -43,14 +52,10 @@ export function use(when: When, { override = false, identifier = 'default', conc
     return function useHandler(session: (ctx: ISessionContext) => void) {
         const manager = concurrent ? managers[identifier].concurrent : managers[identifier].single
         async function wrapper(stream) {
-            const originalRaw = await stream.get()
-            const raw = Object.keys(originalRaw).reduce((acc, val) => acc[val] = originalRaw[val], {}),
+            const raw = deepCopy(await stream.get()),
                   command = await when.parse(raw, stream)
             const boundSender = sender.to(raw)
-            async function get(condition: (ctx: any) => boolean = () => true) {
-                const original = await stream.get(condition) 
-                return Object.keys(original).reduce((acc, val) => acc[val] = original[val], {})
-            }
+            async function get(condition: (ctx: any) => boolean = () => true) { return deepCopy(await stream.get(condition)) }
             function reply(...message: (string|ICQCode)[]) { return boundSender.send(...message) }
             async function question(...prompt: (string|ICQCode)[]) {
                 await reply(...prompt)
