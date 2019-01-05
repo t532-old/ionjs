@@ -1,4 +1,10 @@
 # Ion.js
+[![GitHub](https://img.shields.io/github/license/ionjs-dev/ionjs.svg)](https://github.com/ionjs-dev/ionjs/blob/master/LICENSE)
+[![Build status](https://ci.appveyor.com/api/projects/status/pblq9p2ad4g33wrf?svg=true)](https://ci.appveyor.com/project/trustgit/flow-w07af)
+[![codecov](https://codecov.io/gh/ionjs-dev/ionjs/branch/master/graph/badge.svg)](https://codecov.io/gh/ionjs-dev/ionjs)
+[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/ionjs-dev/ionjs.svg)](https://lgtm.com/projects/g/ionjs-dev/ionjs/context:javascript)
+[![npm (scoped)](https://img.shields.io/npm/v/ionjs.svg)](https://npmjs.org/package/ionjs)
+
 > Yet another QQ bot framework based on CQHTTP &amp; CoolQ.
 
 ## 介绍
