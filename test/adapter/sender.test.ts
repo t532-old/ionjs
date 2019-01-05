@@ -1,3 +1,4 @@
+/// <reference types="jest" />
 import { Sender } from '../../src/adapter/sender'
 import * as Koa from 'koa'
 import * as koaBody from 'koa-bodyparser'
@@ -28,13 +29,25 @@ test(`Send ill-formed message`, async () => {
     catch (err) { expect(err).not.toBeUndefined() }
 })
 
+const ctx = {
+    message_type: 'group',
+    request_type: 'friend',
+    group_id: 1234567890,
+    user_id: 1234567890,
+    flag: 114514,
+}
+
+const post = {
+    send: ['abc', 'def'],
+    delete: [114514],
+    sendLike: [10],
+    cleanDataDir: ['whereever'],
+}
+
 for (const i of Object.getOwnPropertyNames(Sender.prototype))
     if (!special.includes(i))
         test(`Send ${i}`, async () => {
             expect.assertions(1)
-            const result = await sender.to({
-                message_type: 'group',
-                request_type: 'friend',
-            })[i]([])
+            const result = await sender.to(ctx)[i](...(post[i] || []))
             expect(result.status).toBe('success')
         })
