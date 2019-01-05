@@ -1,8 +1,6 @@
 import { Receiver } from '../../src/adapter/receiver'
-import * as Koa from 'koa'
 import axios from 'axios'
 import { createHmac } from 'crypto'
-const fakeServer = new Koa()
 let receiver: Receiver
 const secret = Math.random().toString()
 
