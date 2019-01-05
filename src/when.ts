@@ -10,7 +10,10 @@ const config: { operators?: number[], prefixes?: string[], self?: number, atSelf
  * @param msg the message (cqcode array)
  */
 export function parseCommandString(msg: ICQCode[]) {
-    let str = CQCode.arrayToString(msg.map(i => i.type === 'text' ? { type: 'text', data: { text: i.data.text.replace('=', '\\=') } } : i)).trim()
+    let str = CQCode.arrayToString(msg.map(i => i.type === 'text' ? i : { type: i.type, data: Object.keys(i.data).reduce((acc, val) => {
+        acc[`${val}\\\\`] = i.data[val]
+        return acc
+    }, {}) })).trim()
     if (str.startsWith(config.atSelf)) str = str.slice(config.atSelf.length).trim()
     return str
 }

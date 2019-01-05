@@ -38,7 +38,7 @@ export class Command {
         /** A regexp that matches a parameter in the declaration */
         PARAMETER: /^([<\[])(\?)?(.+?)(?:\((.+?)\))?([>\]])(?:\:(.+?))?(?:=(.+?))?$/,
         /** A regexp that matches a key-value pair in a command */
-        KEY_VALUE: /^(.+?)\\=(.+)$/,
+        KEY_VALUE: /^(.*[^\\])=(.+)$/,
     }
     /** 
      * @param declaration The command declaration 
