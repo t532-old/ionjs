@@ -2,6 +2,7 @@ import { PassThrough } from 'stream'
 import Debug from 'debug'
 const debugExVerbose = Debug('ex-verbose-ionjs:session')
 
+export class MessageStreamError extends Error {}
 /** A class that extends PassThrough stream, supports async message fetching */
 export class MessageStream extends PassThrough {
     /** Deleter is a function that'll called by free() */
@@ -24,6 +25,7 @@ export class MessageStream extends PassThrough {
                 resolve(result)
             } else {
                 debugExVerbose('get:failing')
+                if (!this.writable) throw new MessageStreamError('Can\'t get new data because stream has been ended')
                 this.once('readable', _recursiveHandler.bind(this, resolve))
             }
         }
