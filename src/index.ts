@@ -4,6 +4,7 @@ import { init as initReceiver, start, receiver } from './receiver'
 import { use as useSession, run as runSession, create as createSessionManager } from './session-managers'
 import { use as useMiddleware, run as runMiddleware } from './middleware-manager'
 
+const queue = new Promise(resolve => resolve())
 /**
  * Initialize the bot
  * @param config the bot's configuration
@@ -20,10 +21,12 @@ export function init({ receivePort = 8080, receiveSecret, sendURL = 'http://127.
     initReceiver(receivePort, receiveSecret)
     initSender(sendURL, sendToken)
     initWhen({ operators, prefixes, self })
-    receiver.on('message', async ctx => {
-        await runMiddleware(ctx)
-        runSession(ctx)
-    })
+    receiver.on('message', ctx => 
+        queue.then(async () => {
+            await runMiddleware(ctx)
+            await runSession(ctx)
+        })
+    )
 }
 /** An object for determining when should a session start */
 export const when = new When()

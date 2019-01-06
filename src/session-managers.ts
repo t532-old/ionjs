@@ -86,8 +86,10 @@ export function create(name: string, identifier: (ctx: any) => any) {
  * @param ctx the context
  */
 export function run(ctx: any) {
+    const promises: Promise<void>[] = []
     for (const i in managers) {
-        managers[i].single.run(ctx)
-        managers[i].concurrent.run(ctx)
+        promises.push(managers[i].single.run(ctx))
+        promises.push(managers[i].concurrent.run(ctx))
     }
+    return Promise.all(promises)
 }
