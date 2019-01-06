@@ -32,18 +32,18 @@ export class ConcurrentSessionManager extends SessionStore {
         for (const template of this._templates) {
             const templateSymbol = template.symbol,
                   msgId = await this._identifier(ctx)
-                  const getter = () => this._streams.get(templateSymbol).get(msgId),
-                        setter = () => this._streams.get(templateSymbol).set(msgId, new MessageStream(deleter.bind(this))),
-                        deleter = () => this._streams.get(templateSymbol).delete(msgId)
+            const getter = () => this._streams.get(templateSymbol).get(msgId),
+                  setter = () => this._streams.get(templateSymbol).set(msgId, new MessageStream(deleter.bind(this))),
+                  deleter = () => this._streams.get(templateSymbol).delete(msgId)
             if (getter() && getter().writable) {
-                debugExVerbose('next (new)')
+                debugExVerbose('next(exist)')
                 if (!getter().write(ctx)) 
                     getter().once('drain', () => getter().write(ctx))
             } else if (await template.match(ctx)) {
-                debugExVerbose('next (exist)')
+                debugExVerbose('next(new)')
                 setter()
                 getter().write(ctx)
-                template.session(getter()).then(deleter)
+                template.session(getter()).then(deleter.bind(this))
             }
         }
         debugVerbose('finish')
