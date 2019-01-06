@@ -41,9 +41,10 @@ export class SingleSessionManager extends SessionStore {
                 finalBehavior = template
         if (finalBehavior) {
             debugExVerbose('next (new)')
+            if (getter()) getter().free()
             setter()
             getter().write(ctx)
-            finalBehavior.session(getter()).then(() => getter().free())
+            finalBehavior.session(getter()).then(deleter.bind(this))
         } else if (getter()) {
             debugExVerbose('next (exist)')
             if (!getter().write(ctx)) 
