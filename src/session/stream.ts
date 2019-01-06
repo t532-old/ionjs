@@ -17,7 +17,7 @@ export class MessageStream extends PassThrough {
      * else it'll be resolved when a new object is pushed into the stream.
      */
     get(condition: (ctx: any) => boolean = () => true): any {
-        function _recursiveHandler(resolve) {
+        function _recursiveHandler(resolve, reject) {
             debugExVerbose('get:attempt')
             const result = this.read()
             if (result && !!condition(result)) {
@@ -25,8 +25,9 @@ export class MessageStream extends PassThrough {
                 resolve(result)
             } else {
                 debugExVerbose('get:failing')
-                if (!this.writable) throw new MessageStreamError('Can\'t get new data because stream has been ended')
-                this.once('readable', _recursiveHandler.bind(this, resolve))
+                if (!this.writable) reject(new MessageStreamError('Can\'t get new data because stream has been ended'))
+                this.once('end', () => reject(new MessageStreamError('Can\'t get new data because stream has been ended')))
+                this.once('readable', _recursiveHandler.bind(this, resolve, reject))
             }
         }
         return new Promise(_recursiveHandler.bind(this))
