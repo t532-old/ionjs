@@ -5,7 +5,7 @@ for (const i in CQCode)
     if (i[0] === i[0].toUpperCase())
         test(`Generate CQCode ${i}()`, () => {
             expect(() => CQCode[i]()).not.toThrow()
-            expect(CQCode[i]()).toMatchObject({ type: expect.any(String), data: expect.any(Object) })
+            expect(CQCode[i]()).toEqual({ type: expect.any(String), data: expect.any(Object) })
         })
 
 test(`Encode/Decode CQCode`, () => {
@@ -20,7 +20,7 @@ test(`Form CQCode`, () => {
     const arr = [{ type: 'text', data: { text: 'abc' } }, { type: 'at', data: { qq: '1145141919810' } }]
     const str = 'abc[CQ:at,qq=1145141919810]'
     expect(CQCode.arrayToString(arr)).toBe(str)
-    expect(CQCode.stringToArray(str)).toMatchObject(arr)
+    expect(CQCode.stringToArray(str)).toEqual(arr)
 })
 
 test(`Filter CQCode Types`, () => {
@@ -28,6 +28,6 @@ test(`Filter CQCode Types`, () => {
     const raw = 'abc[CQ:at,qq=1145141919810]', str = 'abc[CQ:at,qq=1145141919810]', any = { type: 'text', data: { text: 'abc' } }
     expect(CQCode.filterType(arr, 'raw')).toBe(raw)
     expect(CQCode.filterType(arr, 'string')).toBe(str)
-    expect(CQCode.filterType(arr, 'any')).toMatchObject(any)
-    expect(CQCode.filterType(arr, 'text')).toMatchObject({ text: 'abc' })
+    expect(CQCode.filterType(arr, 'any')).toEqual(any)
+    expect(CQCode.filterType(arr, 'text')).toEqual({ text: 'abc' })
 })

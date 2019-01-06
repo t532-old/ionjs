@@ -32,9 +32,9 @@ test('Handle Event Types', async () => {
         meta_event_type: 'unit_test',
         sub_type: 'fake_sub_type',
     }
-    receiver.once('post', ctx => expect(ctx).toMatchObject(post))
-    receiver.once('fake_post', ctx => expect(ctx).toMatchObject(post))
-    receiver.once('fake_post/unit_test', ctx => expect(ctx).toMatchObject(post))
-    receiver.once('fake_post/unit_test/fake_sub_type', ctx => expect(ctx).toMatchObject(post))
+    receiver.once('post', ctx => expect(ctx).toEqual(post))
+    receiver.once('fake_post', ctx => expect(ctx).toEqual(post))
+    receiver.once('fake_post/unit_test', ctx => expect(ctx).toEqual(post))
+    receiver.once('fake_post/unit_test/fake_sub_type', ctx => expect(ctx).toEqual(post))
     await axios.post('http://localhost:8080', post, { headers: {'x-signature': `sha1=${createHmac('sha1', secret).update(JSON.stringify(post)).digest('hex')}`} })
 })
