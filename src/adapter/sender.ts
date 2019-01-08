@@ -10,7 +10,17 @@ const debug = Debug('ionjs:sender'),
       debugVerbose = Debug('verbose-ionjs:sender'), 
       debugExVerbose = Debug('ex-verbose-ionjs:sender')
 
-export class SenderError extends Error {}
+export class SenderError extends Error {
+    readonly post: any
+    readonly url: string
+    readonly retcode: number
+    constructor(post: any, url: string, retcode: number) {
+        super(`Error when trying to send to ${url}, retcode: ${retcode}`)
+        this.post = post
+        this.url = url
+        this.retcode = retcode
+    }
+}
 
 export class Sender {
     private readonly _context: any
@@ -34,7 +44,7 @@ export class Sender {
                 args[param] = this._context[param]
         debug('post %s %o', url, args)
         const result = (await axios.post(url, args, { headers: this._token ? { 'Authorization': `Token ${this._token}` } : {} })).data
-        if (result.status === 'failed') throw new SenderError(`Error when trying to send ${JSON.stringify(args)} to ${url}, retcode: ${result.retcode}`)
+        if (result.status === 'failed') throw new SenderError(args, url, result.retcode)
         else return result
     }
     private _checkContext(...keys: string[]) {
