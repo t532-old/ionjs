@@ -1,6 +1,6 @@
 import 'module-alias/register'
 import { Utils as CQCodeUtils } from '@/classes/cqcode'
-import { init as initWhen, When } from '@/classes/when'
+import { BotWhen } from '@/classes/when'
 import { init as initSender, sender } from '@/instances/sender'
 import { init as initReceiver, start, receiver } from '@/instances/receiver'
 import { use as useSession, run as runSession, create as createSessionManager } from '@/instances/sessions'
@@ -22,7 +22,7 @@ export function init({ receivePort = 8080, receiveSecret, sendURL = 'http://127.
 }) {
     initReceiver(receivePort, receiveSecret)
     initSender(sendURL, sendToken)
-    initWhen({ operators, prefixes, self })
+    BotWhen.init({ operators, prefixes, self })
     useMiddleware(async (ctx, next) => {
         if (ctx.message instanceof Array) ctx.message = CQCodeUtils.arrayToString(ctx.message)
         await next()
@@ -33,7 +33,7 @@ export function init({ receivePort = 8080, receiveSecret, sendURL = 'http://127.
     )
 }
 /** An object for determining when should a session start */
-export const when = new When()
+export const when = new BotWhen([], []).raw()
 export { start }
 export { sender, receiver }
 export { runMiddleware, runSession, createSessionManager }

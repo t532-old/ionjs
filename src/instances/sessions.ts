@@ -53,8 +53,8 @@ export function use(when: When, { override = false, identifier = 'default', conc
     return function useHandler(session: (ctx: ISessionContext) => void) {
         const manager = concurrent ? managers[identifier].concurrent : managers[identifier].single
         async function wrapper(stream) {
-            const raw = deepCopy(await stream.get()),
-                  command = await when.parse(raw, stream)
+            const raw = await stream.get()
+            const init = await when.parse(raw, stream)
             const boundSender = sender.to(raw)
             async function get(condition: (ctx: any) => boolean = () => true) { return deepCopy(await stream.get(condition)) }
             function reply(...message: (string|ICQCode)[]) { return boundSender.send(...message) }
@@ -62,7 +62,7 @@ export function use(when: When, { override = false, identifier = 'default', conc
                 await reply(...prompt)
                 return get()
             }
-            await session({ init: { raw, command }, sender, stream, get, reply, question })
+            await session({ init, sender, stream, get, reply, question })
         }
         if (manager instanceof SingleSessionManager) manager.use(wrapper, ctx => when.validate(ctx), override)
         else if (manager instanceof ConcurrentSessionManager) manager.use(wrapper, ctx => when.validate(ctx))
