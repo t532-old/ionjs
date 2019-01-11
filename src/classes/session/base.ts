@@ -1,4 +1,4 @@
-import { ISessionTemplate } from './definition'
+import { ISessionTemplate } from './definitions'
 /** The base class that represents an object that stores Behaviors */
 export abstract class SessionStore {
     /** The list of the stored session templates */

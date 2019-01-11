@@ -1,5 +1,5 @@
-import { split } from './split'
-import { ICommandParameters, ICommandArguments, TCommandProcessor } from './definition'
+import { split } from './utils'
+import { ICommandParameters, ICommandArguments, TCommandProcessor } from './definitions'
 import Debug from 'debug'
 const debug = Debug('ionjs:command'),
       debugVerbose = Debug('verbose-ionjs:command')

@@ -1,6 +1,6 @@
 import { SessionStore } from './base'
 import { MessageStream } from './stream'
-import { TSessionFn, TSessionMatcher } from './definition'
+import { TSessionFn, TSessionMatcher } from './definitions'
 import Debug from 'debug'
 const debug = Debug('ionjs:session'),
       debugVerbose = Debug('verbose-ionjs:session'),

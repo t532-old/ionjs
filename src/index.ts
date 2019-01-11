@@ -1,9 +1,10 @@
 import 'module-alias/register'
+import { Utils as CQCodeUtils } from '@/classes/cqcode'
 import { init as initWhen, When } from '@/classes/when'
 import { init as initSender, sender } from '@/instances/sender'
 import { init as initReceiver, start, receiver } from '@/instances/receiver'
-import { use as useSession, run as runSession, create as createSessionManager } from '@/instances/session-managers'
-import { use as useMiddleware, useLast as useMiddlewareLast, run as runMiddleware } from '@/instances/middleware-manager'
+import { use as useSession, run as runSession, create as createSessionManager } from '@/instances/sessions'
+import { use as useMiddleware, useLast as useMiddlewareLast, run as runMiddleware } from '@/instances/middlewares'
 
 const queue = new Promise(resolve => resolve())
 /**
@@ -22,6 +23,10 @@ export function init({ receivePort = 8080, receiveSecret, sendURL = 'http://127.
     initReceiver(receivePort, receiveSecret)
     initSender(sendURL, sendToken)
     initWhen({ operators, prefixes, self })
+    useMiddleware(async (ctx, next) => {
+        if (ctx.message instanceof Array) ctx.message = CQCodeUtils.arrayToString(ctx.message)
+        await next()
+    })
     useMiddlewareLast(async ctx => await runSession(ctx))
     receiver.on('message', ctx => 
         queue.then(async () => await runMiddleware(ctx))

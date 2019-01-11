@@ -1,2 +1,2 @@
-export { Command, CommandParseError } from './command'
-export { ICommandParameters, ICommandArguments, TCommandProcessor } from './definition'
+export { Command, CommandParseError } from './classes'
+export { ICommandParameters, ICommandArguments, TCommandProcessor } from './definitions'

@@ -1,5 +1,5 @@
 /// <reference types="jest" />
-import { Command, CommandParseError } from '@/classes/command/command'
+import { Command, CommandParseError } from '@/classes/command'
 let command: Command
 
 test('Create Command', () => {

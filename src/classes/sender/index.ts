@@ -1,3 +1,3 @@
-export * from './results'
+export * from './definitions'
 export { CQHTTP_API } from './api'
-export { Sender, SenderError } from './sender'
+export { Sender, SenderError } from './classes'

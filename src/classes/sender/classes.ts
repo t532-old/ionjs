@@ -4,7 +4,7 @@ import { URL } from 'url'
 import { ok as assert } from 'assert'
 import { CQHTTP_API } from './api'
 import { Codes, ICQCode } from '@/classes/cqcode'
-import * as Result from './results'
+import * as Result from './definitions'
 
 const debug = Debug('ionjs:sender'), 
       debugVerbose = Debug('verbose-ionjs:sender'), 

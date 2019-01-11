@@ -1,5 +1,5 @@
 /// <reference types="jest" />
-import { MiddlewareManager } from '@/classes/middleware/manager'
+import { MiddlewareManager } from '@/classes/middleware'
 let manager: MiddlewareManager
 
 test('Create MiddlewareManager', () => {

@@ -1,4 +1,4 @@
-import { nextExecutor } from './next'
+import { nextExecutor } from './utils'
 import { TMiddleware } from './definition'
 import Debug from 'debug'
 const debug = Debug('ionjs:middleware'),
