@@ -23,4 +23,4 @@ export interface ICommandArguments {
 }
 
 /** An extraneous processor for arguments */
-export type TExtraneousProcessor = (args: ICommandArguments, params: { parameters: ICommandParameters, options: string[] }, ...extraArgs: any[]) => void
+export type TCommandProcessor = (args: ICommandArguments, params: { parameters: ICommandParameters, options: string[] }, ...extraArgs: any[]) => void

@@ -1,5 +1,5 @@
 import { split } from './split'
-import { ICommandParameters, ICommandArguments, TExtraneousProcessor } from './definition'
+import { ICommandParameters, ICommandArguments, TCommandProcessor } from './definition'
 import Debug from 'debug'
 const debug = Debug('ionjs:command'),
       debugVerbose = Debug('verbose-ionjs:command')
@@ -27,7 +27,7 @@ export class Command {
     /** The command's name */
     private readonly _name: string
     /** The command's extraneous processor */
-    private readonly _processor: TExtraneousProcessor
+    private readonly _processor: TCommandProcessor
     /**
      * Check if a command matches the name
      * @param command the command for checking
@@ -44,7 +44,7 @@ export class Command {
      * @param declaration The command declaration 
      * @param processor An extraneous processor for parsed args
      */
-    constructor(declaration: string, processor: TExtraneousProcessor = () => {}) {
+    constructor(declaration: string, processor: TCommandProcessor = () => {}) {
         debug('init %s', declaration)
         this._raw = declaration
         this._processor = processor
