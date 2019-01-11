@@ -22,7 +22,7 @@ export const CQCode = {
     isCQCodeObject(obj: any): obj is ICQCode { return typeof obj === 'object' && typeof obj.type === 'string' && typeof obj.data === 'object' && obj.data },
     isRealCQCodeObject(obj: any) { return CQCode.isCQCodeObject(obj) && obj.type !== 'text' },
     encodePlainText(str: string) { return str.replace(/&/g, '&amp;').replace(/\[/g, '&#91;').replace(/\]/g, '&#93;') },
-    decodePlainText(str: string) { return str.replace(/&amp;/g, '&').replace(/&#91;/g, '[').replace(/&#93;/g, ']') },
+    decodePlainText(str: string) { return str.replace(/&amp;/g, '&').replace(/&#91;/g, '[').replace(/&#93;/g, ']') }, // lgtm [js/double-escaping]
     encodeCQCodeText(str: string) { return CQCode.encodePlainText(str).replace(/,/g, '&#44;') },
     decodeCQCodeText(str: string) { return CQCode.decodePlainText(str).replace(/&#44;/g, ',') },
     arrayToString(message: (ICQCode|string)[]) {

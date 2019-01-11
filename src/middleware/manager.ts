@@ -24,7 +24,7 @@ export class MiddlewareManager {
      * @param middleware the middleware
      */
     useLast(middleware: TMiddleware) {
-        this._lastMiddlewares = this._lastMiddlewares = [...(this._lastMiddlewares || []), middleware]
+        this._lastMiddlewares = [...(this._lastMiddlewares || []), middleware]
         debug('use last (+%d)', this._lastMiddlewares.length)
         return this
     }

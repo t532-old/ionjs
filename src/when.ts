@@ -1,6 +1,6 @@
 import { IMemberInfoResult, CQCode, contextTypeOf, ICQCode } from './adapter'
 import { MessageStream } from './session'
-import { Command, ICommandArguments } from './command'
+import { Command } from './command'
 import { sender } from './sender'
 
 const config: { operators?: number[], prefixes?: string[], self?: number, atSelf?: string } = {}
