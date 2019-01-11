@@ -1,5 +1,5 @@
 /// <reference types="jest" />
-import { ConcurrentSessionManager } from '../../src/session/concurrent'
+import { ConcurrentSessionManager } from '@/classes/session/concurrent'
 import { EventEmitter } from 'events'
 import { spy } from 'sinon'
 let manager: ConcurrentSessionManager

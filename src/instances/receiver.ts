@@ -1,4 +1,4 @@
-import { Receiver } from './adapter'
+import { Receiver } from '@/classes/receiver'
 
 /** The raw receiver */
 export let receiver: Receiver

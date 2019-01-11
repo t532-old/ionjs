@@ -1,8 +1,9 @@
-import { SingleSessionManager, ConcurrentSessionManager, MessageStream } from './session'
-import { Sender, ICQCode, ISendResult } from './adapter'
-import { ICommandArguments } from './command'
+import { SingleSessionManager, ConcurrentSessionManager, MessageStream } from '@/classes/session'
+import { Sender, ISendResult } from '@/classes/sender'
+import { ICommandArguments } from '@/classes/command'
+import { ICQCode } from '@/classes/cqcode'
+import { When } from '@/classes/when'
 import { sender } from './sender'
-import { When } from './when'
 
 function defaultIdentifier(ctx) { return `${ctx.user_id}${ctx.message_type[0]}${ctx._union_id}` }
 function groupIdentifier(ctx) { return `${ctx.group_id || ctx.discuss_id}` }

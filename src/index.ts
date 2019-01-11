@@ -1,8 +1,9 @@
-import { init as initWhen, When } from './when'
-import { init as initSender, sender } from './sender'
-import { init as initReceiver, start, receiver } from './receiver'
-import { use as useSession, run as runSession, create as createSessionManager } from './session-managers'
-import { use as useMiddleware, useLast as useMiddlewareLast, run as runMiddleware } from './middleware-manager'
+import 'module-alias/register'
+import { init as initWhen, When } from '@/classes/when'
+import { init as initSender, sender } from '@/instances/sender'
+import { init as initReceiver, start, receiver } from '@/instances/receiver'
+import { use as useSession, run as runSession, create as createSessionManager } from '@/instances/session-managers'
+import { use as useMiddleware, useLast as useMiddlewareLast, run as runMiddleware } from '@/instances/middleware-manager'
 
 const queue = new Promise(resolve => resolve())
 /**
@@ -32,7 +33,10 @@ export { start }
 export { sender, receiver }
 export { runMiddleware, runSession, createSessionManager }
 export { useMiddleware, useSession }
-export * from './adapter'
-export * from './command'
-export * from './middleware'
-export * from './session'
+export * from '@/classes/sender'
+export * from '@/classes/receiver'
+export * from '@/classes/cqcode'
+export * from '@/classes/when'
+export * from '@/classes/command'
+export * from '@/classes/middleware'
+export * from '@/classes/session'

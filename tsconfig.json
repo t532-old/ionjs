@@ -6,7 +6,13 @@
         "lib": ["esnext"],
         "target": "es2017",
         "allowSyntheticDefaultImports": true,
-        "module": "commonjs"
+        "module": "commonjs",
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["src/*"]
+        },
+        "removeComments": true,
+        "pretty": true
     },
     "include": ["src/**/*"]
 }

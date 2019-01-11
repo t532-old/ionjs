@@ -3,6 +3,7 @@ import * as koaBody from 'koa-bodyparser'
 import Debug from 'debug'
 import { createHmac } from 'crypto'
 import { EventEmitter } from 'events'
+import { contextTypeOf } from './utils'
 declare module 'koa' {
     interface Request {
         body: any
@@ -11,12 +12,7 @@ declare module 'koa' {
 }
 const debug = Debug('ionjs:receiver'),
       debugVerbose = Debug('verbose-ionjs:receiver')
-      
-export function contextTypeOf(ctx: any) {
-    const events: string[] = ['post', ctx.post_type, `${ctx.post_type}/${ctx.message_type || ctx.request_type || ctx.notice_type || ctx.meta_event_type}`]
-    if (ctx.sub_type) events.push(`${ctx.post_type}/${ctx.message_type || ctx.request_type || ctx.notice_type || ctx.meta_event_type}/${ctx.sub_type}`)
-    return events
-}
+
 export class Receiver extends EventEmitter {
     private readonly _server = new Koa()
     constructor(secret?: string) {

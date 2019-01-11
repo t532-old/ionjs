@@ -1,7 +1,9 @@
-import { IMemberInfoResult, CQCode, contextTypeOf, ICQCode } from './adapter'
-import { MessageStream } from './session'
-import { Command } from './command'
-import { sender } from './sender'
+import { IMemberInfoResult } from '@/classes/sender'
+import { Utils as CQCodeUtils, ICQCode } from '@/classes/cqcode'
+import { contextTypeOf } from '@/classes/receiver'
+import { MessageStream } from '@/classes/session'
+import { Command } from '@/classes/command'
+import { sender } from '@/instances/sender'
 
 const config: { operators?: number[], prefixes?: string[], self?: number, atSelf?: string } = {}
 
@@ -10,7 +12,7 @@ const config: { operators?: number[], prefixes?: string[], self?: number, atSelf
  * @param msg the message (cqcode array)
  */
 export function parseCommandString(msg: ICQCode[]) {
-    let str = CQCode.arrayToString(msg.map(i => i.type === 'text' ? i : { type: i.type, data: Object.keys(i.data).reduce((acc, val) => {
+    let str = CQCodeUtils.arrayToString(msg.map(i => i.type === 'text' ? i : { type: i.type, data: Object.keys(i.data).reduce((acc, val) => {
         acc[`${val}\\\\`] = i.data[val]
         return acc
     }, {}) })).trim()
@@ -50,7 +52,7 @@ export class When {
      */
     async validate(ctx: any) {
         // onlyAt
-        if (this._onlyAt && !CQCode.arrayToString(ctx.message).startsWith(config.atSelf)) return false
+        if (this._onlyAt && !CQCodeUtils.arrayToString(ctx.message).startsWith(config.atSelf)) return false
         // command
         if (this._commands.length) {
             let commandMatched = false
@@ -124,10 +126,10 @@ export class When {
                         else return [...acc, val]
                     }, [])
                     const description = { type: rawDescription[0] || 'string', prompt: rawDescription[1] || `Enter '${i}'${rawDescription[0] ? `(include ${rawDescription[0]})` : ''}:` }
-                    let result = CQCode.filterType(args[i] || [], description.type)
+                    let result = CQCodeUtils.filterType(args[i] || [], description.type)
                     while (!result) {
                         await sender.to(rawMessage).send(description.prompt)
-                        result = CQCode.filterType((await stream.get()).message, description.type)
+                        result = CQCodeUtils.filterType((await stream.get()).message, description.type)
                     }
                     args[i] = result
                 }

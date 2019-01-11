@@ -1,0 +1,17 @@
+export const Codes = {
+    Text(text: string) { return { type: 'text', data: { text } } },
+    Face(id: number) { return { type: 'face', data: { id } } },
+    Emoji(id: number) { return { type: 'emoji', data: { id } } },
+    BFace(id: number) { return { type: 'bface', data: { id } } },
+    SFace(id: number) { return { type: 'sface', data: { id } } },
+    Image(file: string) { return { type: 'image', data: { file } } },
+    Record(file: string, magic: boolean = false) { return { type: 'record', data: { file, magic } } },
+    At(qq: number) { return { type: 'at', data: { qq } } },
+    RPS() { return { type: 'rps', data: { } } },
+    Dice() { return { type: 'dice', data: { } } },
+    Shake() { return { type: 'shake', data: { } } },
+    Anonymous(ignore: boolean = false) { return { type: 'anonymous', data: { ignore } } },
+    PlatformMusic(type: 'qq'|'163'|'xiami', id: number) { return { type: 'music', data: { type, id } } },
+    CustomMusic(url: string, audio: string, title: string, content?: string, image?: string) { return { type: 'music', data: { type: 'custom', url, audio, title, content, image } } },
+    Share(url: string, title: string, content?: string, image?: string) { return { type: 'share', data: { url, title, content, image } } },
+}

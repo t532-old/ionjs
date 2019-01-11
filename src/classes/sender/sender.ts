@@ -3,8 +3,8 @@ import Debug from 'debug'
 import { URL } from 'url'
 import { ok as assert } from 'assert'
 import { CQHTTP_API } from './api'
-import { CQCode, ICQCode } from './cqcode'
-import * as Result from './result'
+import { Codes, ICQCode } from '@/classes/cqcode'
+import * as Result from './results'
 
 const debug = Debug('ionjs:sender'), 
       debugVerbose = Debug('verbose-ionjs:sender'), 
@@ -55,7 +55,7 @@ export class Sender {
         this._checkContext('message_type')
         const message = []
         for (const i of mixedMessage) {
-            if (typeof i === 'string') message.push(CQCode.Text(i))
+            if (typeof i === 'string') message.push(Codes.Text(i))
             else message.push(i)
         }
         return this._post(CQHTTP_API.send[this._context.message_type], { message })

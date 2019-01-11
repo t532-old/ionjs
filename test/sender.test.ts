@@ -1,5 +1,5 @@
 /// <reference types="jest" />
-import { Sender } from '../../src/adapter/sender'
+import { Sender } from '@/classes/sender'
 import * as Koa from 'koa'
 import * as koaBody from 'koa-bodyparser'
 declare module "koa" {
