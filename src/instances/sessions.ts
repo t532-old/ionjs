@@ -17,12 +17,7 @@ const managers: any = {
 /** Contexts that'll be passed into essions */
 export interface ISessionContext {
     /** The first context */
-    init: { 
-        /** THe raw context */
-        raw: any
-        /** The parsed arguments */
-        command: ICommandArguments
-    }
+    init: any
     /** Sender bound to this.init.raw */
     sender: Sender
     /** Stream of messages */
