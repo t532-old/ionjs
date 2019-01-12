@@ -1,5 +1,5 @@
 {
-  "name": "@ionjs/core",
+  "name": "ionjs",
   "version": "0.1.0",
   "description": "Yet another QQ bot framework based on CQHTTP & CoolQ.",
   "main": "dist/index.js",
