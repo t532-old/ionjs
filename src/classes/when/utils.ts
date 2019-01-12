@@ -1,7 +1,7 @@
 import { config } from './derived'
-import { sender } from '@/instances/sender'
-import { MessageStream } from '@/classes/session'
-import { Utils as CQCodeUtils } from '@/classes/cqcode'
+import { sender } from '../../instances/sender'
+import { MessageStream } from '../session'
+import { Utils as CQCodeUtils } from '../cqcode'
 
 export function compare(matcher: any, obj: any) {
     if (typeof matcher !== 'object' || !matcher) return matcher === obj

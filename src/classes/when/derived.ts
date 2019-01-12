@@ -1,11 +1,11 @@
 import { When } from './base'
 import { compare, commandProcessor, processCommandString } from './utils'
 import { TValidator, TParser } from './definitions'
-import { sender } from '@/instances/sender'
-import { Command } from '@/classes/command'
-import { MessageStream } from '@/classes/session'
-import { contextTypeOf } from '@/classes/receiver'
-import { IMemberInfoResult } from '@/classes/sender'
+import { sender } from '../../instances/sender'
+import { Command } from '../command'
+import { MessageStream } from '../session'
+import { contextTypeOf } from '../receiver'
+import { IMemberInfoResult } from '../sender'
 
 export const config: { operators?: number[], prefixes?: string[], self?: number, atSelf?: string } = {}
 

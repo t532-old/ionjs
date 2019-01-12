@@ -1,4 +1,4 @@
-import { MiddlewareManager, TMiddleware } from '@/classes/middleware'
+import { MiddlewareManager, TMiddleware } from '../classes/middleware'
 
 const manager = new MiddlewareManager()
 

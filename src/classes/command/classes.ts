@@ -112,6 +112,8 @@ export class Command {
             if (!(param in args.arguments)) {
                 args.arguments[param] = this._parameters.defaults[param]
             }
+        for (const arg in args.arguments)
+            args.arguments[arg] = args.arguments[arg].replace(/\\=/g, '=')
         await this._processor(args, { parameters: this._parameters, options: this._options }, ...extraArgs)
         for (const param of this._parameters.required)
             if (!(param in args.arguments)) throw new CommandParseError('No enough required arguments')

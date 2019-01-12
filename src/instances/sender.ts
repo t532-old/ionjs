@@ -1,4 +1,4 @@
-import { Sender } from '@/classes/sender'
+import { Sender } from '../classes/sender'
 
 /** The raw sender */
 export let sender: Sender
