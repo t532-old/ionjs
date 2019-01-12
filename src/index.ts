@@ -32,7 +32,7 @@ export function init({ receivePort = 8080, receiveSecret, sendURL = 'http://127.
     )
 }
 /** An object for determining when should a session start */
-export const when = new BotWhen([], []).raw()
+export const when: BotWhen = new BotWhen([], []).raw()
 export { start }
 export { sender, receiver }
 export { runMiddleware, runSession, createSessionManager }
