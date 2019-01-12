@@ -1,4 +1,4 @@
-import { TValidator, TParser } from './definitions'
+import { TValidator, TParser, TWhenClass } from './definitions'
 
 /** A class that represents a series of conditions */
 export class When {
@@ -15,12 +15,20 @@ export class When {
         this._parsers = parsers
     }
     /** Returns a new When instance based on this, with one more validator and/or parser */
-    derive({ validate, parse }: { validate?: TValidator, parse?: TParser }, Type) {
+    protected deriveFromType<T extends When>({ validate, parse }: { validate?: TValidator, parse?: TParser }) {
         const validators = Array.from(this._validators),
               parsers = Array.from(this._parsers)
-        if (validate) validators.push(validate)
-        if (parse) parsers.push(parse)
-        return new Type(validators, parsers)
+        if (validate) {
+            const last = validators.findIndex(fn => fn.name === validate.name)
+            if (last >= 0) validators.splice(last, 1)
+            validators.push(validate)
+        }
+        if (parse) {
+            const last = parsers.findIndex(fn => fn.name === parse.name)
+            if (last >= 0) parsers.splice(last, 1)
+            parsers.push(parse)
+        }
+        return new (this.constructor as TWhenClass<T>)(validators, parsers)
     }
     /** Validate a context */
     async validate(ctx: any, ...extraArgs: any[]) {

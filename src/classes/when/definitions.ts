@@ -3,3 +3,6 @@ export type TValidator = (ctx: any, ...extraArgs: any[]) => boolean|Promise<bool
 
 /** A type alias for a parser function */
 export type TParser = (ctx: any, ...extraArgs: any[]) => any|Promise<any>
+
+/** A type alias for class When and its derived classes */
+export type TWhenClass<T> = Function&{ new(validators: TValidator[], parsers: TParser[]): T }
