@@ -19,41 +19,39 @@ export class BotWhen extends When {
         config.operators = operators
         config.prefixes = prefixes
         config.self = self
-        config.atSelf = `[CQ:at,qq:${self}]`
+        config.atSelf = `[CQ:at,qq=${self}]`
     }
-    static register(name: string, method: Function) { BotWhen.prototype[name] = method }
-    deriveWithClass(obj: { validate?: TValidator, parse?: TParser }) { return this.derive(obj, BotWhen) }
+    derive(obj: { validate?: TValidator, parse?: TParser }) { return this.deriveFromType<BotWhen>(obj) }
     /** Return a When instance with no conditions */
-    ever() { return this.deriveWithClass({}) }
+    ever() { return this.derive({}) }
     /** Add the raw message to the parsed result */
     raw() { 
-        function raw(ctx: any) { return ctx }
-        return this.deriveWithClass({ parse: raw })
+        return this.derive({ parse: function raw(ctx: any) { return ctx } })
     }
     /**
      * Add a custom matcher
      * @param condition the matcher
      */
     match(condition: any) {
-        function validate(ctx: any) { return compare(condition, ctx) }
-        return this.deriveWithClass({ validate })
+        return this.derive({ validate: function match(ctx: any) { return compare(condition, ctx) } })
     }
     /**
      * Check if a message contains one of the keywords
      * @param keywords the keywords
      */
     contain(keywords: RegExp|string|string[]) {
-        function validate(ctx: any) {
-            if (keywords instanceof RegExp) return keywords.test(ctx.message)
-            else if (keywords instanceof Array) return keywords.some(i => ctx.message.indexOf(i) >= 0)
-            else return ctx.message.indexOf(keywords) >= 0
-        }
-        function contain(ctx: any) {
-            if (keywords instanceof RegExp) return ctx.message.match(keywords)
-            else if (keywords instanceof Array) return keywords.find(i => ctx.message.indexOf(i) >= 0)
-            else return keywords
-        }
-        return this.deriveWithClass({ validate, parse: contain })
+        return this.derive({
+            validate: function contain(ctx: any) {
+                if (keywords instanceof RegExp) return keywords.test(ctx.message)
+                else if (keywords instanceof Array) return keywords.some(i => ctx.message.indexOf(i) >= 0)
+                else return ctx.message.indexOf(keywords) >= 0
+            }, 
+            parse: function contain(ctx: any) {
+                if (keywords instanceof RegExp) return ctx.message.match(keywords)
+                else if (keywords instanceof Array) return keywords.find(i => ctx.message.indexOf(i) >= 0)
+                else return keywords
+            },
+        })
     }
     /**
      * Specify expected content types
@@ -61,14 +59,15 @@ export class BotWhen extends When {
      */
     type(types: string|string[]) {
         if (!(types instanceof Array)) types = [types]
-        function validate(ctx: any) {
-            const ctxTypes = contextTypeOf(ctx)
-            for (const i of types)
-                if (ctxTypes.includes(i)) return true
-            return false
-        }
-        function type(ctx: any) { return contextTypeOf(ctx) }
-        return this.deriveWithClass({ validate, parse: type })
+        return this.derive({ 
+            validate: function type(ctx: any) {
+                const ctxTypes = contextTypeOf(ctx)
+                for (const i of types)
+                    if (ctxTypes.includes(i)) return true
+                return false
+            }, 
+            parse: function type(ctx: any) { return contextTypeOf(ctx) },
+        })
     }
     /**
      * Specify the permission level
@@ -76,16 +75,17 @@ export class BotWhen extends When {
      */
     permission(level: 'everyone'|'admin'|'owner'|'operator') {
         const requiredLevel = ['everyone', 'admin', 'owner', 'operator'].indexOf(level)
-        async function validate(ctx: any) {
-            let actualLevel: number
-            if (config.operators.includes(ctx.user_id)) actualLevel = 3
-            else if (ctx.message_type !== 'group') 
-                actualLevel = ['member', 'admin', 'owner'].indexOf((await sender.to(ctx).getInfo() as IMemberInfoResult).data.role)
-            else actualLevel = 2
-            if (actualLevel < requiredLevel) return false
-            return true
-        }
-        return this.deriveWithClass({ validate })
+        return this.derive({ 
+            validate: async function permission(ctx: any) {
+                let actualLevel: number
+                if (config.operators.includes(ctx.user_id)) actualLevel = 3
+                else if (ctx.message_type !== 'group') 
+                    actualLevel = ['member', 'admin', 'owner'].indexOf((await sender.to(ctx).getInfo() as IMemberInfoResult).data.role)
+                else actualLevel = 2
+                if (actualLevel < requiredLevel) return false
+                return true
+            },
+        })
     }
     /**
      * Use a command for the conditions
@@ -105,22 +105,24 @@ export class BotWhen extends When {
         const commands: Command[] = []
         for (const name of names)
             commands.push(new Command(`"${name}" ${params}`, commandProcessor))
-        function validate(ctx: any) {
-            const msg = processCommandString(ctx.message)
-            return commands.some(i => i.is(msg))
-        }
-        async function command(ctx: any, stream: MessageStream) {
-            const msg = processCommandString(ctx.message)
-            return await commands.find(i => i.is(msg)).parse(msg, ctx, stream)
-        }
-        return this.deriveWithClass({ validate, parse: command })
+        return this.derive({ 
+            validate: function command(ctx: any) {
+                const msg = processCommandString(ctx.message)
+                return commands.some(i => i.is(msg))
+            }, 
+            parse: async function command(ctx: any, stream: MessageStream) {
+                const msg = processCommandString(ctx.message)
+                return await commands.find(i => i.is(msg)).parse(msg, ctx, stream)
+            },
+        })
     }
     /** At only */
     at() {
-        function validate(ctx: any) {
-            if (!ctx.message.startsWith(config.atSelf)) return false
-            return true
-        }
-        return this.deriveWithClass({ validate })
+        return this.derive({
+            validate: function at(ctx: any) {
+                if (!ctx.message.startsWith(config.atSelf)) return false
+                return true
+            },
+        })
     }
 }

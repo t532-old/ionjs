@@ -37,6 +37,7 @@ export function processCommandString(msg: string) {
             return acc
         }, {}) 
     })).trim()
-    if (str.startsWith(config.atSelf)) str = str.slice(config.atSelf.length).trim()
+    const escapedAtSelf = config.atSelf.replace(/=/g, '\\\\=')
+    if (str.startsWith(escapedAtSelf)) str = str.slice(escapedAtSelf.length).trim()
     return str
 }
