@@ -1,5 +1,5 @@
 /// <reference types="jest" />
-import { Codes, Utils } from '@/classes/cqcode'
+import { Codes, Utils } from '../src/classes/cqcode'
 
 for (const i in Codes)
     if (i[0] === i[0].toUpperCase())

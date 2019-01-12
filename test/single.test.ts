@@ -1,5 +1,5 @@
 /// <reference types="jest" />
-import { SingleSessionManager } from '@/classes/session/single'
+import { SingleSessionManager } from '../src/classes/session/single'
 import { EventEmitter } from 'events'
 import { spy } from 'sinon'
 let manager: SingleSessionManager

@@ -1,5 +1,5 @@
 /// <reference types="jest" />
-import { Receiver } from '@/classes/receiver'
+import { Receiver } from '../src/classes/receiver'
 import axios from 'axios'
 import { createHmac } from 'crypto'
 let receiver: Receiver
