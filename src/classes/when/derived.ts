@@ -21,7 +21,7 @@ export class BotWhen extends When {
         config.self = self
         config.atSelf = `[CQ:at,qq=${self}]`
     }
-    derive(obj: { validate?: TValidator, parse?: TParser }) { return this.deriveFromType<BotWhen>(obj) }
+    private derive(obj: { validate?: TValidator, parse?: TParser }) { return this.deriveFromType<BotWhen>(obj) }
     /** Return a When instance with no conditions */
     ever() { return this.derive({}) }
     /** Add the raw message to the parsed result */
