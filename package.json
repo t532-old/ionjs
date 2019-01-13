@@ -2,8 +2,8 @@
   "name": "ionjs",
   "version": "0.1.0",
   "description": "Yet another QQ bot framework based on CQHTTP & CoolQ.",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
     "build": "tsc",
     "test": "jest --coverage --verbose --config=jest.config.json --detectOpenHandles --forceExit",
@@ -12,7 +12,10 @@
   "files": [
     "LICENSE",
     "package.json",
-    "dist/"
+    "classes/",
+    "instances/",
+    "extensions/",
+    "index.*"
   ],
   "repository": {
     "type": "git",
@@ -39,7 +42,6 @@
     "@types/sinon": "^7.0.3",
     "jest": "^23.6.0",
     "sinon": "^7.2.2",
-    "source-map-support": "^0.5.9",
     "ts-jest": "^23.10.5",
     "typescript": "^3.2.1"
   }

@@ -58,4 +58,7 @@ typings/
 .env
 
 # compiled JS
-dist/
+classes/
+instances/
+extensions/
+index.*

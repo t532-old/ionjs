@@ -1,13 +1,13 @@
 {
     "compilerOptions": {
-        "sourceMap": true,
         "declaration": true,
-        "outDir": "./dist",
+        "outDir": ".",
         "lib": ["esnext"],
         "target": "es2017",
         "allowSyntheticDefaultImports": true,
         "module": "commonjs",
         "pretty": true
     },
-    "include": ["src/**/*"]
+    "include": ["src/**/*"],
+    "exclude": []
 }
