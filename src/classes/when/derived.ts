@@ -70,19 +70,19 @@ export class BotWhen extends When {
         })
     }
     /**
-     * Specify the permission level
-     * @param level The level
+     * Specify the required role
+     * @param role The role
      */
-    permission(level: 'everyone'|'admin'|'owner'|'operator') {
-        const requiredLevel = ['everyone', 'admin', 'owner', 'operator'].indexOf(level)
+    role(role: 'everyone'|'admin'|'owner'|'operator') {
+        const requiredRole = ['everyone', 'admin', 'owner', 'operator'].indexOf(role)
         return this.derive({ 
-            validate: async function permission(ctx: any) {
-                let actualLevel: number
-                if (config.operators.includes(ctx.user_id)) actualLevel = 3
+            validate: async function role(ctx: any) {
+                let actualRole: number
+                if (config.operators.includes(ctx.user_id)) actualRole = 3
                 else if (ctx.message_type !== 'group') 
-                    actualLevel = ['member', 'admin', 'owner'].indexOf((await sender.to(ctx).getInfo() as IMemberInfoResult).data.role)
-                else actualLevel = 2
-                if (actualLevel < requiredLevel) return false
+                    actualRole = ['member', 'admin', 'owner'].indexOf((await sender.to(ctx).getInfo() as IMemberInfoResult).data.role)
+                else actualRole = 2
+                if (actualRole < requiredRole) return false
                 return true
             },
         })
