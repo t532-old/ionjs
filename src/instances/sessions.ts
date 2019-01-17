@@ -1,7 +1,7 @@
 import { SingleSessionManager, ConcurrentSessionManager, MessageStream } from '../classes/session'
 import { Sender, ISendResult } from '../classes/sender'
 import { ICommandArguments } from '../classes/command'
-import { ICQCode } from '../classes/cqcode'
+import { ICQCode, Utils } from '../classes/cqcode'
 import { When } from '../classes/when'
 import { sender } from './sender'
 
@@ -28,10 +28,12 @@ export interface ISessionContext {
     reply(...message: (string|ICQCode)[]): Promise<ISendResult> 
     /** Question user and get an answer */
     question(...prompt: (string|ICQCode)[]): Promise<any>
+    /** Forward to other sessions */
+    forward(...message: (string|ICQCode)[]): Promise<void[]>
 }
 
 
-function deepCopy(obj: any) {
+function deepCopy(obj: any): any {
     const newObj = {}
     for (const i in obj) {
         if (typeof obj[i] === 'object' && obj[i] && obj[i] !== obj) newObj[i] = deepCopy(obj[i])
@@ -48,19 +50,24 @@ export function use(when: When, { override = false, identifier = 'default', conc
     return function useHandler(session: (ctx: ISessionContext) => void) {
         const manager = concurrent ? managers[identifier].concurrent : managers[identifier].single
         async function wrapper(stream: MessageStream) {
+            async function get(condition: (ctx: any) => boolean = () => true) { return deepCopy(await stream.get(condition)) }
             let raw, init: ICommandArguments
-            try { raw = await stream.get() }
+            try { raw = await get() }
             catch { return }
             try { init = await when.parse(raw, stream) }
             catch { return }
             const boundSender = sender.to(raw)
-            async function get(condition: (ctx: any) => boolean = () => true) { return deepCopy(await stream.get(condition)) }
             function reply(...message: (string|ICQCode)[]) { return boundSender.send(...message) }
             async function question(...prompt: (string|ICQCode)[]) {
                 await reply(...prompt)
                 return get()
             }
-            await session({ init, sender, stream, get, reply, question })
+            function forward(...message: (string|ICQCode)[]) {
+                const ctx = deepCopy(raw)
+                ctx.message = Utils.arrayToString(message.map(i => typeof i === 'string' ? { type: 'text', data: { text: i } } : i))
+                return run(ctx)
+            }
+            await session({ init, sender, stream, get, reply, question, forward })
         }
         if (manager instanceof SingleSessionManager) manager.use(wrapper, ctx => when.validate(ctx), override)
         else if (manager instanceof ConcurrentSessionManager) manager.use(wrapper, ctx => when.validate(ctx))
