@@ -81,7 +81,7 @@ export function use(when: When, { override = false, identifier = 'default', conc
  * @param identifier the session manager's identifier
  */
 export function create(name: string, identifier: (ctx: any) => any) { 
-    this.managers[name] = { 
+    managers[name] = { 
         single: new SingleSessionManager(identifier), 
         concurrent: new ConcurrentSessionManager(identifier),
     } 
