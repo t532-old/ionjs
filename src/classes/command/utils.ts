@@ -1,4 +1,5 @@
 const delimiters = ['\'', '"', '‘', '“', '’', '”']
+const delimitersRegex = new RegExp(`([${delimiters.join('')}])`, 'g')
 /**
  * Split a string, by spaces, ASCII quotes and CJK quotes
  * @param string The string for splitting
@@ -32,4 +33,12 @@ export function split(string: string) {
         }
     }
     return result
+}
+
+/**
+ * escape a string so that it is a legal command argument
+ * @param str The string that needs to be escaped
+ */
+export function escapeArgument(str: string) {
+    return str.replace(delimitersRegex, '\\$1').replace(' ', '\\ ')
 }
