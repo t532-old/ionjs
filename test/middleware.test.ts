@@ -12,7 +12,11 @@ test('Use Middlewares', () => {
         await next()
     }).use(async (ctx, next) => {
         if (ctx.i) await next()
-    }).use(async (ctx, next) => {
+    })).not.toThrow()
+})
+
+test('Use Middlewares (Last)', () => {
+    expect(() => manager.useLast(async (ctx, next) => {
         ctx.finished = true
         await next()
     })).not.toThrow()
