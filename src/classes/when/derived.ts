@@ -93,7 +93,7 @@ export class BotWhen extends When {
      * @param params the parameters' declaration
      * @param withPrefixes whether this Command should be called with prefixes
      */
-    command(names: string|string[], params: string, withPrefixes: boolean = true) {
+    command(names: string|string[], params?: string, withPrefixes: boolean = true) {
         names = names instanceof Array ? names : [names]
         if (withPrefixes) {
             const prefixedNames: string[] = []
@@ -104,7 +104,7 @@ export class BotWhen extends When {
         }
         const commands: Command[] = []
         for (const name of names)
-            commands.push(new Command(`"${name}" ${params}`, commandProcessor))
+            commands.push(new Command(`"${name}"${params ? ` ${params}` : ''}`, commandProcessor))
         return this.derive({ 
             validate: function command(ctx: any) {
                 const msg = processCommandString(ctx.message)
