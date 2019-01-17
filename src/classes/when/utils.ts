@@ -4,8 +4,9 @@ import { MessageStream } from '../session'
 import { Utils as CQCodeUtils } from '../cqcode'
 
 export function compare(matcher: any, obj: any) {
-    if (typeof matcher !== 'object' || !matcher) return matcher === obj
-    else if (matcher instanceof RegExp) return matcher.test(obj)
+    if (matcher instanceof RegExp) return matcher.test(obj)
+    else if (matcher instanceof Function) return matcher(obj)
+    else if (typeof matcher !== 'object' || !matcher) return matcher === obj
     else 
         for (const i in matcher)
             if (!compare(matcher[i], obj[i])) return false
