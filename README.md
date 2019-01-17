@@ -3,7 +3,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/hngl103v209a313f?svg=true)](https://ci.appveyor.com/project/trustgit/ionjs)
 [![codecov](https://codecov.io/gh/ionjs-dev/ionjs/branch/master/graph/badge.svg)](https://codecov.io/gh/ionjs-dev/ionjs)
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/ionjs-dev/ionjs.svg)](https://lgtm.com/projects/g/ionjs-dev/ionjs/context:javascript)
-[![npm (scoped)](https://img.shields.io/npm/v/ionjs.svg)](https://npmjs.org/package/ionjs)
+[![npm (scoped)](https://img.shields.io/npm/v/@ionjs/core.svg)](https://npmjs.org/package/@ionjs/core)
 
 > Yet another QQ bot framework based on CQHTTP &amp; CoolQ.
 
@@ -16,14 +16,12 @@ Ion.js 使用 koa 来与 CQHTTP 通信，同时使用了 Node.js 原生的 `stre
 
 需要注意的是，Ion.js 仍使用的是传统的 HTTP 通信方式，且不内置对会话状态的长期存储（即仅有内存存储）；Ion.js 要求 Node.js 环境支持 ES2017，CQHTTP 插件在版本 4 以上。
 
-### 与 [nodebot](https://github.com/trustgit/nodebot) 对比
-与 nodebot 相比，Ion.js：
+## 特性
 - **是可引入的 CommonJS 模块**，因此无需遵循特定的路径结构；
 - **有一系列实用工具**，包括获取消息时的条件判断与CQ码的处理等；
-- **支持真正的中间件**，而非遍历执行一组函数；
+- **支持真正的中间件**，数据传至下游、控制传回上游；
 - **提供更强大的命令声明与解析**，包括具名参数、引号转义、默认值等；
-- **支持创建与用户持续交互的会话**，而非仅接收一条信息；
-- **npm 包 gzip 后尺寸为 nodebot 的 1/2**；由于 nodebot 无法通过 npm 直接获取，这个尺寸差距仍是保守的。
+- **支持创建与用户持续交互的会话**，使用友好的异步 I/O。
 
 ## 文档
 > WIP
