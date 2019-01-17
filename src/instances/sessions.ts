@@ -40,16 +40,19 @@ function deepCopy(obj: any) {
     return newObj
 }
 /**
- * Use a session templace
+ * Use a session template
  * @param when when to start the session
  * @param params Another info of the session template
  */
 export function use(when: When, { override = false, identifier = 'default', concurrent = false } = {}) {
     return function useHandler(session: (ctx: ISessionContext) => void) {
         const manager = concurrent ? managers[identifier].concurrent : managers[identifier].single
-        async function wrapper(stream) {
-            const raw = await stream.get()
-            const init = await when.parse(raw, stream)
+        async function wrapper(stream: MessageStream) {
+            let raw, init: ICommandArguments
+            try { raw = await stream.get() }
+            catch { return }
+            try { init = await when.parse(raw, stream) }
+            catch { return }
             const boundSender = sender.to(raw)
             async function get(condition: (ctx: any) => boolean = () => true) { return deepCopy(await stream.get(condition)) }
             function reply(...message: (string|ICQCode)[]) { return boundSender.send(...message) }
