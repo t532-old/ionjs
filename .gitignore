@@ -61,4 +61,8 @@ typings/
 classes/
 instances/
 extensions/
-index.*
+/index.d.ts
+/index.js
+
+# compiled docs
+docs/.vuepress/dist

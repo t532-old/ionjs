@@ -1,0 +1,1 @@
+<script>location.href = 'https://ion.js.org'</script>
