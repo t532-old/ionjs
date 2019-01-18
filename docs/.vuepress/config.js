@@ -13,6 +13,7 @@ module.exports = {
         lastUpdated: '上次更新',
         nav: [
             { text: '指南', link: '/guide/' },
+            { text: 'API', link: '/api/' },
         ],
         sidebarDepth: 2,
         sidebar: {
