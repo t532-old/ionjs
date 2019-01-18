@@ -14,6 +14,7 @@ module.exports = {
         nav: [
             { text: '指南', link: '/guide/' },
         ],
+        sidebarDepth: 2,
         sidebar: {
             '/guide/': [{
                 title: '指南',
@@ -22,6 +23,13 @@ module.exports = {
                     '',
                     'getting-started',
                     'what-happened',
+                ],
+            }],
+            '/api/': [{
+                title: 'API',
+                collapsable: false,
+                children: [
+                    '',
                 ],
             }],
         }

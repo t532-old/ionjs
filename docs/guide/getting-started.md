@@ -39,13 +39,16 @@ ionjs.init({
 接着，我们使用 `useSession()` 来让 Bot 可以对特定的消息做出反应：
 ```js
 ionjs.useSession(ionjs.when.contain('你好')) (
-    async function greet({ reply }) {
-        await reply('你好呀!')
+    async function greet(ctx) {
+        await ctx.reply('你好呀!')
     }
 )
 ```
 
-最后，运行你的 Bot：
+最后，启动你的 Bot 并在 Shell 中运行：
+```js
+ionjs.start()
+```
 ```bash
 node .
 ```
