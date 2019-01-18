@@ -12,6 +12,9 @@ test_script:
   - npm --version
   - npm run build
   - npm test
+
+after_test:
   - codecov
+  - ps: ./ci/deploy-docs
 
 build: off
