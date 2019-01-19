@@ -6,7 +6,7 @@ export const Codes = {
     SFace(id: number) { return { type: 'sface', data: { id } } },
     Image(file: string) { return { type: 'image', data: { file } } },
     Record(file: string, magic: boolean = false) { return { type: 'record', data: { file, magic } } },
-    At(qq: number) { return { type: 'at', data: { qq } } },
+    At(qq: number|'all') { return { type: 'at', data: { qq } } },
     RPS() { return { type: 'rps', data: { } } },
     Dice() { return { type: 'dice', data: { } } },
     Shake() { return { type: 'shake', data: { } } },
