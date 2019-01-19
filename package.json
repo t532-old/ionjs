@@ -29,6 +29,15 @@
     "url": "https://github.com/ionjs-dev/ionjs/issues"
   },
   "homepage": "https://github.com/ionjs-dev/ionjs",
+  "keywords": [
+    "bot-framework",
+    "coolq",
+    "qq-bot-framework",
+    "bot",
+    "chat",
+    "chatbot",
+    "cqhttp"
+  ],
   "dependencies": {
     "axios": "^0.18.0",
     "debug": "^4.1.1",
