@@ -1,9 +1,11 @@
 # Ion.js
 [![GitHub](https://img.shields.io/github/license/ionjs-dev/ionjs.svg)](https://github.com/ionjs-dev/ionjs/blob/master/LICENSE)
+[![Docs](https://img.shields.io/badge/docs-ion.js.org-yellow.svg)](https://ion.js.org)
 [![Build status](https://ci.appveyor.com/api/projects/status/hngl103v209a313f?svg=true)](https://ci.appveyor.com/project/trustgit/ionjs)
 [![codecov](https://codecov.io/gh/ionjs-dev/ionjs/branch/master/graph/badge.svg)](https://codecov.io/gh/ionjs-dev/ionjs)
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/ionjs-dev/ionjs.svg)](https://lgtm.com/projects/g/ionjs-dev/ionjs/context:javascript)
 [![npm (scoped)](https://img.shields.io/npm/v/@ionjs/core.svg)](https://npmjs.org/package/@ionjs/core)
+[![install size](https://packagephobia.now.sh/badge?p=@ionjs/core)](https://packagephobia.now.sh/result?p=@ionjs/core)
 
 > Yet another QQ bot framework based on CQHTTP &amp; CoolQ.
 
@@ -23,10 +25,7 @@ Ion.js 使用 koa 来与 CQHTTP 通信，同时使用了 Node.js 原生的 `stre
 - **提供更强大的命令声明与解析**，包括具名参数、引号转义、默认值等；
 - **支持创建与用户持续交互的会话**，使用友好的异步 I/O。
 
-## 文档
-> WIP
->
-> Future Home: https://ion.js.org
+## [文档](https://ion.js.org)
 
 ## 贡献
 - 如果本项目对你有帮助，请点一颗 Star。
