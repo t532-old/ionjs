@@ -1,11 +1,16 @@
 import { SingleSessionManager, ConcurrentSessionManager, MessageStream } from '../classes/session'
 import { Sender, ISendResult } from '../classes/sender'
 import { ICommandArguments } from '../classes/command'
+import { contextTypeOf, unionIdOf } from '../classes/receiver'
 import { ICQCode, Utils } from '../classes/cqcode'
 import { When } from '../classes/when'
 import { sender } from './sender'
 
-function defaultIdentifier(ctx) { return `${ctx.user_id}${ctx.message_type[0]}${ctx._union_id}` }
+
+function defaultIdentifier(ctx) {
+    const contextType = contextTypeOf(ctx)
+    return `${ctx.user_id}${contextType[contextType.length - 1]}${unionIdOf(ctx)}`
+}
 function groupIdentifier(ctx) { return `${ctx.group_id || ctx.discuss_id}` }
 function userIdentifier(ctx) { return `${ctx.user_id}` }
 const managers: any = { 

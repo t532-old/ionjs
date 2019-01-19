@@ -1,2 +1,2 @@
 export { Receiver } from './classes'
-export { contextTypeOf } from './utils'
+export { contextTypeOf, unionIdOf } from './utils'
