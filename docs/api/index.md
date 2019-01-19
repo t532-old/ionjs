@@ -28,7 +28,7 @@ import { name } from '@ionjs/core'
 :::
 - [receiver: 上报接收端默认实例](objects.html#receiver)
 - [sender: 消息发送端默认实例](objects.html#sender)
-- [when: 条件判断器默认实例](objects.html#receiver)
+- [when: 条件判断器默认实例](objects.html#when)
 
 ## 函数 (*function*)
 ::: tip 命名格式
@@ -39,8 +39,8 @@ import { name } from '@ionjs/core'
 - [runMiddleware: 将给定的上下文传入中间件管理器](functions.html#runmiddlewares)
 - [runSession: 将给定的上下文传入会话管理器](functions.html#runsession)
 - [start: 接收端开始监听](functions.html#start)
-- [useMiddleware: 挂载中间件](functions.html#usemiddleware)
-- [useSession: 挂载会话](functions.html#usesession)
+- [useMiddleware: 注册中间件](functions.html#usemiddleware)
+- [useSession: 注册会话](functions.html#usesession)
 
 ## 类型别名 (*type*)
 ::: tip 命名格式

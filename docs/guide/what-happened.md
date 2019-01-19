@@ -1,9 +1,12 @@
 # 发生了什么？
-在上一节，我们刚刚创建了第一个 Ion.js 应用。虽然只有 11 行代码，但 Ion.js 在幕后做了许多事情。
+在[起步](getting-started.html)一节，我们刚刚创建了第一个 Ion.js 应用。虽然只有 11 行代码，但 Ion.js 在幕后做了许多事情。
 
 ## 应用启动时
 
 ### 加载配置
+::: tip 参见
+- [API: *function* init: 加载配置](/api/functions.html#init)
+:::
 ```js
 ionjs.init({
     receivePort: 8080,
@@ -19,11 +22,12 @@ ionjs.init({
 
 ### 添加会话
 ::: tip 参见
-- [API: *interface* ISessionContext（会话上下文）](/api/intefaces.html#ISessionContext)
-- [API: *class* BotWhen（针对QQ机器人特化的条件判断器）](/api/classes.html#BotWhen)
+- [API: *interface* ISessionContext: 会话上下文](/api/intefaces.html#isessioncontext)
+- [API: *class* BotWhen: 针对QQ机器人特化的条件判断器](/api/classes.html#botwhen)
+- [API: *function* useSession: 注册会话](/api/functions.html#usesession)
 :::
 
-**会话**是 Ion.js 的两种消息处理器中的一种，通过调用 `ionjs.useSession(条件)(会话)` 来挂载。Ion.js 将在收到符合条件的信息后触发这个会话。
+**会话**是 Ion.js 的两种消息处理器中的一种，通过调用 `ionjs.useSession(条件)(会话)` 来注册。Ion.js 将在收到符合条件的信息后触发这个会话。
 ```js
 ionjs.useSession(ionjs.when.contain('你好')) (
     async function greet(ctx) {
@@ -36,6 +40,9 @@ ionjs.useSession(ionjs.when.contain('你好')) (
 在**会话**部分，传入的则是一个 `async function`。它接收一个参数 `ctx`，包含了此次会话的信息和操作方法。在这里，异步方法 `reply()` 用以向发信人发送消息。
 
 ### 启动
+::: tip 参见
+- [API: *function* start: 接收端开始监听](/api/functions.html#start)
+:::
 通过调用 `start()`，Ion.js 开始监听 CQHTTP 的上报数据并将它们交由消息处理器处理。
 ```js
 ionjs.start()
@@ -45,7 +52,7 @@ ionjs.start()
 
 ### 会话之前
 ::: tip 参见
-- [API: *namespace* Utils（CQ码工具函数）](/api/objects.html#Utils)
+- [API: *namespace* Utils: CQ码工具函数](/api/objects.html#utils)
 :::
 消息在传到会话前，已经经过了多次处理：
 - 酷Q 将腾讯的加密消息解码；
@@ -56,18 +63,18 @@ ionjs.start()
 
 ### 条件判断
 ::: tip 参见
-- [API: *class* SessionManager（会话管理器抽象基类）](/api/class.html#SessionManager)
-- [API: *class* SingleSessionManager（一对一会话管理器）](/api/class.html#SingleSessionManager)
-- [API: *class* ConcurrentSessionManager（一对多会话管理器）](/api/class.html#ConcurrentSessionManager)
-- [API: *class* BotWhen（针对QQ机器人特化的条件判断器）](/api/classes.html#BotWhen)
+- [API: *class* SessionManager: 会话管理器抽象基类](/api/classes.html#sessionmanager)
+- [API: *class* SingleSessionManager: 一对一会话管理器](/api/classes.html#singlesessionmanager)
+- [API: *class* ConcurrentSessionManager: 一对多会话管理器](/api/class.html#concurrentsessionmanager)
+- [API: *class* MessageStream: 会话消息流](/api/classes.html#messagestream)
+- [API: *class* BotWhen: 针对QQ机器人特化的条件判断器](/api/classes.html#botwhen)
 :::
 收到消息后，Ion.js 将会把它传入内部会话管理模块。
-- 若对于当前发信者，没有已触发的会话，会话管理模块将依次比对所有已挂载会话的条件，并触发符合条件的会话。
+- 若对于当前发信者，没有已触发的会话，会话管理模块将依次比对所有已注册会话的条件，并触发符合条件的会话。
 - 如果有，则直接传进已触发的会话的消息流。
 
 ### 创建上下文
 ::: tip 参见
-- [API: *interface* ISessionContext（会话上下文）](/api/intefaces#ISessionContext)
-- [API: *class* BotWhen （条件判断器）](/api/classes#BotWhen)
+- [API: *interface* ISessionContext: 会话上下文](/api/intefaces.html#isessioncontext)
 :::
-若触发了会话，Ion.js 将为其生成上下文，包括关于消息、发送方的信息以及一系列实用方法。
+若触发了会话，Ion.js 将为其生成上下文，包括关于消息、发送方的信息以及一系列实用方法，并经由会话管理器传入会话。

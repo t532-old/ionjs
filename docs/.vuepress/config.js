@@ -23,7 +23,9 @@ module.exports = {
                 children: [
                     '',
                     'getting-started',
+                    'structure',
                     'what-happened',
+                    'use-sessions',
                 ],
             }],
             '/api/': [{
