@@ -1,3 +1,4 @@
+/// <reference types="jest" />
 import * as ionjs from '../src'
 import { EventEmitter } from 'events'
 
