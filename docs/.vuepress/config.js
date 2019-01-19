@@ -27,6 +27,7 @@ module.exports = {
                     'what-happened',
                     'using-sessions',
                     'using-middlewares',
+                    'using-commands',
                 ],
             }],
             '/api/': [{
