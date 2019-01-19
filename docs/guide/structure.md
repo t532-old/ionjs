@@ -9,14 +9,14 @@
 如果你想要你的代码在 Node.js 下直接运行，则可如此转换 `import` （每行一一对应）：
 ```js
 // ES6 import
-import * as ionjs from 'ionjs' // 全部导入
-import { init, useSession, when, start } from 'ionjs' // 部分导入
-import { useMiddleware as use } from 'ionjs' // 别名导入
+import * as ionjs from '@ionjs/core' // 全部导入
+import { init, useSession, when, start } from '@ionjs/core' // 部分导入
+import { useMiddleware as use } from '@ionjs/core' // 别名导入
 
 // CommonJS(Node.js) require
-const ionjs = require('ionjs') // 全部导入
-const { init, useSession, when, start } = require('ionjs') // 部分导入
-const { useMiddleware: use } = require('ionjs') // 别名导入
+const ionjs = require('@ionjs/core') // 全部导入
+const { init, useSession, when, start } = require('@ionjs/core') // 部分导入
+const { useMiddleware: use } = require('@ionjs/core') // 别名导入
 ```
 
 ## 参见

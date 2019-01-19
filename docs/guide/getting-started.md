@@ -23,7 +23,7 @@ npm install --save @ionjs/auto-accept # 自动同意加群/拉群/好友请求
 ## 编写
 在你的 bot 项目下创建入口文件 `index.js` 并导入 Ion.js：
 ```js
-const ionjs = require('ionjs')
+const ionjs = require('@ionjs/core')
 ```
 
 初始化：

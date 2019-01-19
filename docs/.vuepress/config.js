@@ -25,7 +25,8 @@ module.exports = {
                     'getting-started',
                     'structure',
                     'what-happened',
-                    'use-sessions',
+                    'using-sessions',
+                    'using-middlewares',
                 ],
             }],
             '/api/': [{

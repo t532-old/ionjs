@@ -8,7 +8,7 @@
 
 在 Ion.js，我们可以通过导出的柯里化函数 `useSession` 来注册会话：
 ```js
-import { useSession, when } from 'ionjs'
+import { useSession, when } from '@ionjs/core'
 useSession(when./* 链式调用 */) (
     async function mySession(ctx/* 会话上下文 */) {
         ...
@@ -63,7 +63,7 @@ when 是类 `BotWhen` 的一个实例，它是 Ion.js 条件判断器的默认�
 
 ### 命令
 ::: tip 参见
-- [指南: 使用命令](use-commands.html)
+- [指南: 使用命令](using-commands.html)
 - [API: *class* Command: 命令](/api/classes.html#command)
 - [API: *interface* ICommandArguments: 命令解析结果(实参)](/api/interfaces.html#icommandarguments)
 :::
