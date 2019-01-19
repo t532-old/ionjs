@@ -39,17 +39,16 @@ export class BotWhen extends When {
      * Check if a message contains one of the keywords
      * @param keywords the keywords
      */
-    contain(keywords: RegExp|string|string[]) {
+    contain(...keywords: (RegExp|string)[]) {
+        const keywords0 = keywords[0]
         return this.derive({
             validate: function contain(ctx: any) {
-                if (keywords instanceof RegExp) return keywords.test(ctx.message)
-                else if (keywords instanceof Array) return keywords.some(i => ctx.message.indexOf(i) >= 0)
-                else return ctx.message.indexOf(keywords) >= 0
+                if (keywords0 instanceof RegExp) return keywords0.test(ctx.message)
+                else return keywords.some(i => ctx.message.indexOf(i) >= 0)
             }, 
             parse: function contain(ctx: any) {
-                if (keywords instanceof RegExp) return ctx.message.match(keywords)
-                else if (keywords instanceof Array) return keywords.find(i => ctx.message.indexOf(i) >= 0)
-                else return keywords
+                if (keywords0 instanceof RegExp) return keywords0.test(ctx.message)
+                else return keywords.filter(i => ctx.message.indexOf(i) >= 0)
             },
         })
     }
@@ -57,8 +56,7 @@ export class BotWhen extends When {
      * Specify expected content types
      * @param type The expected content type(s)
      */
-    type(types: string|string[]) {
-        if (!(types instanceof Array)) types = [types]
+    type(...types: string[]) {
         return this.derive({ 
             validate: function type(ctx: any) {
                 const ctxTypes = contextTypeOf(ctx)
@@ -79,7 +77,7 @@ export class BotWhen extends When {
             validate: async function role(ctx: any) {
                 let actualRole: number
                 if (config.operators.includes(ctx.user_id)) actualRole = 3
-                else if (ctx.message_type !== 'group') 
+                else if (ctx.message_type === 'group') 
                     actualRole = ['member', 'admin', 'owner'].indexOf((await sender.to(ctx).getInfo() as IMemberInfoResult).data.role)
                 else actualRole = 2
                 if (actualRole < requiredRole) return false
