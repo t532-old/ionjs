@@ -38,16 +38,16 @@ test('Validator: Match', async () => {
 
 test('Validator & Parser: Contain', async () => {
     expect.assertions(5)
-    expect(() => when = new BotWhen([], []).contain(['abc', 'xyz'])).not.toThrow()
+    expect(() => when = new BotWhen([], []).contain('abc', 'xyz')).not.toThrow()
     expect(await when.validate({ message: 'abc!' })).toBeTruthy()
     expect(await when.validate({ message: 'abc_!xyz' })).toBeTruthy()
     expect(await when.validate({ message: 'ab!c_x$yz' })).toBeFalsy()
-    expect((await when.parse({ message: 'abc!!' })).contain).toBe('abc')
+    expect((await when.parse({ message: 'abc!!' })).contain).toContain('abc')
 })
 
 test('Validator & Parser: Type', async () => {
     expect.assertions(5)
-    expect(() => when = new BotWhen([], []).type(['message/private', 'meta_event'])).not.toThrow()
+    expect(() => when = new BotWhen([], []).type('message/private', 'meta_event')).not.toThrow()
     expect(await when.validate({ post_type: 'message', message_type: 'private' })).toBeTruthy()
     expect(await when.validate({ post_type: 'meta_event' })).toBeTruthy()
     expect(await when.validate({ post_type: 'notice' })).toBeFalsy()
