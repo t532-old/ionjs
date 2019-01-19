@@ -29,5 +29,5 @@ test(`Filter CQCode Types`, () => {
     expect(Utils.filterType(arr, 'raw')).toBe(raw)
     expect(Utils.filterType(arr, 'string')).toBe(str)
     expect(Utils.filterType(arr, 'any')).toEqual(any)
-    expect(Utils.filterType(arr, 'text')).toEqual({ text: 'abc' })
+    expect(Utils.filterType(arr, 'text')).toEqual({ type: 'text', data: { text: 'abc' } })
 })
