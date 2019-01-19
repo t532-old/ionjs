@@ -21,6 +21,7 @@ import { name } from '@ionjs/core'
 :::
 - [contextTypeOf: CQHTTP上报类型代码](tool-functions.html#contexttypeof)
 - [escapeArgument: 转义命令参数](tool-functions.html#escapeargument)
+- [unionIdOf: 发信人所在群号或讨论组号或QQ号](tool-functions.html#unionidof)
 
 ## 对象 (*object*)
 ::: tip 命名格式
