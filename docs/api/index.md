@@ -8,6 +8,10 @@ const { name } = require('@ionjs/core')
 import { name } from '@ionjs/core'
 ```
 
+在 API 的详细说明中，每个标题旁都会有一个<Badge text="像这样的" /> Badge，点击它可以去到定义这个 API 的源文件。
+
+API 的描述是 TypeScript 自动生成的 `.d.ts`，如果不了解 TypeScript，请阅读 [TypeScript 文档](https://www.typescriptlang.org)。
+
 ## 命名空间 (*namespace*)
 ::: tip 命名格式
 - PascalCased

@@ -36,6 +36,13 @@ module.exports = {
                 collapsable: false,
                 children: [
                     '',
+                    'namespaces',
+                    'tool-functions',
+                    'objects',
+                    'functions',
+                    'types',
+                    'classes',
+                    'interfaces',
                 ],
             }],
         }
