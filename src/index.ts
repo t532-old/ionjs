@@ -10,7 +10,7 @@ const queue = new Promise(resolve => resolve())
  * Initialize the bot
  * @param config the bot's configuration
  */
-export function init({ receivePort = 8080, receiveSecret, sendURL = 'http://127.0.0.1:5700', sendToken, operators = [], prefixes = [], self }: {
+export function init({ receivePort = 8080, receiveSecret, sendURL = 'http://127.0.0.1:5700', sendToken, operators = [], prefixes = [], self, timeout = 10000 }: {
     receivePort: number, 
     receiveSecret?: string, 
     sendURL: string, 
@@ -18,6 +18,7 @@ export function init({ receivePort = 8080, receiveSecret, sendURL = 'http://127.
     operators?: number[],
     prefixes?: string[],
     self: number,
+    timeout?: number,
 }) {
     initReceiver(receivePort, receiveSecret)
     initSender(sendURL, sendToken)
@@ -27,8 +28,12 @@ export function init({ receivePort = 8080, receiveSecret, sendURL = 'http://127.
         await next()
     })
     useMiddlewareLast(async ctx => await runSession(ctx))
-    receiver.on('message', ctx => 
-        queue.then(async () => await runMiddleware(ctx))
+    receiver.on('post', ctx => 
+        queue.then(() => new Promise(async resolve => {
+            setTimeout(resolve, timeout)
+            await runMiddleware(ctx)
+            resolve()
+        }))
     )
 }
 /** An object for determining when should a session start */
