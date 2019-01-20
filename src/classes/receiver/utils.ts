@@ -4,6 +4,6 @@ export function contextTypeOf(ctx: any) {
     return events
 }
 
-export function unionIdOf(ctx: any) {
+export function unionIdOf(ctx: any): number {
     return ctx.discuss_id || ctx.group_id || ctx.user_id
 }
