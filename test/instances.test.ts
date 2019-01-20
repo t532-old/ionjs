@@ -1,16 +1,31 @@
 /// <reference types="jest" />
 import * as ionjs from '../src'
+import axios from 'axios'
 import { EventEmitter } from 'events'
 
 const bus = new EventEmitter
+function wasteTime(time = 500) { return new Promise(resolve => setTimeout(resolve, time)) }
 
 test('Initialize bot', () => {
     expect(() => ionjs.init({
-        receivePort: 8080,
+        receivePort: 8081,
         sendURL: 'http://localhost:5700',
         operators: [114514],
         self: 1919810,
     })).not.toThrow()
+})
+
+test('Start server', () => {
+    expect(() => ionjs.start()).not.toThrow()
+})
+
+test('Use Middleware', async done => {
+    expect(() => ionjs.useMiddleware(async (ctx, next) => {
+        expect(typeof ctx.message).toBe('string')
+        await next()
+        done()
+    })).not.toThrow()
+    axios.post('http://localhost:8081', { message: [] })
 })
 
 test('Create Session Manager', () => {
