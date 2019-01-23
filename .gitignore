@@ -58,11 +58,11 @@ typings/
 .env
 
 # compiled JS
-classes/
-instances/
-extensions/
+/classes/
+/instances/
+/extensions/
 /index.d.ts
 /index.js
 
 # compiled docs
-docs/.vuepress/dist
+/docs/.vuepress/dist
