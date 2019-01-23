@@ -5,16 +5,17 @@ import { ok as assert } from 'assert'
 import { CQHTTP_API } from './api'
 import { Codes, ICQCode } from '../cqcode'
 import * as Result from './definitions'
+import { IMessage } from '../receiver'
 
 const debug = Debug('ionjs:sender'), 
       debugVerbose = Debug('verbose-ionjs:sender'), 
       debugExVerbose = Debug('ex-verbose-ionjs:sender')
 
 export class SenderError extends Error {
-    readonly post: any
+    readonly post: { [x: string]: any }
     readonly url: string
     readonly retcode: number
-    constructor(post: any, url: string, retcode: number) {
+    constructor(post: { [x: string]: any }, url: string, retcode: number) {
         super(`Error when trying to send to ${url}, retcode: ${retcode}`)
         this.post = post
         this.url = url
@@ -23,10 +24,10 @@ export class SenderError extends Error {
 }
 
 export class Sender {
-    private readonly _context: any
+    private readonly _context: IMessage
     private readonly _sendURL: string
     private readonly _token?: string
-    constructor(sendURL: string, token?: string, context: any = {}) {
+    constructor(sendURL: string, token?: string, context: IMessage = {}) {
         debugVerbose('init')
         debugExVerbose(`set ${sendURL}(Token ${token || null}) %o`, context)
         this._sendURL = sendURL
@@ -37,7 +38,7 @@ export class Sender {
         const next = new Sender(this._sendURL, this._token, context)
         return next
     }
-    private async _post({ api, params = [] }: { api: string, params?: string[] }, args?: any) {
+    private async _post({ api, params = [] }: { api: string, params?: string[] }, args: { [x: string]: any } = {}) {
         const url = new URL(api, this._sendURL).toString()
         for (const param of params)
             if (!(param in args)) 
@@ -64,7 +65,7 @@ export class Sender {
     sendLike(times: number): Promise<Result.INoneResult> { return this._post(CQHTTP_API.sendLike, { times }) }
     kick(reject_add_request: boolean = false): Promise<Result.INoneResult> { return this._post(CQHTTP_API.kick, { reject_add_request }) }
     ban(duration: number = 30 * 60): Promise<Result.INoneResult> { 
-        if (this._context.anonymous) return this._post(CQHTTP_API.ban.anonymous, duration)
+        if (this._context.anonymous) return this._post(CQHTTP_API.ban.anonymous, { duration })
         else return this._post(CQHTTP_API.ban.member, { duration })
     }
     unban(): Promise<Result.INoneResult> { return this._post(CQHTTP_API.unban, { duration: 0 }) }
@@ -92,13 +93,13 @@ export class Sender {
         else return this._post(CQHTTP_API.getInfo.stranger, { no_cache })
     }
     getGroupList(no_cache: boolean = false): Promise<Result.IGroupListResult> { return this._post(CQHTTP_API.getGroupList, { no_cache }) }
-    getMemberList(): Promise<Result.IMemberInfoListResult> { return this._post(CQHTTP_API.getMemberList, { }) }
-    getCredentials(): Promise<Result.ICredentialsResult> { return this._post(CQHTTP_API.getCredentials, { })}
+    getMemberList(): Promise<Result.IMemberInfoListResult> { return this._post(CQHTTP_API.getMemberList) }
+    getCredentials(): Promise<Result.ICredentialsResult> { return this._post(CQHTTP_API.getCredentials)}
     getRecord(): Promise<Result.IRecordResult> { return this._post(CQHTTP_API.getRecord, {}) }
-    getPluginStatus(): Promise<Result.IPluginStatusResult> { return this._post(CQHTTP_API.getPluginStatus, { }) }
-    getPluginVersionInfo(): Promise<Result.IPluginVersionInfoResult> { return this._post(CQHTTP_API.getPluginVersionInfo, { }) }
+    getPluginStatus(): Promise<Result.IPluginStatusResult> { return this._post(CQHTTP_API.getPluginStatus) }
+    getPluginVersionInfo(): Promise<Result.IPluginVersionInfoResult> { return this._post(CQHTTP_API.getPluginVersionInfo) }
     restart(clean_log: boolean = true, clean_cache: boolean = true, clean_event: boolean = true): Promise<Result.INoneResult> { return this._post(CQHTTP_API.restart, { clean_log, clean_cache, clean_event }) }
     restartPlugin(delay: number = 0): Promise<Result.INoneResult> { return this._post(CQHTTP_API.restartPlugin, { delay }) }
     cleanDataDir(data_dir: string): Promise<Result.INoneResult> { return this._post(CQHTTP_API.cleanDataDir, { data_dir }) }
-    cleanPluginLog(): Promise<Result.INoneResult> { return this._post(CQHTTP_API.cleanPluginLog, { }) } 
+    cleanPluginLog(): Promise<Result.INoneResult> { return this._post(CQHTTP_API.cleanPluginLog) } 
 }

@@ -1,4 +1,4 @@
 export interface ICQCode {
     type: string
-    data: any
+    data: { [x: string]: any }
 }

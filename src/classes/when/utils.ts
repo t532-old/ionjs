@@ -2,6 +2,7 @@ import { config } from './derived'
 import { sender } from '../../instances/sender'
 import { MessageStream } from '../session'
 import { Utils as CQCodeUtils } from '../cqcode'
+import { IMessage } from '../receiver'
 
 export function compare(matcher: any, obj: any) {
     if (matcher instanceof RegExp) return matcher.test(obj)
@@ -13,7 +14,7 @@ export function compare(matcher: any, obj: any) {
     return true
 }
 
-export async function commandProcessor({ arguments: args }, { parameters: params }, rawMessage: any, stream: MessageStream) {
+export async function commandProcessor({ arguments: args }, { parameters: params }, rawMessage: IMessage, stream: MessageStream) {
     const paramList = [...params.required, ...Object.keys(args)].reduce((acc, val) => acc.includes(val) ? acc : [...acc, val], [])
     for (const i of paramList) {
         const rawDescription: string[] = (params.description[i] || '').split(',').reduce((acc, val) => {
