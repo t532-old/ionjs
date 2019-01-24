@@ -1,4 +1,5 @@
 import { IPluginStatusResult, IInfoResult } from '../sender'
+import { ICQCode } from '../cqcode'
 
 // Fix type definiton of koa-bodyparser
 declare module 'koa' {
@@ -15,7 +16,7 @@ export interface IMessage {
     sub_type?: 'friend'|'group'|'discuss'|'other'|'normal'|'anonymous'|'notice'|'approve'|'invite'|'add'|'enable'|'disable'
     message_id?: number
     user_id?: number
-    message?: string
+    message?: any
     raw_message?: string
     font?: number
     sender?: IInfoResult
