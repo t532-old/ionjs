@@ -10,10 +10,7 @@ export class When {
     protected readonly _validCallbacks: TValidatorCallback[] = []
     /** The validator callback (when invalid) */
     protected readonly _invalidCallbacks: TValidatorCallback[] = []
-    /**
-     * @param validators A list of validators
-     * @param parsers A list of parsers
-     */
+    /** @param fns functions for When */
     constructor({ validate = [], parse = [], validCallback = [], invalidCallback = [] }: {
         validate?: TValidator[], 
         parse?: TParser[],
