@@ -40,7 +40,7 @@ export interface IGroupListResult extends IBaseResult {
     }[]
 }
 export interface IMemberInfoListResult extends IBaseResult {
-    data: IMemberInfoResult[]
+    data: IInfoResult[]
 }
 export interface ICredentialsResult extends IBaseResult {
     data: {
