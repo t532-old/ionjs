@@ -4,12 +4,6 @@ import Debug from 'debug'
 import { createHmac } from 'crypto'
 import { EventEmitter } from 'events'
 import { contextTypeOf } from './utils'
-declare module 'koa' {
-    interface Request {
-        body: any
-        rawBody: string
-    }
-}
 const debug = Debug('ionjs:receiver'),
       debugVerbose = Debug('verbose-ionjs:receiver')
 

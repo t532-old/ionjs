@@ -1,5 +1,13 @@
 import { IPluginStatusResult, IInfoResult } from '../sender'
 
+// Fix type definiton of koa-bodyparser
+declare module 'koa' {
+    interface Request {
+        body: any
+        rawBody: string
+    }
+}
+
 /** CQHTTP Message */
 export interface IMessage {
     post_type?: 'message'|'notice'|'request'|'meta_event'
