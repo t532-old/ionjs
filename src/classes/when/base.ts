@@ -23,7 +23,7 @@ export class When {
         this._invalidCallbacks = invalidCallback
     }
     /** Returns a new When instance based on this, with one more validator and/or parser */
-    protected deriveFromType<T extends When>(deriviation: { validate?: TValidator, parse?: TParser, validCallback?: TValidatorCallback, invalidCallback?: TValidatorCallback }) {
+    protected deriveFromType<T extends When>(derivation: { validate?: TValidator, parse?: TParser, validCallback?: TValidatorCallback, invalidCallback?: TValidatorCallback }) {
         const original = {
             validate: Array.from(this._validators),
             parse: Array.from(this._parsers),
@@ -31,18 +31,22 @@ export class When {
             invalid: Array.from(this._invalidCallbacks),
         }
         for (const name in original) {
-            if (deriviation[name]) {
-                const last = original[name].findIndex(fn => fn.name === deriviation[name].name)
+            if (derivation[name]) {
+                const last = original[name].findIndex(fn => fn.name === derivation[name].name)
                 if (last >= 0) original[name].splice(last, 1)
-                original[name].push(deriviation[name])
+                original[name].push(derivation[name])
             }
         }
         return new (this.constructor as TWhenClass<T>)(original)
     }
     /** Validate a context */
     async validate(ctx: any, ...extraArgs: any[]) {
-        for (const validate of this._validators)
-            if (!(await validate(ctx, ...extraArgs))) return false
+        for (const validate in this._validators) {
+            if (!(await this._validators[validate](ctx, ...extraArgs))) {
+                if (this._invalidCallbacks[validate]) this._invalidCallbacks[validate](ctx, ...extraArgs)
+                return false
+            } else if (this._validCallbacks[validate]) this._validCallbacks[validate](ctx, ...extraArgs)
+        }
         return true
     }
     /** Parse a context */
