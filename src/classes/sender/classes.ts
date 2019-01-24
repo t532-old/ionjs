@@ -88,7 +88,7 @@ export class Sender {
         return this._post(CQHTTP_API.solveRequest[this._context.request_type], { approve, remark: remarkOrReason })
     }
     getSelfInfo(): Promise<Result.ISelfInfoResult> { return this._post(CQHTTP_API.getSelfInfo) }
-    getInfo(no_cache: boolean = false): Promise<Result.IStrangerInfoResult|Result.IMemberInfoResult> {
+    getInfo(no_cache: boolean = false): Promise<Result.IInfoResult> {
         if (this._context.group_id) return this._post(CQHTTP_API.getInfo.member, { no_cache })
         else return this._post(CQHTTP_API.getInfo.stranger, { no_cache })
     }

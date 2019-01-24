@@ -15,30 +15,22 @@ export interface ISelfInfoResult extends IBaseResult {
         nickname: string,
     }
 }
-export interface IStrangerInfoResult extends IBaseResult {
+export interface IInfoResult extends IBaseResult {
     data: {
         user_id: number,
         nickname: string,
-        sex: string,
+        sex: 'male'|'female'|'unknown',
         age: number,
-    }
-}
-export interface IMemberInfoResult extends IBaseResult {
-    data: {
-        user_id: number,
-        nickname: string,
-        sex: string,
-        age: number,
-        card: string,
-        area: string,
-        join_time: number,
-        last_sent_time: number,
-        level: string,
-        role: 'owner'|'admin'|'member',
-        unfriendly: boolean,
-        title: string,
-        title_expire_time: number,
-        card_changeable: boolean,
+        card?: string,
+        area?: string,
+        join_time?: number,
+        last_sent_time?: number,
+        level?: string,
+        role?: 'owner'|'admin'|'member',
+        unfriendly?: boolean,
+        title?: string,
+        title_expire_time?: number,
+        card_changeable?: boolean,
     }
 }
 export interface IGroupListResult extends IBaseResult {

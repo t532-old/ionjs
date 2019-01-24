@@ -5,7 +5,6 @@ import { sender } from '../../instances/sender'
 import { Command } from '../command'
 import { MessageStream } from '../session'
 import { contextTypeOf, IMessage } from '../receiver'
-import { IMemberInfoResult } from '../sender'
 
 export const config: { operators?: number[], prefixes?: string[], self?: number, atSelf?: string } = {}
 
@@ -78,7 +77,7 @@ export class BotWhen extends When {
                 let actualRole: number
                 if (config.operators.includes(ctx.user_id)) actualRole = 3
                 else if (ctx.message_type === 'group') 
-                    actualRole = ['member', 'admin', 'owner'].indexOf((await sender.to(ctx).getInfo() as IMemberInfoResult).data.role)
+                    actualRole = ['member', 'admin', 'owner'].indexOf((await sender.to(ctx).getInfo()).data.role)
                 else actualRole = 2
                 if (actualRole < requiredRole) return false
                 return true

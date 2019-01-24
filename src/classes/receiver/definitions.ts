@@ -1,4 +1,4 @@
-import { IPluginStatusResult } from '../sender'
+import { IPluginStatusResult, IInfoResult } from '../sender'
 
 /** CQHTTP Message */
 export interface IMessage {
@@ -10,17 +10,7 @@ export interface IMessage {
     message?: string
     raw_message?: string
     font?: number
-    sender?: { 
-        user_id: number,
-        nickname: string,
-        sex: 'male'|'female'|'unknown',
-        age: number,
-        card?: string,
-        area?: string,
-        level?: string,
-        role?: string,
-        title?: string,
-    }
+    sender?: IInfoResult
     group_id?: number
     anonymous?: {
         id: number,
