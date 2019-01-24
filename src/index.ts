@@ -1,9 +1,9 @@
-import { Utils as CQCodeUtils } from './classes/cqcode'
+import { Utils as CQCodeUtils, ICQCode } from './classes/cqcode'
 import { BotWhen } from './classes/when'
 import { init as initSender, sender } from './instances/sender'
 import { init as initReceiver, start, receiver } from './instances/receiver'
 import { use as useMiddleware, useLast as useMiddlewareLast, run as runMiddleware } from './instances/middlewares'
-import { use as useSession, run as runSession, create as createSessionManager, ISessionContext, TExtensibleMessage } from './instances/sessions'
+import { use as useSession, run as runSession, create as createSessionManager } from './instances/sessions'
 
 const queue = new Promise(resolve => resolve())
 /**
@@ -24,7 +24,7 @@ export function init({ receivePort = 8080, receiveSecret, sendURL = 'http://127.
     initSender(sendURL, sendToken)
     BotWhen.init({ operators, prefixes, self })
     useMiddleware(async (ctx, next) => {
-        if (ctx.message instanceof Array) ctx.message = CQCodeUtils.arrayToString(ctx.message)
+        if (ctx.message as ICQCode[]|string instanceof Array) ctx.message = CQCodeUtils.arrayToString(ctx.message as ICQCode[])
         await next()
     })
     useMiddlewareLast(async ctx => await runSession(ctx))
@@ -42,7 +42,7 @@ export { start }
 export { sender, receiver }
 export { runMiddleware, runSession, createSessionManager }
 export { useMiddleware, useSession }
-export { ISessionContext, TExtensibleMessage }
+export { ISessionContext, TExtensibleMessage } from './instances/definitions'
 export * from './classes/sender'
 export * from './classes/receiver'
 export * from './classes/cqcode'

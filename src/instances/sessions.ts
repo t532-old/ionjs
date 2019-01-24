@@ -5,6 +5,7 @@ import { contextTypeOf, unionIdOf, IMessage } from '../classes/receiver'
 import { ICQCode, Utils } from '../classes/cqcode'
 import { When } from '../classes/when'
 import { sender } from './sender'
+import { TExtensibleMessage, ISessionContext } from './definitions'
 
 export type TExtensibleMessage = IMessage&{ [x: string]: any }
 
