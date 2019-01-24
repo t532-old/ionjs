@@ -1,4 +1,5 @@
 import { MiddlewareManager, TMiddleware } from '../classes/middleware'
+import { IMessage } from '../classes/receiver'
 
 const manager = new MiddlewareManager()
 
@@ -24,4 +25,4 @@ export function useLast(...middlewares: TMiddleware[]) {
  * Let a context go through the middlewares
  * @param ctx the context
  */
-export function run(ctx: any) { return manager.run(ctx) }
+export function run(ctx: IMessage) { return manager.run(ctx) }

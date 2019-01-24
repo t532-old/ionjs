@@ -2,6 +2,7 @@
 import * as ionjs from '../src'
 import axios from 'axios'
 import { EventEmitter } from 'events'
+import { IMessage } from '../src/classes/receiver'
 
 const bus = new EventEmitter
 function wasteTime(time = 500) { return new Promise(resolve => setTimeout(resolve, time)) }
@@ -58,7 +59,7 @@ test('Register Session', () => {
 test('Run Session', async (done) => {
     const ctx = { post_type: 'message', message_type: 'private', user_id: 114514, message: 'test' },
           concurrentCtx = { post_type: 'message', message_type: 'private', user_id: 114514, message: 'test-concurrent' }
-    await ionjs.runSession(ctx)
+    await ionjs.runSession(ctx as IMessage)
     bus.on('session', received => {
         expect(received).toEqual(ctx)
     })

@@ -28,7 +28,7 @@ export interface ISessionContext {
     /** Stream of messages */
     stream: MessageStream
     /** Get a copy of the next message from this.stream */
-    get(condition?: (ctx: IMessage) => boolean): Promise<IMessage>
+    get(condition?: (ctx: IMessage) => boolean): Promise<IMessage&{ [x: string]: any }>
     /** Reply to user */
     reply(...message: (string|ICQCode)[]): Promise<ISendResult> 
     /** Question user and get an answer */
@@ -96,7 +96,7 @@ export function create(name: string, identifier: (ctx: IMessage) => any) {
  * Pass a context through the sessions
  * @param ctx the context
  */
-export function run(ctx: IMessage) {
+export function run(ctx: IMessage&{ [x: string]: any }) {
     const promises: Promise<void>[] = []
     for (const i in managers) {
         promises.push(managers[i].single.run(ctx))
