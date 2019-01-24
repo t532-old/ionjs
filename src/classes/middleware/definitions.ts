@@ -1,0 +1,1 @@
+export type TMiddleware<T> = (ctx: T, next: () => Promise<void>) => T

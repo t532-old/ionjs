@@ -1,20 +1,20 @@
 import { nextExecutor } from './utils'
-import { TMiddleware } from './definition'
+import { TMiddleware } from './definitions'
 import Debug from 'debug'
 const debug = Debug('ionjs:middleware'),
       debugVerbose = Debug('verbose-ionjs:middleware')
 
 /** A middleware manager */
-export class MiddlewareManager {
+export class MiddlewareManager<T> {
     /** The list of middlewares */
-    private _middlewares: TMiddleware[] = []
+    private _middlewares: TMiddleware<T>[] = []
     /** The list of middlewares that runs at last */
-    private _lastMiddlewares: TMiddleware[] = []
+    private _lastMiddlewares: TMiddleware<T>[] = []
     /**
      * add a middleware to the middleware list
      * @param middleware the middleware
      */
-    use(middleware: TMiddleware) {
+    use(middleware: TMiddleware<T>) {
         this._middlewares = [...(this._middlewares || []), middleware]
         debug('use (+%d)', this._middlewares.length)
         return this
@@ -23,7 +23,7 @@ export class MiddlewareManager {
      * add a middleware to another middleware list that'll be run at last
      * @param middleware the middleware
      */
-    useLast(middleware: TMiddleware) {
+    useLast(middleware: TMiddleware<T>) {
         this._lastMiddlewares = [...(this._lastMiddlewares || []), middleware]
         debug('use last (+%d)', this._lastMiddlewares.length)
         return this
@@ -32,10 +32,10 @@ export class MiddlewareManager {
      * Let context go through the middlewares
      * @param ctx the context
      */
-    async run(ctx: any) {
+    async run(ctx: T) {
         debugVerbose('start %o', ctx)
         if (this._middlewares.length) 
-            await nextExecutor([...this._middlewares, ...this._lastMiddlewares][Symbol.iterator](), ctx)()
+            await nextExecutor<T>([...this._middlewares, ...this._lastMiddlewares][Symbol.iterator](), ctx)()
         debugVerbose('finish')
     }
 }
