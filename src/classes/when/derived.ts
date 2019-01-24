@@ -5,6 +5,7 @@ import { sender } from '../../instances/sender'
 import { Command } from '../command'
 import { MessageStream } from '../session'
 import { contextTypeOf, IMessage } from '../receiver'
+import { TExtensibleMessage } from '../../instances/sessions'
 
 export const config: { operators?: number[], prefixes?: string[], self?: number, atSelf?: string } = {}
 
@@ -107,7 +108,7 @@ export class BotWhen extends When {
                 const msg = processCommandString(ctx.message)
                 return commands.some(i => i.is(msg))
             }, 
-            parse: async function command(ctx: IMessage, stream: MessageStream) {
+            parse: async function command(ctx: IMessage, stream: MessageStream<TExtensibleMessage>) {
                 const msg = processCommandString(ctx.message)
                 return await commands.find(i => i.is(msg)).parse(msg, ctx, stream)
             },

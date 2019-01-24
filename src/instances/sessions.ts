@@ -6,6 +6,7 @@ import { ICQCode, Utils } from '../classes/cqcode'
 import { When } from '../classes/when'
 import { sender } from './sender'
 
+export type TExtensibleMessage = IMessage&{ [x: string]: any }
 
 function defaultIdentifier(ctx) {
     const contextType = contextTypeOf(ctx)
@@ -13,10 +14,10 @@ function defaultIdentifier(ctx) {
 }
 function groupIdentifier(ctx) { return `${ctx.group_id || ctx.discuss_id}` }
 function userIdentifier(ctx) { return `${ctx.user_id}` }
-const managers: { [x: string]: { single: SingleSessionManager, concurrent: ConcurrentSessionManager } } = { 
-    default: { single: new SingleSessionManager(defaultIdentifier), concurrent: new ConcurrentSessionManager(defaultIdentifier) },
-    group: { single: new SingleSessionManager(groupIdentifier), concurrent: new ConcurrentSessionManager(groupIdentifier) },
-    user: { single: new SingleSessionManager(userIdentifier), concurrent: new ConcurrentSessionManager(userIdentifier) },
+const managers: { [x: string]: { single: SingleSessionManager<TExtensibleMessage>, concurrent: ConcurrentSessionManager<TExtensibleMessage> } } = { 
+    default: { single: new SingleSessionManager<TExtensibleMessage>(defaultIdentifier), concurrent: new ConcurrentSessionManager<TExtensibleMessage>(defaultIdentifier) },
+    group: { single: new SingleSessionManager<TExtensibleMessage>(groupIdentifier), concurrent: new ConcurrentSessionManager<TExtensibleMessage>(groupIdentifier) },
+    user: { single: new SingleSessionManager<TExtensibleMessage>(userIdentifier), concurrent: new ConcurrentSessionManager<TExtensibleMessage>(userIdentifier) },
 }
 
 /** Contexts that'll be passed into essions */
@@ -26,19 +27,19 @@ export interface ISessionContext {
     /** Sender bound to this.init.raw */
     sender: Sender
     /** Stream of messages */
-    stream: MessageStream
+    stream: MessageStream<TExtensibleMessage>
     /** Get a copy of the next message from this.stream */
-    get(condition?: (ctx: IMessage) => boolean): Promise<IMessage&{ [x: string]: any }>
+    get(condition?: (ctx: IMessage) => boolean): Promise<TExtensibleMessage>
     /** Reply to user */
     reply(...message: (string|ICQCode)[]): Promise<ISendResult> 
     /** Question user and get an answer */
-    question(...prompt: (string|ICQCode)[]): Promise<any>
+    question(...prompt: (string|ICQCode)[]): Promise<TExtensibleMessage>
     /** Forward to other sessions */
     forward(...message: (string|ICQCode)[]): Promise<void[]>
 }
 
 
-function deepCopy(obj: any): any {
+function deepCopy(obj: { [x: string]: any }): { [x: string]: any } {
     const newObj = {}
     for (const i in obj) {
         if (typeof obj[i] === 'object' && obj[i] && obj[i] !== obj) newObj[i] = deepCopy(obj[i])
@@ -54,8 +55,8 @@ function deepCopy(obj: any): any {
 export function use(when: When, { override = false, identifier = 'default', concurrent = false } = {}) {
     return function useHandler(session: (ctx: ISessionContext) => void) {
         const manager = concurrent ? managers[identifier].concurrent : managers[identifier].single
-        async function wrapper(stream: MessageStream) {
-            async function get(condition: (ctx: IMessage) => boolean = () => true) { return deepCopy(await stream.get(condition)) }
+        async function wrapper(stream: MessageStream<TExtensibleMessage>) {
+            async function get(condition: (ctx: TExtensibleMessage) => boolean = () => true) { return deepCopy(await stream.get(condition)) as TExtensibleMessage }
             let raw, init: ICommandArguments
             try { raw = await get() }
             catch { return }
@@ -87,8 +88,8 @@ export function use(when: When, { override = false, identifier = 'default', conc
  */
 export function create(name: string, identifier: (ctx: IMessage) => any) { 
     managers[name] = { 
-        single: new SingleSessionManager(identifier), 
-        concurrent: new ConcurrentSessionManager(identifier),
+        single: new SingleSessionManager<TExtensibleMessage>(identifier), 
+        concurrent: new ConcurrentSessionManager<TExtensibleMessage>(identifier),
     } 
 }
 
@@ -96,7 +97,7 @@ export function create(name: string, identifier: (ctx: IMessage) => any) {
  * Pass a context through the sessions
  * @param ctx the context
  */
-export function run(ctx: IMessage&{ [x: string]: any }) {
+export function run(ctx: TExtensibleMessage) {
     const promises: Promise<void>[] = []
     for (const i in managers) {
         promises.push(managers[i].single.run(ctx))

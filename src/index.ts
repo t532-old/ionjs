@@ -2,8 +2,8 @@ import { Utils as CQCodeUtils } from './classes/cqcode'
 import { BotWhen } from './classes/when'
 import { init as initSender, sender } from './instances/sender'
 import { init as initReceiver, start, receiver } from './instances/receiver'
-import { use as useSession, run as runSession, create as createSessionManager } from './instances/sessions'
 import { use as useMiddleware, useLast as useMiddlewareLast, run as runMiddleware } from './instances/middlewares'
+import { use as useSession, run as runSession, create as createSessionManager, ISessionContext, TExtensibleMessage } from './instances/sessions'
 
 const queue = new Promise(resolve => resolve())
 /**
@@ -42,6 +42,7 @@ export { start }
 export { sender, receiver }
 export { runMiddleware, runSession, createSessionManager }
 export { useMiddleware, useSession }
+export { ISessionContext, TExtensibleMessage }
 export * from './classes/sender'
 export * from './classes/receiver'
 export * from './classes/cqcode'

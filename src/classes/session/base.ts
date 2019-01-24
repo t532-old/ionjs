@@ -1,8 +1,8 @@
 import { ISessionTemplate } from './definitions'
 /** The base class that represents an object that stores Behaviors */
-export abstract class SessionStore {
+export abstract class SessionStore<T> {
     /** The list of the stored session templates */
-    protected readonly _templates: (ISessionTemplate&any)[] = []
+    protected readonly _templates: (ISessionTemplate<T>&{ [x: string]: any })[] = []
     /** Generates a session id for a context */
     protected readonly _identifier: (ctx: any) => any
     /** @param identifier A function that generates a session id for a context */

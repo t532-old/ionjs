@@ -1,23 +1,23 @@
 import { MessageStream } from './stream'
 
-export type TSessionFn = (stream: MessageStream) => void
+export type TSessionFn<T> = (stream: MessageStream<T>) => void
 
-export type TSessionMatcher = (ctx: any) => boolean|Promise<boolean>
+export type TSessionMatcher<T> = (ctx: T) => boolean|Promise<boolean>
 
-export interface ISessionTemplate {
+export interface ISessionTemplate<T> {
     /**
      * determines whether the session should be created or not
      * @param ctx the context
      */
-    match: TSessionMatcher
+    match: TSessionMatcher<T>
     /**
      * the function for generating sessions
      * @param stream the stream for contexts matches the session id
      */
-    session: TSessionFn
+    session: TSessionFn<T>
 }
 
-export interface IConcurrentSessionTemplate extends ISessionTemplate {
+export interface IConcurrentSessionTemplate<T> extends ISessionTemplate<T> {
     /** 
      * (Only avaliable in class ConcurrentSessionManager)
      * A unique symbol of the session template
@@ -25,7 +25,7 @@ export interface IConcurrentSessionTemplate extends ISessionTemplate {
     symbol?: symbol
 }
 
-export interface ISingleSessionTemplate extends ISessionTemplate {
+export interface ISingleSessionTemplate<T> extends ISessionTemplate<T> {
     /** 
      * (Only avaliable in class SingleSessionManager)
      * determines when the condition is matched,
