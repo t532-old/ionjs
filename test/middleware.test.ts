@@ -1,6 +1,6 @@
 /// <reference types="jest" />
 import { MiddlewareManager } from '../src/classes/middleware'
-let manager: MiddlewareManager
+let manager: MiddlewareManager<any>
 
 test('Create MiddlewareManager', () => {
     expect(() => manager = new MiddlewareManager()).not.toThrow()

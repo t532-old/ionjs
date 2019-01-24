@@ -2,12 +2,12 @@
 import { SingleSessionManager } from '../src/classes/session/single'
 import { EventEmitter } from 'events'
 import { spy } from 'sinon'
-let manager: SingleSessionManager
 const bus = new EventEmitter()
 interface ITestContext {
     id: number
     data: any
 }
+let manager: SingleSessionManager<ITestContext>
 
 function wasteTime(time = 500) { return new Promise(resolve => setTimeout(resolve, time)) }
 

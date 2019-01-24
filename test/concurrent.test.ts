@@ -2,12 +2,12 @@
 import { ConcurrentSessionManager } from '../src/classes/session/concurrent'
 import { EventEmitter } from 'events'
 import { spy } from 'sinon'
-let manager: ConcurrentSessionManager
 const bus = new EventEmitter()
 interface ITestContext {
     id: number
     data: any
 }
+let manager: ConcurrentSessionManager<ITestContext>
 
 function wasteTime(time = 500) { return new Promise(resolve => setTimeout(resolve, time)) }
 
