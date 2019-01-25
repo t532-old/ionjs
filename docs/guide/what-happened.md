@@ -22,7 +22,7 @@ ionjs.init({
 
 ### 添加会话
 ::: tip 参见
-- [API: *interface* ISessionContext: 会话上下文](/api/intefaces.html#isessioncontext)
+- [API: *interface* ISessionContext: 会话上下文](/api/interfaces.html#isessioncontext)
 - [API: *class* BotWhen: 针对QQ机器人特化的条件判断器](/api/classes.html#botwhen)
 - [API: *function* useSession: 注册会话](/api/functions.html#usesession)
 :::
@@ -52,7 +52,7 @@ ionjs.start()
 
 ### 会话之前
 ::: tip 参见
-- [API: *namespace* Utils: CQ码工具函数](/api/objects.html#utils)
+- [API: *namespace* Utils: CQ码工具函数](/api/namespaces.html#utils)
 :::
 消息在传到会话前，已经经过了多次处理：
 - 酷Q 将腾讯的加密消息解码；
@@ -63,7 +63,7 @@ ionjs.start()
 
 ### 条件判断
 ::: tip 参见
-- [API: *class* SessionManager: 会话管理器抽象基类](/api/classes.html#sessionmanager)
+- [API: *class* SessionStore: 会话管理器抽象基类](/api/classes.html#sessionstore)
 - [API: *class* SingleSessionManager: 一对一会话管理器](/api/classes.html#singlesessionmanager)
 - [API: *class* ConcurrentSessionManager: 一对多会话管理器](/api/classes.html#concurrentsessionmanager)
 - [API: *class* MessageStream: 会话消息流](/api/classes.html#messagestream)
@@ -75,6 +75,6 @@ ionjs.start()
 
 ### 创建上下文
 ::: tip 参见
-- [API: *interface* ISessionContext: 会话上下文](/api/intefaces.html#isessioncontext)
+- [API: *interface* ISessionContext: 会话上下文](/api/interfaces.html#isessioncontext)
 :::
 若触发了会话，Ion.js 将为其生成上下文，包括关于消息、发送方的信息以及一系列实用方法，并经由会话管理器传入会话。
