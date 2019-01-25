@@ -59,6 +59,7 @@ API 的描述是 TypeScript 自动生成的 `.d.ts`，如果不了解 TypeScript
 - [TSessionFn: 会话](types.html#tsessionfn)
 - [TSessionMatcher: 会话条件判断函数](types.html#tsessionmatcher)
 - [TValidator: 条件判断器判断组件](types.html#tvalidator)
+- [TValidatorCallback: 条件判断器判断回调](types.html#tvalidatorcallback)
 
 ## 类 (*class*)
 ::: tip 命名格式
