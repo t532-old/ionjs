@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<svg viewBox="0 0 90 1000" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <!-- Circle -->
+    <circle fill="transparent" stroke="white" cx="45" cy="45" r="20"/>
+    <!-- Line Left -->
+    <line stroke="white" x1="32" y1="0" x2="32" y2="48" />
+    <!-- Line Middle -->
+    <line stroke="white" x1="45" y1="43" x2="45" y2="48" />
+    <!-- Line Right -->
+    <line stroke="white" x1="57" y1="43" x2="57" y2="1000" />
+    <!-- Line Strikethrough -->
+    <line stroke="white" x1="-180" y1="0" x2="265" y2="90" />
+</svg>
