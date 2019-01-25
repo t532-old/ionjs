@@ -98,3 +98,4 @@ API 的描述是 TypeScript 自动生成的 `.d.ts`，如果不了解 TypeScript
 - [IRecordResult: CQHTTP语音转换响应](interfaces.html#irecordresult)
 - [ISelfInfoResult: CQHTTP登录号信息响应](interfaces.html#iselfinforesult)
 - [ISendResult: CQHTTP发信响应](interfaces.html#isendresult)
+- [ISessionContext: Ion.js 扩展会话上下文](interfaces.html#isessioncontext)

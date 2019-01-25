@@ -225,3 +225,29 @@ interface ISendResult extends IBaseResult {
     }
 }
 ```
+
+## ISessionContext [<Badge text="instances/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/instances/definitions.ts)
+传入使用 `useSession` 注册的会话中的上下文。
+
+```ts {2,4,8,10,12,14,16,18}
+/** Contexts that'll be passed into essions */
+interface ISessionContext {
+    /** The first context */
+    init: {
+        [x: string]: any
+    }
+    /** Sender bound to this.init.raw */
+    sender: Sender
+    /** Stream of messages */
+    stream: MessageStream<TExtensibleMessage>
+    /** Get a copy of the next message from this.stream */
+    get(condition?: (ctx: IMessage) => boolean): Promise<TExtensibleMessage>
+    /** Reply to user */
+    reply(...message: (string | ICQCode)[]): Promise<ISendResult>
+    /** Question user and get an answer */
+    question(...prompt: (string | ICQCode)[]): Promise<TExtensibleMessage>
+    /** Forward to other sessions */
+    forward(...message: (string | ICQCode)[]): Promise<void[]>
+}
+```
+
