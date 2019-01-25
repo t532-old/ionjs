@@ -1,6 +1,11 @@
 # 起步
 欢迎使用 Ion.js！这份指南将一一介绍 Ion.js 的使用方法。
 
+## 准备
+Ion.js 基于酷Q和 CQHTTP，因此你需要先安装它们。
+- [酷Q：https://cqp.cc](https://cqhttp.cc)
+- [CQHTTP（CoolQ HTTP API）：https://cqhttp.cc](https://cqhttp.cc)
+
 ## 安装
 创建一个新项目：
 ```bash
@@ -12,7 +17,7 @@ npm init
 npm install --save @ionjs/core
 ```
 
-同时还可以安装一系列可选 package（见[@ionjs package 列表](??)），如：
+同时还可以安装一系列可选 package（见[@ionjs package 列表](/packages/index.md)），如：
 ```bash
 npm install --save @ionjs/user-levels # 层级权限管理（MongoDB）
 npm install --save @ionjs/user-groups # 用户组权限管理（MongoDB）
