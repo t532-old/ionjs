@@ -1,7 +1,7 @@
 module.exports = {
     title: 'Ion.js',
     description: 'Yet another QQ bot framework based on CQHTTP &amp; CoolQ.',
-    base: '/docs/',
+    base: '/',
     head: [
         ['link', { rel: 'icon', href: `https://raw.githubusercontent.com/ionjs-dev/ionjs-dev.github.io/master/logo.png` }],
     ],
