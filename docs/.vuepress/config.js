@@ -28,7 +28,8 @@ module.exports = {
                     'using-sessions',
                     'using-middlewares',
                     'using-commands',
-                    'using-sender-receiver'
+                    'using-sender-receiver',
+                    'more-about-sessions'
                 ],
             }],
             '/api/': [{

@@ -1,6 +1,7 @@
 # 使用会话
 ::: tip 参见
 - [API: *function* useSession: 注册会话](/api/functions.html#usesession)
+- [指南: 深入会话](more-about-sessions.md)
 :::
 
 首先，我们观察一下 Ion.js 中会话的概念：
@@ -129,45 +130,3 @@ async function fiveHellos(ctx) {
 `ctx` 还包含了：
 - `ctx.sender`：默认绑定到 `ctx.init.raw` 的 `Sender` 实例。
 - `ctx.stream`：当前会话的 `MessageStream` 消息流。
-
-## 自定义会话
-::: warning 注意
-这一部分可能有些难以理解，请尽量看懂。（
-:::
-通过更高级的会话自定义操作，你可以使会话有更符合你所希望的逻辑。这些自定义由 `ionjs.useSession` 的第二个参数（是一个对象，下称 `options`）指定。
-
-### 会话标识符
-::: tip 参见
-- [API: *function* createSessionManager: 根据会话标识符生成器创建会话管理器](/api/functions.html#createsessionmanager)
-:::
-
-Ion.js 判断消息应该传入哪些会话的依据是将每条消息的**会话标识符**与会话的会话标识符匹配。会话标识符由**会话标识符生成器**产生。通过指定 `options.identifier`，你可以指定会话应该注册到哪个会话标识符生成器下。
-
-Ion.js 默认的会话标识符生成器名称是 `default`，它所生成的的会话标识符是`<user_id> + <contextType> + <unionId>`。例如，`114514message/group/normal1919810` 即为 “在群 `1919810` 中的用户 `114514` 的发送消息行为”。
-
-可选的会话标识符生成器还有：
-- `'group'`，仅生成群号；
-- `'user'`，仅生成发送者 QQ 号。
-
-你也可以自定义标识符生成器：
-```js
-ionjs.createSessionManager('my-identifier', ctx => ctx.message)
-```
-这样，标识符生成器 `'my-identifier'` 生成的会话标识符就是消息的内容。
-
-### 覆盖性与并发性
-::: tip 参见
-- [API: *class* SingleSessionManager: 一对一会话管理器](/api/classes.html#singlesessionmanager)
-- [API: *class* ConcurrentSessionManager: 一对多会话管理器](/api/classes.html#concurrentsessionmanager)
-:::
-
-#### 定义
-- 所有会话默认是**普通会话**；
-- 通过指定 `options.concurrent` 为 `true`，可以使其作为一个**并发会话**被注册。
-- 通过指定 `options.override` 为 `true`，可以使其作为一个**优先普通会话**被注册。
-- 两者不能同时指定。
-
-#### 规则 
-- 并发会话无论当前是否有运行中的会话，都会被触发。
-- 普通会话在当前有其他普通会话运行时，不会被触发。
-- 优先普通会话无论当前是否有运行中的会话，都会被触发。同时，优先普通会话会强制关闭当前普通会话的消息流。
