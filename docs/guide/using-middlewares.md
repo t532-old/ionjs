@@ -5,6 +5,7 @@
 
 如果你之前使用过 [koa](https://koajs.com) 或类似的中间件系统，你应该已经对中间件的概念很熟悉了。
 
+## 注册
 在 Ion.js 中，我们通过函数 `useMiddleware` 来注册中间件：
 ```js
 import { useMiddleware } from '@ionjs/core'
@@ -13,6 +14,10 @@ useMiddleware(async (ctx, next) => {
     await next()
 })
 ```
+
+它只接受一个函数（可以为异步）。
+- 这个函数的第一个参数（`ctx`）是 `TExtensibleMessage`，即经上一个中间件处理后的 CQHTTP 上报消息。
+- 第二个参数（`next`）则是一个异步函数，只有调用它，下一个中间件才能得以执行。
 
 ::: warning 注意
 Ion.js 默认注册了一个中间件，它负责将信息传入会话管理器。因此，你注册的最后一个中间件若想使会话正确执行，也应该调用 `await next()`。
