@@ -55,14 +55,19 @@
         background-color: white;
         color: black;
     }
+
+    .homepage-header--positioner {
+        width: auto;
+    }
     
     @media (min-width: 700px) {
         .homepage-header {
             background-image: url("/static/background-wide.svg");
+            max-height: 700px;
         }
         .homepage-header--positioner {
             position: relative;
-            left: 22em;
+            left: 25em;
             top: 13em;
         }
     }
@@ -70,6 +75,7 @@
     @media (max-width: 700px) and (min-width: 500px) {
         .homepage-header {
             background-image: url("/static/background-narrow.svg");
+            max-height: 650px;
         }
         .homepage-header--positioner {
             position: relative;
@@ -82,17 +88,25 @@
     @media (max-width: 500px) {
         .homepage-header {
             background-image: url("/static/background-narrow.svg");
+            max-height: 550px;
         }
         .homepage-header--positioner {
-            position: relative;
-            top: 70vw;
-            text-align: center;
-            left: 9vw;
+            transform: translateX(calc(70vw - 12em)) translateY(70vw);
         }
         .homepage-header-link {
-            position: relative;
-            margin-left: 0;
-            left: 5vw;
+            width: 7em;
+        }
+    }
+
+    @media (min-width: 400px) and (max-width: 420px) {
+        .homepage-header--positioner {
+            transform: translateX(calc(70vw - 12em)) translateY(70vw);
+        }
+    }
+
+    @media (min-width: 420px) and (max-width: 500px) {
+        .homepage-header--positioner {
+            transform: translateX(calc(70vw - 14em)) translateY(70vw);
         }
     }
 </style>
