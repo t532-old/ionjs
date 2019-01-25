@@ -24,7 +24,7 @@ type TExtensibleMessage = IMessage & {
 ## TMiddleware [<Badge text="classes/middleware/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/middleware/definitions.ts)
 中间件处理器 `MiddlewareManager` 可接受的中间件。
 
-```ts {2}
+```ts {}
 type TMiddleware = (ctx: any, next: () => Promise<void>) => void
 ```
 
