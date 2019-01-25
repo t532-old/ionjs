@@ -3,7 +3,7 @@
 ## IBaseResult [<Badge text="classessender/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/sender/definitions.ts)
 CQHTTP API 调用的响应数据。
 
-```ts {}
+```ts {1}
 interface IBaseResult {
     status: 'ok' | 'async' | 'failed'
     retcode: number
@@ -56,7 +56,7 @@ interface ICommandParameters {
 ## ICQCode [<Badge text="classes/cqcode/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/cqcode/definitions.ts)
 CQHTTP 数组消息格式中的CQ码。
 
-```ts {}
+```ts {1}
 interface ICQCode {
     type: string
     data: {
@@ -69,7 +69,7 @@ interface ICQCode {
 ## ICredentialsResult [<Badge text="classes/receiver/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/receiver/definitions.ts)
 CQHTTP `/get_credentials` API 的响应数据。
 
-```ts {}
+```ts {1}
 interface ICredentialsResult extends IBaseResult {
     data: {
         cookies: string
@@ -81,7 +81,7 @@ interface ICredentialsResult extends IBaseResult {
 ## IGroupListResult [<Badge text="classes/receiver/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/receiver/definitions.ts)
 CQHTTP `/get_group_list` API 的响应数据。
 
-```ts {}
+```ts {1}
 interface IGroupListResult extends IBaseResult {
     data: {
         group_id: number
@@ -93,7 +93,7 @@ interface IGroupListResult extends IBaseResult {
 ## IInfoResult [<Badge text="classes/receiver/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/receiver/definitions.ts)
 CQHTTP `/get_stranger_info` 或 `/get_group_member_info` API 的响应数据。
 
-```ts {}
+```ts {1}
 interface IInfoResult extends IBaseResult {
     data: {
         user_id: number
@@ -117,7 +117,7 @@ interface IInfoResult extends IBaseResult {
 ## IMessage [<Badge text="classes/receiver/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/receiver/definitions.ts)
 CQHTTP 的上报消息。
 
-```ts {}
+```ts {1}
 interface IMessage {
     post_type?: 'message' | 'notice' | 'request' | 'meta_event'
     message_type?: 'private' | 'group' | 'discuss'
@@ -154,7 +154,7 @@ interface IMessage {
 ## INoneResult [<Badge text="classes/receiver/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/receiver/definitions.ts)
 CQHTTP 无附加响应信息的 API 的响应数据。
 
-```ts {}
+```ts {1}
 interface INoneResult extends IBaseResult {
     data: null
 }
@@ -163,7 +163,7 @@ interface INoneResult extends IBaseResult {
 ## IPluginStatusResult [<Badge text="classes/receiver/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/receiver/definitions.ts)
 CQHTTP `/get_plugin_status` API 的响应数据。
 
-```ts {}
+```ts {1}
 interface IPluginStatusResult extends IBaseResult {
     data: {
         app_initialized: boolean
@@ -179,7 +179,7 @@ interface IPluginStatusResult extends IBaseResult {
 ## IPluginVersionInfoResult [<Badge text="classes/receiver/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/receiver/definitions.ts)
 CQHTTP `/get_plugin_version_info` API 的响应数据。
 
-```ts {}
+```ts {1}
 interface IPluginVersionInfoResult extends IBaseResult {
     data: {
         coolq_directory: string
@@ -195,7 +195,7 @@ interface IPluginVersionInfoResult extends IBaseResult {
 ## IRecordResult [<Badge text="classes/receiver/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/receiver/definitions.ts)
 CQHTTP `/get_record` API 的响应数据。
 
-```ts {}
+```ts {1}
 interface IRecordResult extends IBaseResult {
     data: {
         file: string
@@ -206,7 +206,7 @@ interface IRecordResult extends IBaseResult {
 ## ISelfInfoResult [<Badge text="classes/receiver/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/receiver/definitions.ts)
 CQHTTP `/get_login_info` API 的响应数据。
 
-```ts {}
+```ts {1}
 interface ISelfInfoResult extends IBaseResult {
     data: {
         user_id: number
@@ -218,7 +218,7 @@ interface ISelfInfoResult extends IBaseResult {
 ## ISendResult [<Badge text="classes/receiver/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/receiver/definitions.ts)
 CQHTTP `/send_*_message` API 的响应数据。
 
-```ts {}
+```ts {1}
 interface ISendResult extends IBaseResult {
     data: {
         message_id: number

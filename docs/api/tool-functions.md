@@ -3,7 +3,7 @@
 ## contextTypeOf [<Badge text="classes/receiver/utils" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/receiver/utils.ts)
 获取上报数据的上报类型。
 
-```ts
+```ts {1}
 function contextTypeOf(ctx: any): string[]
 ```
 
@@ -21,6 +21,6 @@ function escapeArgument(str: string): string
 ## unionIdOf [<Badge text="classes/receiver/utils" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/receiver/utils.ts)
 若上报消息来自群组，返回群号/讨论组；否则返回QQ号。
 
-```ts
+```ts {1}
 function unionIdOf(ctx: any): number
 ```

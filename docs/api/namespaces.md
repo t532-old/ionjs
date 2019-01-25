@@ -3,7 +3,7 @@
 ## Codes [<Badge text="classes/cqcode/codes" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/cqcode/codes.ts)
 生成CQ码的工具函数。
 
-```ts {2,8,14,20,26,32,38,45,51,55,59,63,69,76,87}
+```ts {1,2,8,14,20,26,32,38,45,51,55,59,63,69,76,87}
 const Codes: {
     Text(text: string): {
         type: string
@@ -105,7 +105,7 @@ const Codes: {
 ## Utils [<Badge text="classes/cqcode/utils" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/cqcode/utils.ts)
 转换CQ码的工具函数。
 
-```ts {2,3,4,5,6,7,8,9,10}
+```ts {1,2,3,4,5,6,7,8,9,10}
 const Utils: {
     isCQCodeObject(obj: any): obj is ICQCode
     isRealCQCodeObject(obj: any): boolean

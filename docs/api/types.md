@@ -24,7 +24,7 @@ type TExtensibleMessage = IMessage & {
 ## TMiddleware [<Badge text="classes/middleware/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/middleware/definitions.ts)
 中间件处理器 `MiddlewareManager` 可接受的中间件。
 
-```ts {}
+```ts {1}
 type TMiddleware = (ctx: any, next: () => Promise<void>) => void
 ```
 
@@ -39,14 +39,14 @@ type TParser = (ctx: any, ...extraArgs: any[]) => any | Promise<any>
 ## TSessionFn [<Badge text="classes/session/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/session/definitions.ts)
 会话管理器 `SessionStore` 可接受的会话函数。
 
-```ts {}
+```ts {1}
 type TSessionFn<T> = (stream: MessageStream<T>) => void
 ```
 
 ## TSessionMatcher [<Badge text="classes/session/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/session/definitions.ts)
 会话管理器 `SessionStore` 可接受的会话条件判断函数。
 
-```ts {}
+```ts {1}
 type TSessionMatcher<T> = (ctx: T) => boolean | Promise<boolean>
 ```
 
