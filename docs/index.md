@@ -42,7 +42,6 @@ Ion.js 提供了更强大的命令声明与解析，包括一系列特性：具�
         background-color: black;
         background-repeat: no-repeat;
         background-size: cover;
-        height: 90vh;
         width: 100%;
         box-shadow: gray 0 0 20px -3px;
     }
@@ -85,7 +84,7 @@ Ion.js 提供了更强大的命令声明与解析，包括一系列特性：具�
     @media (min-width: 700px) {
         .homepage-header {
             background-image: url("/static/background-wide.svg");
-            max-height: 700px;
+            height: 700px;
         }
         .homepage-header--positioner {
             position: relative;
@@ -97,7 +96,7 @@ Ion.js 提供了更强大的命令声明与解析，包括一系列特性：具�
     @media (max-width: 700px) and (min-width: 500px) {
         .homepage-header {
             background-image: url("/static/background-narrow.svg");
-            max-height: 650px;
+            height: 650px;
         }
         .homepage-header--positioner {
             position: relative;
@@ -110,7 +109,7 @@ Ion.js 提供了更强大的命令声明与解析，包括一系列特性：具�
     @media (max-width: 500px) {
         .homepage-header {
             background-image: url("/static/background-narrow.svg");
-            max-height: 550px;
+            height: 550px;
         }
         .homepage-header--positioner {
             transform: translateX(calc(70vw - 12em)) translateY(70vw);
