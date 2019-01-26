@@ -25,9 +25,9 @@ test(`Form CQCode`, () => {
 
 test(`Filter CQCode Types`, () => {
     const arr = [{ type: 'text', data: { text: 'abc' } }, { type: 'at', data: { qq: '1145141919810' } }]
-    const raw = 'abc[CQ:at,qq=1145141919810]', str = 'abc[CQ:at,qq=1145141919810]', any = { type: 'text', data: { text: 'abc' } }
-    expect(Utils.filterType(arr, 'raw')).toBe(raw)
+    const raw = 'abc[CQ:at,qq=1145141919810]', str = 'abc[CQ:at,qq=1145141919810]', any = [{ type: 'text', data: { text: 'abc' } }, {data: {qq: '1145141919810'}, type: 'at'}]
+    expect(Utils.filterType(arr, 'rawstring')).toBe(raw)
     expect(Utils.filterType(arr, 'string')).toBe(str)
     expect(Utils.filterType(arr, 'any')).toEqual(any)
-    expect(Utils.filterType(arr, 'text')).toEqual({ type: 'text', data: { text: 'abc' } })
+    expect(Utils.filterType(arr, 'text')).toEqual([{ type: 'text', data: { text: 'abc' } }])
 })

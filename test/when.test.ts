@@ -72,8 +72,8 @@ test('Validator & Parser: Command', async () => {
     let commWhen: BotWhen
     expect(() => commWhen = new BotWhen().command(['name_a', 'name_b'], '<arg> <arg2> [arg3]=良いよ来いよ', {
         types: {
-            arg: 'raw',
-            arg2: 'array',
+            arg: 'rawstring',
+            arg2: 'any',
         },
         prompts: { arg2: 'GIVE THIS PARAMETER: arg2' },
     })).not.toThrow()

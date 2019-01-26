@@ -45,17 +45,21 @@ export async function processArgs(
 ) {
     notGiven = [
         ...notGiven, 
-        ...Object.keys(args).filter(i => !Utils.filterType(args[i], types[i] || 'string')), 
+        ...Object.keys(args).filter(i => !Utils.filterType(Utils.stringToArray(args[i]), types[i] || 'string')), 
         ...Object.keys(args).filter(i => validators[i]).filter(i => {
-            const data = Utils.filterType(args[i], types[i] || 'string')
+            const data = Utils.filterType(Utils.stringToArray(args[i]), types[i] || 'string')
             return data && validators[i](data)
         })
     ]
     for (const i of notGiven) {
         const prompt = prompts[i] || prompts.$default.replace(/\{\}/g, i)
         await sender.to(init).send(prompt)
-        args[i] = await stream.get(({ message }) =>
-            validators[i](message) && (Utils.filterType(message, types[i] || 'string') ? true : false))
+        args[i] = await stream.get(async ({ message }) => {
+            const converted = Utils.filterType(Utils.stringToArray(message), types[i] || 'string')
+            if (!converted) return false
+            if (validators[i]) return await validators[i](converted)
+            else return true
+        })
     }
     for (const i in args) args[i] = Utils.filterType(Utils.stringToArray(args[i]), types[i] || 'string')
 }

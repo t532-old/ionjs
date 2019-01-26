@@ -16,11 +16,11 @@ export class MessageStream<T> extends PassThrough {
      * if there is an object in the stream, it'll be directly resolved;
      * else it'll be resolved when a new object is pushed into the stream.
      */
-    get(condition: (ctx: T) => boolean = () => true): Promise<T> {
-        function _recursiveHandler(resolve: (ctx: T) => void, reject: (err: MessageStreamError) => void) {
+    get(condition: (ctx: T) => Promise<boolean>|boolean = () => true): Promise<T> {
+        async function _recursiveHandler(resolve: (ctx: T) => void, reject: (err: MessageStreamError) => void) {
             debugExVerbose('get:attempt')
             const result = this.read()
-            if (result && !!condition(result)) {
+            if (result && await condition(result)) {
                 debugExVerbose('get:success')
                 resolve(result)
             } else {
