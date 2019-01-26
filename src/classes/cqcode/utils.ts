@@ -35,10 +35,9 @@ export const Utils = {
         return converted
     },
     filterType(message: ICQCode[], type: string) {
-        if (type === 'raw') return Utils.arrayToString(message)
+        if (type === 'rawstring') return Utils.arrayToString(message)
         else if (type === 'string') return Utils.decodePlainText(Utils.arrayToString(message))
-        else if (type === 'array') return message
-        else if (type === 'any') return message[0]
-        else return message.find(i => i.type === type)
+        else if (type === 'any') return message
+        else return message.filter(i => i.type === type)
     }
 }
