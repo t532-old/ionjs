@@ -90,7 +90,7 @@ interface IGroupListResult extends IBaseResult {
 }
 ```
 
-## IInfoResult <Badge text="0.2.0+" /> [<Badge text="classes/receiver/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/receiver/definitions.ts)
+## IInfoResult [<Badge text="0.2.0+" /> <Badge text="classes/receiver/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/receiver/definitions.ts)
 CQHTTP `/get_stranger_info` 或 `/get_group_member_info` API 的响应数据。
 
 ```ts {1}
@@ -114,7 +114,7 @@ interface IInfoResult extends IBaseResult {
 }
 ```
 
-## IMemberInfoResult <Badge text="0.2.0-" type="error" /> [<Badge text="classes/receiver/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/receiver/definitions.ts)
+## IMemberInfoResult [<Badge text="0.2.0-" type="error" /> <Badge text="classes/receiver/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/receiver/definitions.ts)
 CQHTTP `/get_group_member_info` API 的响应数据。
 
 ```ts {1}
@@ -138,7 +138,7 @@ interface IMemberInfoResult extends IBaseResult {
 }
 ```
 
-## IMessage <Badge text="0.2.0+" /> [<Badge text="classes/receiver/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/receiver/definitions.ts)
+## IMessage [<Badge text="0.2.0+" /> <Badge text="classes/receiver/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/receiver/definitions.ts)
 CQHTTP 的上报消息。
 
 ```ts {1}
@@ -275,7 +275,7 @@ interface ISessionContext {
 }
 ```
 
-## IStrangerInfoResult <Badge text="0.2.0-" type="error" /> [<Badge text="classes/receiver/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/receiver/definitions.ts)
+## IStrangerInfoResult [<Badge text="0.2.0-" type="error" /> <Badge text="classes/receiver/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/receiver/definitions.ts)
 CQHTTP `/get_stranger_info` API 的响应数据。
 
 ```ts {1}

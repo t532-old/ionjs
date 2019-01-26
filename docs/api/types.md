@@ -1,6 +1,6 @@
 # 类型别名
 
-## TCommandProcessor <Badge text="0.3.0-" type="error" /> [<Badge text="classes/command/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/command/definitions.ts)
+## TCommandProcessor [<Badge text="0.3.0-" type="error" /> <Badge text="classes/command/definitions"></Badge>](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/command/definitions.ts)
 命令解析完毕后的可选参数处理函数。
 
 ```ts {2}
