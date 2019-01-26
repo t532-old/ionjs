@@ -11,58 +11,55 @@ test('Check Command Name', () => {
     expect(command.is('not_this')).toBe(false)
 })
 
-test('Parse Regular Args', async () => {
+test('Parse Regular Args', () => {
     expect.assertions(1)
-    expect((await command.parse('comm whatever')).arguments.a).toBe('whatever')
+    expect(command.parse('comm whatever').arguments.a).toBe('whatever')
 })
 
-test('Parse Default Args', async () => {
+test('Parse Default Args', () => {
     expect.assertions(1)
-    expect((await command.parse('comm whatever')).arguments.b).toBe('1')
+    expect(command.parse('comm whatever').arguments.b).toBe('1')
 })
 
-test('Parse Aliased Args', async () => {
+test('Parse Aliased Args', () => {
     expect.assertions(1)
-    expect((await command.parse('comm whatever @i_am_aliased')).arguments.c).toBe('i_am_aliased')
+    expect(command.parse('comm whatever @i_am_aliased').arguments.c).toBe('i_am_aliased')
 })
 
-test('Parse Key-Value Pair Args', async () => {
+test('Parse Key-Value Pair Args', () => {
     expect.assertions(1)
-    expect((await command.parse('comm whatever b=i_am_paired')).arguments.b).toBe('i_am_paired')
+    expect(command.parse('comm whatever b=i_am_paired').arguments.b).toBe('i_am_paired')
 })
 
-test('Parse Unordered Args', async () => {
+test('Parse Unordered Args', () => {
     expect.assertions(1)
-    expect((await command.parse('comm whatever whatever whatever d=value whatever')).arguments.d).toBe('value')
+    expect(command.parse('comm whatever whatever whatever d=value whatever').arguments.d).toBe('value')
 })
 
-test('Parse Rest Args', async () => {
+test('Parse Rest Args', () => {
     expect.assertions(1)
-    expect((await command.parse('comm whatever whatever whatever whatever whatever')).rest).toContain('whatever')
+    expect(command.parse('comm whatever whatever whatever whatever whatever').rest).toContain('whatever')
 })
 
-test('Parse Options', async () => {
+test('Parse Options', () => {
     expect.assertions(1)
-    expect((await command.parse('comm whatever --option')).options).toContain('--option')
+    expect(command.parse('comm whatever --option').options).toContain('--option')
 })
 
-test('Split Quoted Strings', async () => {
+test('Split Quoted Strings', () => {
     expect.assertions(1)
-    expect((await command.parse('comm "a b"')).arguments.a).toBe('a b')
+    expect(command.parse('comm "a b"').arguments.a).toBe('a b')
 })
 
-test('Split Escaped Strings', async () => {
+test('Split Escaped Strings', () => {
     expect.assertions(1)
-    expect((await command.parse('comm \\"a\\ b\\"\\\\')).arguments.a).toBe('"a b"\\')
+    expect(command.parse('comm \\"a\\ b\\"\\\\').arguments.a).toBe('"a b"\\')
 })
 
-test('Create Command With Processors', () => {
-    expect(() => command = new Command('comm <a>:description', async function processor(args, { parameters: params }) {
-        args.arguments.a = `${params.description.a}:${args.arguments.a}`
-    })).not.toThrow()
+test('Name Error', () => {
+    expect(() => command.parse('not_this a')).toThrow()
 })
 
-test('Parse Descripted Args', async () => {
-    expect.assertions(1)
-    expect((await command.parse('comm a')).arguments.a).toBe('description:a')
+test('Arg Error', () => {
+    expect(() => command.parse('comm')).toThrow()
 })

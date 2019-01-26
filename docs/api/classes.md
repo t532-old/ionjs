@@ -3,50 +3,55 @@
 ## BotWhen [<Badge text="classes/when/derived" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/when/derived.ts)
 针对QQ机器人特化的条件判断器 `When`，带有一系列实用方法。
 
-```ts {2,3,10,12,17,24,29,34,41,43}
+```ts {2,3,10,12,18,25,30,36,43,48}
 /** A class that represents conditions that determines whether a session should start ot not */
-class BotWhen extends When {
+export declare class BotWhen extends When {
     static init({ operators, prefixes, self }: {
-        operators: number[]
-        prefixes: string[]
-        self: number
-    }): void
-    private derive
+        operators: number[];
+        prefixes: string[];
+        self: number;
+    }): void;
+    private derive;
     /** Return a When instance with no conditions */
-    ever(): BotWhen
+    ever(): BotWhen;
     /** Add the raw message to the parsed result */
-    raw(): BotWhen
+    raw(): BotWhen;
     /**
      * Add a custom matcher
      * @param condition the matcher
+     * @param failMessage message that'll be sent to user when invalid
      */
     match(condition: {
-        [x: string]: any
-    }): BotWhen
+        [x: string]: any;
+    }, ...failMessage: (string | ICQCode)[]): BotWhen;
     /**
      * Check if a message contains one of the keywords
      * @param keywords the keywords
      */
-    contain(...keywords: (RegExp | string)[]): BotWhen
+    contain(...keywords: (RegExp | string)[]): BotWhen;
     /**
      * Specify expected content types
      * @param type The expected content type(s)
      */
-    type(...types: string[]): BotWhen
+    type(...types: string[]): BotWhen;
     /**
      * Specify the required role
      * @param role The role
+     * @param failMessage message that'll be sent to user when invalid
      */
-    role(role: 'everyone' | 'admin' | 'owner' | 'operator'): BotWhen
+    role(role: 'everyone' | 'admin' | 'owner' | 'operator', ...failMessage: (string | ICQCode)[]): BotWhen;
     /**
      * Use a command for the conditions
      * @param names the commands' names
      * @param params the parameters' declaration
      * @param withPrefixes whether this Command should be called with prefixes
      */
-    command(names: string | string[], params?: string, withPrefixes?: boolean): BotWhen
-    /** At only */
-    at(): BotWhen
+    command(names: string | string[], params?: string, withPrefixes?: boolean): BotWhen;
+    /**
+     * At only
+     * @param failMessage message that'll be sent to user when invalid
+     */
+    at(...failMessage: (string | ICQCode)[]): BotWhen;
 }
 ```
 

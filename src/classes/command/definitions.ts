@@ -8,8 +8,6 @@ export interface ICommandParameters {
     ordered: string[]
     /** An array of required params */
     required: string[]
-    /** Description of parameters */
-    description: { [param: string]: string }
 }
 
 /** A list of given arguments */
@@ -21,6 +19,3 @@ export interface ICommandArguments {
     /** Rest unparsed items */
     rest: any[]
 }
-
-/** An extraneous processor for arguments */
-export type TCommandProcessor = (args: ICommandArguments, params: { parameters: ICommandParameters, options: string[] }, ...extraArgs: any[]) => void

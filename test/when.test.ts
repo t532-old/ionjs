@@ -61,20 +61,33 @@ test('Validator: At', async () => {
     expect(await when.validate({ message: '[CQ:at,qq=114514]' })).toBeFalsy()
 })
 
-test('Validator & Parser: Role (Only Creation Call)', async () => {
+test('Validator & Parser: Role (Only Creation Call)', () => {
     for (const i of ['everyone', 'admin', 'owner', 'operator']) {
         expect(() => when = new BotWhen().role(i as 'everyone'|'admin'|'owner'|'operator')).not.toThrow()
     }
 })
 
-test('Validator & Parser: Command (Only Creation Call)', async () => {
-    expect(() => when = new BotWhen().command(['name_a', 'name_b'], '<arg>:raw <arg2>:array,GIVE\ THIS\ PARAMETER [arg3($)]=良いよ来いよ')).not.toThrow()
+test('Validator & Parser: Command', async () => {
+    expect.assertions(2)
+    let commWhen: BotWhen
+    expect(() => commWhen = new BotWhen().command(['name_a', 'name_b'], '<arg> <arg2> [arg3]=良いよ来いよ', {
+        types: {
+            arg: 'raw',
+            arg2: 'array',
+        },
+        prompts: { arg2: 'GIVE THIS PARAMETER: arg2' },
+    })).not.toThrow()
+    expect((await commWhen.parse({ message: '!name_a 1 2' })).command.arguments).toEqual({
+        arg: '1',
+        arg2: [{ type: 'text', data: { text: '2' } }],
+        arg3: '良いよ来いよ'
+    })
 })
 
-test('Repeating Validators and Parsers', async () => {
-    expect(() => when = new BotWhen().command('dummy').command(['name_a', 'name_b'], '<arg>:raw <arg2>:array,GIVE\ THIS\ PARAMETER [arg3($)]=良いよ来いよ')).not.toThrow()
+test('Repeating Validators and Parsers', () => {
+    expect(() => when = new BotWhen().command('dummy').command(['name_a', 'name_b'], '<arg> <arg2> [arg3($)]=良いよ来いよ')).not.toThrow()
 })
 
-test('Utilities: processCommandString', async () => {
-    expect(processCommandString('a [CQ:at,qq=1] b=c')).toBe('a [CQ:at,qq\\\\=1] b=c')
+test('Utilities: processCommandString', () => {
+    expect(processCommandString('a [CQ:at,qq="1"] b="c"')).toBe('a "[CQ:at,qq\\\\=\\"1\\"]" b="c"')
 })

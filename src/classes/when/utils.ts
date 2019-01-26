@@ -1,9 +1,11 @@
 import { config } from './derived'
 import { sender } from '../../instances/sender'
 import { MessageStream } from '../session'
-import { Utils as CQCodeUtils } from '../cqcode'
+import { Utils as Utils } from '../cqcode'
 import { IMessage } from '../receiver'
 import { TExtensibleMessage } from '../../instances/definitions'
+import { escapeArgument, ICommandArguments } from '../command'
+import { TValidator } from './definitions'
 
 export function compare(matcher: any, obj: any) {
     if (matcher instanceof RegExp) return matcher.test(obj)
@@ -15,32 +17,45 @@ export function compare(matcher: any, obj: any) {
     return true
 }
 
-export async function commandProcessor({ arguments: args }, { parameters: params }, rawMessage: IMessage, stream: MessageStream<TExtensibleMessage>) {
-    const paramList = [...params.required, ...Object.keys(args)].reduce((acc, val) => acc.includes(val) ? acc : [...acc, val], [])
-    for (const i of paramList) {
-        const rawDescription: string[] = (params.description[i] || '').split(',').reduce((acc, val) => {
-            if (acc.length >= 2) return [acc[0], acc[1] + val]
-            else return [...acc, val]
-        }, [])
-        const description = { type: rawDescription[0] || 'string', prompt: rawDescription[1] || `Enter '${i}'${rawDescription[0] ? `(include ${rawDescription[0]})` : ''}:` }
-        let result = CQCodeUtils.filterType(CQCodeUtils.stringToArray(args[i] || ''), description.type)
-        while (!result) {
-            await sender.to(rawMessage).send(description.prompt)
-            result = CQCodeUtils.filterType(CQCodeUtils.stringToArray((await stream.get()).message), description.type)
-        }
-        args[i] = result
-    }
-}
-
 export function processCommandString(msg: string) {
-    let str = CQCodeUtils.arrayToString(CQCodeUtils.stringToArray(msg).map(i => i.type === 'text' ? i : { 
+    let str = Utils.arrayToString(Utils.stringToArray(msg).map(i => i.type === 'text' ? i : { 
         type: i.type, 
         data: Object.keys(i.data).reduce((acc, val) => {
-            acc[`${val}\\\\`] = i.data[val]
+            acc[`${val}\\\\`] = escapeArgument(i.data[val])
             return acc
-        }, {}) 
-    })).trim()
+        }, {})
+    })).trim().replace(/\[/g, '"[').replace(/\]/g, ']"')
     const escapedAtSelf = config.atSelf.replace(/=/g, '\\\\=')
     if (str.startsWith(escapedAtSelf)) str = str.slice(escapedAtSelf.length).trim()
     return str
+}
+
+export async function processArgs(
+    { arguments: args }: ICommandArguments, 
+    notGiven: string[], 
+    { prompts, types, validators }: { 
+        prompts: { [param: string]: string }, 
+        types: { [param: string]: string }, 
+        validators: { [param: string]: TValidator },
+    },
+    { init, stream }: { 
+        init: TExtensibleMessage, 
+        stream: MessageStream<TExtensibleMessage> 
+    }
+) {
+    notGiven = [
+        ...notGiven, 
+        ...Object.keys(args).filter(i => !Utils.filterType(args[i], types[i] || 'string')), 
+        ...Object.keys(args).filter(i => validators[i]).filter(i => {
+            const data = Utils.filterType(args[i], types[i] || 'string')
+            return data && validators[i](data)
+        })
+    ]
+    for (const i of notGiven) {
+        const prompt = prompts[i] || prompts.$default.replace(/\{\}/g, i)
+        await sender.to(init).send(prompt)
+        args[i] = await stream.get(({ message }) =>
+            validators[i](message) && (Utils.filterType(message, types[i] || 'string') ? true : false))
+    }
+    for (const i in args) args[i] = Utils.filterType(Utils.stringToArray(args[i]), types[i] || 'string')
 }
