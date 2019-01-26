@@ -1,7 +1,18 @@
 /// <reference types="jest" />
+import * as Koa from 'koa'
+import * as koaBody from 'koa-bodyparser'
+import axios from 'axios'
+import { EventEmitter } from 'events'
 import { BotWhen } from '../src/classes/when'
 import { processCommandString } from '../src/classes/when/utils'
+import { init as initSender } from '../src/instances/sender'
 let when: BotWhen
+const bus = new EventEmitter()
+const fakeServer = new Koa().use(koaBody()).use(async ctx => {
+    ctx.status = 200
+    bus.emit('receive', ctx.request.body)
+}).listen(5701)
+initSender('http://localhost:5701')
 
 test('Create BotWhen instance', () => expect(() => when = new BotWhen()).not.toThrow())
 
@@ -67,8 +78,7 @@ test('Validator & Parser: Role (Only Creation Call)', () => {
     }
 })
 
-test('Validator & Parser: Command', async () => {
-    expect.assertions(2)
+test('Validator & Parser: Command', async (done) => {
     let commWhen: BotWhen
     expect(() => commWhen = new BotWhen().command(['name_a', 'name_b'], '<arg> <arg2> [arg3]=良いよ来いよ', {
         types: {
@@ -77,7 +87,12 @@ test('Validator & Parser: Command', async () => {
         },
         prompts: { arg2: 'GIVE THIS PARAMETER: arg2' },
     })).not.toThrow()
-    expect((await commWhen.parse({ message: '!name_a 1 2' })).command.arguments).toEqual({
+    bus.on('receive', ctx => {
+        expect(ctx).toEqual({ message: [ { type: 'text', data: { text: 'GIVE THIS PARAMETER: arg2' } }], user_id: 114514 })
+        done()
+    })
+    try { await commWhen.parse({ message_type: 'private', user_id: 114514, message: '!name_a 2' }) } catch {}
+    expect((await commWhen.parse({ message_type: 'private', user_id: 114514, message: '!name_a 1 2' })).command.arguments).toEqual({
         arg: '1',
         arg2: [{ type: 'text', data: { text: '2' } }],
         arg3: '良いよ来いよ'
