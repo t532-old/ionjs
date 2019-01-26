@@ -3,7 +3,7 @@ module.exports = {
     description: 'Yet another QQ bot framework based on CQHTTP &amp; CoolQ.',
     base: '/',
     head: [
-        ['link', { rel: 'icon', href: `https://raw.githubusercontent.com/ionjs-dev/ionjs-dev.github.io/master/logo.png` }],
+        ['link', { rel: 'icon', href: `/static/logo.png` }],
     ],
     themeConfig: {
         repo: 'ionjs-dev/ionjs',
