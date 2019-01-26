@@ -90,7 +90,7 @@ interface IGroupListResult extends IBaseResult {
 }
 ```
 
-## IInfoResult [<Badge text="classes/receiver/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/receiver/definitions.ts)
+## IInfoResult <Badge text="0.2.0+" /> [<Badge text="classes/receiver/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/receiver/definitions.ts)
 CQHTTP `/get_stranger_info` 或 `/get_group_member_info` API 的响应数据。
 
 ```ts {1}
@@ -114,7 +114,31 @@ interface IInfoResult extends IBaseResult {
 }
 ```
 
-## IMessage [<Badge text="classes/receiver/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/receiver/definitions.ts)
+## IMemberInfoResult <Badge text="0.2.0-" type="error" /> [<Badge text="classes/receiver/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/receiver/definitions.ts)
+CQHTTP `/get_group_member_info` API 的响应数据。
+
+```ts {1}
+interface IMemberInfoResult extends IBaseResult {
+    data: {
+        user_id: number
+        nickname: string
+        sex: 'male' | 'female' | 'unknown'
+        age: number
+        card: string
+        area: string
+        join_time: number
+        last_sent_time: number
+        level: string
+        role: 'owner' | 'admin' | 'member'
+        unfriendly: boolean
+        title: string
+        title_expire_time: number
+        card_changeable: boolean
+    }
+}
+```
+
+## IMessage <Badge text="0.2.0+" /> [<Badge text="classes/receiver/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/receiver/definitions.ts)
 CQHTTP 的上报消息。
 
 ```ts {1}
@@ -251,3 +275,16 @@ interface ISessionContext {
 }
 ```
 
+## IStrangerInfoResult <Badge text="0.2.0-" type="error" /> [<Badge text="classes/receiver/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/receiver/definitions.ts)
+CQHTTP `/get_stranger_info` API 的响应数据。
+
+```ts {1}
+interface IStrangerInfoResult extends IBaseResult {
+    data: {
+        user_id: number
+        nickname: string
+        sex: 'male' | 'female' | 'unknown'
+        age: number
+    }
+}
+```

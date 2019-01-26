@@ -75,7 +75,7 @@ when 是类 `BotWhen` 的一个实例，它是 Ion.js 条件判断器的默认�
 - [API: *interface* ICommandArguments: 命令解析结果(实参)](/api/interfaces.html#icommandarguments)
 :::
 
-使用 `when.command(命令名, 参数声明)` 来声明一个命令。其中，命令名也可为数组，这意味着注册多个命令。
+使用 `when.command(命令名, 参数声明, 额外选项)` 来声明一个命令。其中，命令名也可为数组，这意味着注册多个命令。
 
 关于命令声明的更多信息，见[**使用命令**](using-commands.html)。
 

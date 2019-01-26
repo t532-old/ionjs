@@ -3,7 +3,7 @@
 ## BotWhen [<Badge text="classes/when/derived" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/when/derived.ts)
 针对QQ机器人特化的条件判断器 `When`，带有一系列实用方法。
 
-```ts {2,3,10,12,18,25,30,36,43,48}
+```ts {2,3,10,12,18,25,30,36,43,59}
 /** A class that represents conditions that determines whether a session should start ot not */
 export declare class BotWhen extends When {
     static init({ operators, prefixes, self }: {
@@ -44,9 +44,20 @@ export declare class BotWhen extends When {
      * Use a command for the conditions
      * @param names the commands' names
      * @param params the parameters' declaration
-     * @param withPrefixes whether this Command should be called with prefixes
+     * @param config the config object
      */
-    command(names: string | string[], params?: string, withPrefixes?: boolean): BotWhen;
+    command(names: string | string[], params?: string, { withPrefixes, types, prompts, validators }?: {
+        withPrefixes?: boolean;
+        types?: {
+            [param: string]: any;
+        };
+        prompts?: string | {
+            [params: string]: string;
+        };
+        validators?: {
+            [params: string]: TValidator;
+        };
+    }): BotWhen;
     /**
      * At only
      * @param failMessage message that'll be sent to user when invalid
@@ -58,46 +69,45 @@ export declare class BotWhen extends When {
 ## Command [<Badge text="classes/command/classes" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/command/classes.ts)
 表达一个命令并可对字符串进行命令解析的类。
 
-```ts {2,17,24,26,31}
+```ts {2,15,18,20,22,27}
 /** A class that represents a shell-like-command and is able to parse commands */
-class Command {
+export declare class Command {
     /** The raw declaration of the command instance */
-    private readonly _raw
+    private readonly _raw;
     /** The delcared parameters */
-    private readonly _parameters
+    private readonly _parameters;
     /** An array of declared options */
-    private readonly _options
+    private readonly _options;
     /** The command's name */
-    private readonly _name
-    /** The command's extraneous processor */
-    private readonly _processor
+    private readonly _name;
     /**
      * Check if a command matches the name
      * @param command the command for checking
      */
-    readonly is: (command: string) => boolean
+    readonly is: (command: string) => boolean;
     /** Regexps for parsing declarations and commands */
-    private static readonly _REGEXES
-    /**
-     * @param declaration The command declaration
-     * @param processor An extraneous processor for parsed args
-     */
-    constructor(declaration: string, processor?: TCommandProcessor)
+    private static readonly _REGEXES;
+    readonly parameters: ICommandParameters;
+    /** @param declaration The command declaration */
+    constructor(declaration: string);
     /** Reloaded version of toString() that returns the raw declaration */
-    toString(): string
+    toString(): string;
     /**
      * Parse a command
      * @param command The command for parsing
      */
-    parse(command: string, ...extraArgs: any[]): Promise<ICommandArguments>
+    parse(command: string): ICommandArguments;
 }
 ```
 
 ## CommandParseError [<Badge text="classes/command/classes" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/command/classes.ts)
 命令类 `Command` 在调用方法 `parse()` 解析时遇到的错误。
 
-```ts {1}
-class CommandParseError extends Error {
+```ts {1,2,3}
+export declare class CommandParseError extends Error {
+    args: ICommandArguments;
+    notGiven: string[];
+    constructor(message: string, result?: ICommandArguments, notGiven?: string[]);
 }
 ```
 

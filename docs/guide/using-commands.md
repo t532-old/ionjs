@@ -7,7 +7,7 @@
 Ion.js 提供了强大、稳定的命令声明与解析。你可以在[注册会话](using-sessions.html)时，对 `when` 调用 `command()`方法（i.e. `when.command(...)`）来声明这个会话对应的命令。
 ```js {2}
 import { when } from '@ionjs/core'
-when.command('命令名', '参数列表')
+when.command('命令名', '参数列表', { ... /* 附加选项 */ })
 ```
 
 ## 命令名与前缀
@@ -19,7 +19,7 @@ when.command('命令名', '参数列表')
 
 同时，在 `when.command()` 中，你可以将命令名（i.e. 第一个参数）指定为一个数组，则它们都会被注册为命令。
 
-如若你不想使用全局前缀，你可以将 `when.command()` 的第三个参数改为 `false`。
+如若你不想使用全局前缀，你可以将 `when.command()` 的第三个参数的 prop `withPrefixes` 改为 `false`。
 
 ## 参数列表
 `when.command()` 的第二个参数是一个字符串，用以表明这个命令的参数列表。字符串中各个参数声明由空格分割。
@@ -66,31 +66,69 @@ when.command('命令名', '参数列表')
 <name>=defaultValue
 ```
 
-### CQ码类型转换
-下面若干个实例包含CQ码类型转换：
-```
-<name>:raw      // 转换为字符串，CQ码符号已转义
-<name>:string   // 转换为字符串，CQ码符号未转义
-<name>:array    // 转换为数组
-<name>:any      // 转换为数组并返回第一项
-<name>:image    // 也可以使用任何一种CQ码类型
-                // 转换为数组并返回第一项符合该类型的
-<name>:share=[CQ:share_empty] // 当与默认值同时使用时放到前面
-```
-
-### 参数询问
-你也可以更改当用户未填写必须参数时的询问消息，它跟随在类型转换的后面：
-```
-<name>:string,请填写你的名字
-<name>:,请填写你的名字       // 缺省类型转换
-```
-
 ### 选项
 如果你填入了一个不符合参数格式的参数，它自动成为一个选项（布尔开关）：
 ```
 --i-am-an-option
 ```
 用户可以通过在命令里包含这段字符串来触发这个选项。
+
+## 附加选项
+`when.command()` 的第三个参数是一个对象（下称 `options`），包含可选的附加选项。
+
+### 不使用全局前缀
+将 `options.withPrefixes` 改为 `false` 以不使用全局前缀。
+
+### 命令参数类型转换
+你可以通过指定 `options.types` 每个命令参数应该转换为什么CQ码类型：
+```js
+{
+    ...,
+    types: {
+        arg1: 'rawstring', // 转义后的字符串
+        arg2: 'string', // 转义前的字符串
+        arg3: 'any', // 数组
+        arg4: 'image', // 只包含某一类 CQ 码的数组
+                       // 可以指定 [CQ:*] 中的任意类型
+        ...,
+    },
+    ...,
+}
+```
+
+### 命令参数询问
+当用户未填写必填参数时，你可以通过指定 `options.prompts` 来尝试让用户再次发送参数：
+```js
+// 通用询问
+{
+    ...,
+    prompts: 'Please enter the argument {}', // {} 将被替换为参数名称
+    ...,
+}
+// 分别指定
+{
+    ...,
+    prompts: {
+        $default: 'Please enter the argument {}', // {} 将被替换为参数名称
+        arg1: 'FATAL: Please enter the arguemnt arg1',
+        ...
+    },
+    ...,
+}
+```
+
+### 参数验证
+你也可以通过指定 `options.validators` 为参数指定验证函数：
+```js
+{
+    ...,
+    validators: {
+        arg1: arg => arg.startsWith('hello'),
+        arg2: arg => arg.split(',').length > 1,
+        ...
+    }
+}
+```
 
 ## 读取结果
 ::: tip 参见

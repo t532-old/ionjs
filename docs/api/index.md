@@ -52,7 +52,7 @@ API 的描述是 TypeScript 自动生成的 `.d.ts`，如果不了解 TypeScript
 - 以大写字母 `T` 开头
 - PascalCased
 :::
-- [TCommandProcessor: 命令处理器](types.html#tcommandprocessor)
+- [TCommandProcessor: 命令处理器](types.html#tcommandprocessor) <Badge text="0.3.0-" type="error" />
 - [TExtensibleMessage: 扩展后消息](types.html#textensiblemessage)
 - [TMiddleware: 中间件](types.html#tmiddleware)
 - [TParser: 条件判断器解析组件](types.html#tparser)
@@ -90,8 +90,9 @@ API 的描述是 TypeScript 自动生成的 `.d.ts`，如果不了解 TypeScript
 - [ICQCode: CQ码](interfaces.html#icqcode)
 - [ICredentialsResult: CQHTTP凭据响应](interfaces.html#icredentialsresult)
 - [IGroupListResult: CQHTTP群组列表响应](interfaces.html#igrouplistresult)
-- [IInfoResult: CQHTTP用户信息响应](interfaces.html#iinforesult)
-- [IMessage: CQHTTP上报消息](interfaces.html#imessage)
+- [IInfoResult: CQHTTP用户信息响应](interfaces.html#iinforesult) <Badge text="0.2.0+" />
+- [IMemberInfoResult: CQHTTP群成员信息响应](interfaces.html#imemberinforesult) <Badge text="0.2.0-" type="error" />
+- [IMessage: CQHTTP上报消息](interfaces.html#imessage) <Badge text="0.2.0+" />
 - [INoneResult: CQHTTP无附加信息响应](interfaces.html#inoneresult)
 - [IPluginStatusResult: CQHTTP插件状态响应](interfaces.html#ipluginstatusresult)
 - [IPluginVersionInfoResult: CQHTTP插件版本信息响应](interfaces.html#ipluginversioninforesult)
@@ -99,3 +100,4 @@ API 的描述是 TypeScript 自动生成的 `.d.ts`，如果不了解 TypeScript
 - [ISelfInfoResult: CQHTTP登录号信息响应](interfaces.html#iselfinforesult)
 - [ISendResult: CQHTTP发信响应](interfaces.html#isendresult)
 - [ISessionContext: Ion.js 扩展会话上下文](interfaces.html#isessioncontext)
+- [IStrangerInfoResult: CQHTTP用户信息响应](interfaces.html#istrangerinforesult) <Badge text="0.2.0-" type="error" />
