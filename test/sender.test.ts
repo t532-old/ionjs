@@ -2,12 +2,6 @@
 import { Sender } from '../src/classes/sender'
 import * as Koa from 'koa'
 import * as koaBody from 'koa-bodyparser'
-declare module "koa" {
-    interface Request {
-        body: any
-        rawBody: string
-    }
-}
 const special = ['constructor', 'to', '_post', '_checkContext']
 const token = Math.random().toString()
 let sender: Sender
