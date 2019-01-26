@@ -14,6 +14,7 @@ module.exports = {
         nav: [
             { text: '指南', link: '/guide/' },
             { text: 'API', link: '/api/' },
+            { text: '扩展', link: '/packages/' },
         ],
         sidebarDepth: 2,
         sidebar: {
@@ -44,6 +45,16 @@ module.exports = {
                     'types',
                     'classes',
                     'interfaces',
+                ],
+            }],
+            '/packages/': [{
+                title: '扩展',
+                collapsable: false,
+                children: [
+                    '',
+                    'auto-accept',
+                    'permission',
+                    'echoer',
                 ],
             }],
         }

@@ -3,7 +3,7 @@
 
 ## 准备
 Ion.js 基于酷Q和 CQHTTP，因此你需要先安装它们。
-- [酷Q：https://cqp.cc](https://cqhttp.cc)
+- [酷Q：https://cqp.cc](https://cqp.cc)
 - [CQHTTP（CoolQ HTTP API）：https://cqhttp.cc](https://cqhttp.cc)
 
 ## 安装
@@ -19,8 +19,7 @@ npm install --save @ionjs/core
 
 同时还可以安装一系列可选 package（见[@ionjs package 列表](/packages/index.md)），如：
 ```bash
-npm install --save @ionjs/user-levels # 层级权限管理（MongoDB）
-npm install --save @ionjs/user-groups # 用户组权限管理（MongoDB）
+npm install --save @ionjs/permission # 权限管理（MongoDB）
 npm install --save @ionjs/auto-accept # 自动同意加群/拉群/好友请求
 # ...
 ```
