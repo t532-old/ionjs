@@ -5,41 +5,41 @@
 
 ```ts {2,3,10,12,18,25,30,36,43,59}
 /** A class that represents conditions that determines whether a session should start ot not */
-export declare class BotWhen extends When {
+class BotWhen extends When {
     static init({ operators, prefixes, self }: {
-        operators: number[];
-        prefixes: string[];
-        self: number;
-    }): void;
-    private derive;
+        operators: number[]
+        prefixes: string[]
+        self: number
+    }): void
+    private derive
     /** Return a When instance with no conditions */
-    ever(): BotWhen;
+    ever(): BotWhen
     /** Add the raw message to the parsed result */
-    raw(): BotWhen;
+    raw(): BotWhen
     /**
      * Add a custom matcher
      * @param condition the matcher
      * @param failMessage message that'll be sent to user when invalid
      */
     match(condition: {
-        [x: string]: any;
-    }, ...failMessage: (string | ICQCode)[]): BotWhen;
+        [x: string]: any
+    }, ...failMessage: (string | ICQCode)[]): BotWhen
     /**
      * Check if a message contains one of the keywords
      * @param keywords the keywords
      */
-    contain(...keywords: (RegExp | string)[]): BotWhen;
+    contain(...keywords: (RegExp | string)[]): BotWhen
     /**
      * Specify expected content types
      * @param type The expected content type(s)
      */
-    type(...types: string[]): BotWhen;
+    type(...types: string[]): BotWhen
     /**
      * Specify the required role
      * @param role The role
      * @param failMessage message that'll be sent to user when invalid
      */
-    role(role: 'everyone' | 'admin' | 'owner' | 'operator', ...failMessage: (string | ICQCode)[]): BotWhen;
+    role(role: 'everyone' | 'admin' | 'owner' | 'operator', ...failMessage: (string | ICQCode)[]): BotWhen
     /**
      * Use a command for the conditions
      * @param names the commands' names
@@ -47,22 +47,22 @@ export declare class BotWhen extends When {
      * @param config the config object
      */
     command(names: string | string[], params?: string, { withPrefixes, types, prompts, validators }?: {
-        withPrefixes?: boolean;
+        withPrefixes?: boolean
         types?: {
-            [param: string]: any;
-        };
+            [param: string]: any
+        }
         prompts?: string | {
-            [params: string]: string;
-        };
+            [params: string]: string
+        }
         validators?: {
-            [params: string]: TValidator;
-        };
-    }): BotWhen;
+            [params: string]: TValidator
+        }
+    }): BotWhen
     /**
      * At only
      * @param failMessage message that'll be sent to user when invalid
      */
-    at(...failMessage: (string | ICQCode)[]): BotWhen;
+    at(...failMessage: (string | ICQCode)[]): BotWhen
 }
 ```
 
@@ -71,32 +71,32 @@ export declare class BotWhen extends When {
 
 ```ts {2,15,18,20,22,27}
 /** A class that represents a shell-like-command and is able to parse commands */
-export declare class Command {
+class Command {
     /** The raw declaration of the command instance */
-    private readonly _raw;
+    private readonly _raw
     /** The delcared parameters */
-    private readonly _parameters;
+    private readonly _parameters
     /** An array of declared options */
-    private readonly _options;
+    private readonly _options
     /** The command's name */
-    private readonly _name;
+    private readonly _name
     /**
      * Check if a command matches the name
      * @param command the command for checking
      */
-    readonly is: (command: string) => boolean;
+    readonly is: (command: string) => boolean
     /** Regexps for parsing declarations and commands */
-    private static readonly _REGEXES;
-    readonly parameters: ICommandParameters;
+    private static readonly _REGEXES
+    readonly parameters: ICommandParameters
     /** @param declaration The command declaration */
-    constructor(declaration: string);
+    constructor(declaration: string)
     /** Reloaded version of toString() that returns the raw declaration */
-    toString(): string;
+    toString(): string
     /**
      * Parse a command
      * @param command The command for parsing
      */
-    parse(command: string): ICommandArguments;
+    parse(command: string): ICommandArguments
 }
 ```
 
@@ -104,10 +104,10 @@ export declare class Command {
 命令类 `Command` 在调用方法 `parse()` 解析时遇到的错误。
 
 ```ts {1,2,3}
-export declare class CommandParseError extends Error {
-    args: ICommandArguments;
-    notGiven: string[];
-    constructor(message: string, result?: ICommandArguments, notGiven?: string[]);
+class CommandParseError extends Error {
+    args: ICommandArguments
+    notGiven: string[]
+    constructor(message: string, result?: ICommandArguments, notGiven?: string[])
 }
 ```
 
