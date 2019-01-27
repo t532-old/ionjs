@@ -1,0 +1,32 @@
+{
+  "name": "@ionjs/auto-accept",
+  "version": "0.1.0",
+  "description": "An auto-accept module for Ion.js",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "jest",
+    "build": "tsc"
+  },
+  "files": [
+    "LICENSE",
+    "package.json",
+    "dist/"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ionjs-dev/ionjs.git"
+  },
+  "author": "ionjs-dev",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ionjs-dev/ionjs/issues"
+  },
+  "homepage": "https://github.com/ionjs-dev/ionjs#readme",
+  "dependencies": {
+    "@ionjs/core": "^0.3.0"
+  },
+  "devDependencies": {
+    "jest": "^24.0.0",
+    "typescript": "^3.2.4"
+  }
+}
