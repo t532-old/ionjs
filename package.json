@@ -1,6 +1,6 @@
 {
   "name": "@ionjs/core",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Yet another QQ bot framework based on CQHTTP & CoolQ.",
   "main": "index.js",
   "types": "index.d.ts",
