@@ -13,7 +13,7 @@ foreach ($filename in dir -name "ionjs/docs/.vuepress/dist") { # For every compi
 }
 # Commit and Push
 cd "docs"
-git config user.email "2037246484@qq.com" # Config Email
+git config user.email "trustq@qq.com" # Config Email
 git config user.name "t532 via AppVeyor CI" # Config Name
 git add * # Stage
 git commit -m "AppVeyor CI Automated Deploy" # Commit
