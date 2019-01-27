@@ -16,7 +16,6 @@
     "package.json",
     "classes/",
     "instances/",
-    "extensions/",
     "index.*"
   ],
   "repository": {
