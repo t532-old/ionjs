@@ -21,25 +21,6 @@ const managers: { [x: string]: { single: SingleSessionManager<TExtensibleMessage
     user: { single: new SingleSessionManager<TExtensibleMessage>(userIdentifier), concurrent: new ConcurrentSessionManager<TExtensibleMessage>(userIdentifier) },
 }
 
-/** Contexts that'll be passed into essions */
-export interface ISessionContext {
-    /** The first context */
-    init: { [x: string]: any }
-    /** Sender bound to this.init.raw */
-    sender: Sender
-    /** Stream of messages */
-    stream: MessageStream<TExtensibleMessage>
-    /** Get a copy of the next message from this.stream */
-    get(condition?: (ctx: IMessage) => boolean): Promise<TExtensibleMessage>
-    /** Reply to user */
-    reply(...message: (string|ICQCode)[]): Promise<ISendResult> 
-    /** Question user and get an answer */
-    question(...prompt: (string|ICQCode)[]): Promise<TExtensibleMessage>
-    /** Forward to other sessions */
-    forward(...message: (string|ICQCode)[]): Promise<void[]>
-}
-
-
 function deepCopy(obj: { [x: string]: any }): { [x: string]: any } {
     const newObj = {}
     for (const i in obj) {
@@ -58,11 +39,19 @@ export function use(when: When, { override = false, identifier = 'default', conc
         const manager = concurrent ? managers[identifier].concurrent : managers[identifier].single
         async function wrapper(stream: MessageStream<TExtensibleMessage>) {
             async function get(condition: (ctx: TExtensibleMessage) => boolean = () => true) { return deepCopy(await stream.get(condition)) as TExtensibleMessage }
-            let raw, init: ICommandArguments
+            let raw: TExtensibleMessage, init: ICommandArguments
             try { raw = await get() }
-            catch { return }
+            catch (err) {
+                console.warn('[WARN] Failed when trying to get initial message:')
+                console.warn(err)
+                return
+            }
             try { init = await when.parse(raw, stream) }
-            catch { return }
+            catch (err) {
+                console.error('[ERROR] Error when parsing initial message:')
+                console.error(err)
+                return
+            }
             const boundSender = sender.to(raw)
             function reply(...message: (string|ICQCode)[]) { return boundSender.send(...message) }
             async function question(...prompt: (string|ICQCode)[]) {
@@ -74,7 +63,11 @@ export function use(when: When, { override = false, identifier = 'default', conc
                 ctx.message = Utils.arrayToString(message.map(i => typeof i === 'string' ? { type: 'text', data: { text: i } } : i))
                 return run(ctx)
             }
-            await session({ init, sender, stream, get, reply, question, forward })
+            try { await session({ init, sender, stream, get, reply, question, forward }) }
+            catch (err) {
+                console.error('[ERROR] An uncaught error is thrown by your session code:')
+                console.error(err)
+            }
         }
         if (manager instanceof SingleSessionManager) manager.use(wrapper, ctx => when.validate(ctx), override)
         else if (manager instanceof ConcurrentSessionManager) manager.use(wrapper, ctx => when.validate(ctx))
@@ -91,18 +84,22 @@ export function create(name: string, identifier: (ctx: IMessage) => any) {
     managers[name] = { 
         single: new SingleSessionManager<TExtensibleMessage>(identifier), 
         concurrent: new ConcurrentSessionManager<TExtensibleMessage>(identifier),
-    } 
+    }
 }
 
 /**
  * Pass a context through the sessions
  * @param ctx the context
  */
-export function run(ctx: TExtensibleMessage) {
+export async function run(ctx: TExtensibleMessage) {
     const promises: Promise<void>[] = []
     for (const i in managers) {
         promises.push(managers[i].single.run(ctx))
         promises.push(managers[i].concurrent.run(ctx))
     }
-    return Promise.all(promises)
+    try { await Promise.all(promises) }
+    catch (err) {
+        console.error('[ERROR] An unknown error occured when running sessions.')
+        console.error(err)
+    }
 }

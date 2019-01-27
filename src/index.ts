@@ -30,7 +30,10 @@ export function init({ receivePort = 8080, receiveSecret, sendURL = 'http://127.
     useMiddlewareLast(async ctx => await runSession(ctx))
     receiver.on('post', ctx => 
         queue.then(() => new Promise(async resolve => {
-            setTimeout(resolve, timeout)
+            setTimeout(() => {
+                console.warn(`[WARN] Middlewares didn't finish processing message within ${timeout} ms.`)
+                resolve()
+            }, timeout)
             await runMiddleware(ctx)
             resolve()
         }))

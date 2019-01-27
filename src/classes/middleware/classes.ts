@@ -10,6 +10,8 @@ export class MiddlewareManager<T> {
     private _middlewares: TMiddleware<T>[] = []
     /** The list of middlewares that runs at last */
     private _lastMiddlewares: TMiddleware<T>[] = []
+    /** Returns how many middlewares there are */
+    get length() { return this._middlewares.length + this._lastMiddlewares.length }
     /**
      * add a middleware to the middleware list
      * @param middleware the middleware

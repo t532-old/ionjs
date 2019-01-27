@@ -21,5 +21,5 @@ export interface ISessionContext {
     /** Question user and get an answer */
     question(...prompt: (string|ICQCode)[]): Promise<TExtensibleMessage>
     /** Forward to other sessions */
-    forward(...message: (string|ICQCode)[]): Promise<void[]>
+    forward(...message: (string|ICQCode)[]): Promise<void>
 }

@@ -11,6 +11,7 @@ const manager = new MiddlewareManager<TExtensibleMessage>()
 export function use(...middlewares: TMiddleware<TExtensibleMessage>[]) { 
     for (const mw of middlewares)
         manager.use(mw) 
+    console.log(`[INFO] ${manager.length} Middlewares loaded`)
 }
 
 /**
@@ -20,10 +21,17 @@ export function use(...middlewares: TMiddleware<TExtensibleMessage>[]) {
 export function useLast(...middlewares: TMiddleware<TExtensibleMessage>[]) { 
     for (const mw of middlewares)
         manager.useLast(mw) 
+    console.log(`[INFO] ${manager.length} Middlewares loaded`)
 }
 
 /**
  * Let a context go through the middlewares
  * @param ctx the context
  */
-export function run(ctx: IMessage) { return manager.run(ctx) }
+export async function run(ctx: IMessage) {
+    try { await manager.run(ctx) }
+    catch (err) {
+        console.error('[ERROR] An error was thrown by one of the middlewares:')
+        console.error(err)
+    }
+}
