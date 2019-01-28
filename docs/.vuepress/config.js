@@ -14,6 +14,7 @@ module.exports = {
         nav: [
             { text: '指南', link: '/guide/' },
             { text: 'API', link: '/api/' },
+            { text: '术语表', link: '/glossary.html' },
             { text: '扩展', link: '/packages/' },
         ],
         sidebarDepth: 2,
