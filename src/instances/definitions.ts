@@ -23,4 +23,6 @@ export interface ISessionContext {
     question(...prompt: (string|ICQCode)[]): Promise<TExtensibleMessage>
     /** Forward to other sessions */
     forward(...message: (string|ICQCode)[]): Promise<void>
+    /** Reset the stream deletion timeout */
+    timeout: number
 }

@@ -19,6 +19,8 @@ const managers: { [x: string]: { single: SingleSessionManager<TExtensibleMessage
     user: { single: new SingleSessionManager<TExtensibleMessage>(userIdentifier), concurrent: new ConcurrentSessionManager<TExtensibleMessage>(userIdentifier) },
 }
 
+let timeout: number
+
 function deepCopy(obj: { [x: string]: any }): { [x: string]: any } {
     const newObj = {}
     for (const i in obj) {
@@ -27,6 +29,13 @@ function deepCopy(obj: { [x: string]: any }): { [x: string]: any } {
     }
     return newObj
 }
+
+/**
+ * Initialize with default session timout
+ * @param sessionTimeout the default session timeout
+ */
+export function init(sessionTimeout: number) { timeout = sessionTimeout }
+
 /**
  * Use a session template
  * @param when when to start the session
@@ -61,7 +70,22 @@ export function use(when: When, { override = false, identifier = 'default', conc
                 ctx.message = Utils.arrayToString(message.map(i => typeof i === 'string' ? { type: 'text', data: { text: i } } : i))
                 return run(ctx)
             }
-            try { await session({ init, sender: boundSender, stream, get, reply, question, forward }) }
+            let sessionTimeout = setTimeout(() => stream.free(), timeout)
+            try { 
+                await session({
+                    init, 
+                    sender: boundSender, 
+                    stream, 
+                    get, 
+                    reply, 
+                    question, 
+                    forward,
+                    set timeout(timeout: number) { 
+                        clearTimeout(sessionTimeout)
+                        sessionTimeout = setTimeout(() => stream.free(), timeout)
+                    }
+                }) 
+            }
             catch (err) {
                 console.error('[ERROR] An uncaught error is thrown by your session code:')
                 console.error(err)

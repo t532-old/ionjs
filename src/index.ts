@@ -3,14 +3,14 @@ import { BotWhen } from './classes/when'
 import { init as initSender, sender } from './instances/sender'
 import { init as initReceiver, start, receiver } from './instances/receiver'
 import { use as useMiddleware, useLast as useMiddlewareLast, run as runMiddleware } from './instances/middlewares'
-import { use as useSession, run as runSession, create as createSessionManager } from './instances/sessions'
+import { init as initSession, use as useSession, run as runSession, create as createSessionManager } from './instances/sessions'
 
 const queue = new Promise(resolve => resolve())
 /**
  * Initialize the bot
  * @param config the bot's configuration
  */
-export function init({ receivePort = 8080, receiveSecret, sendURL = 'http://127.0.0.1:5700', sendToken, operators = [], prefixes = [], self, timeout = 10000 }: {
+export function init({ receivePort = 8080, receiveSecret, sendURL = 'http://127.0.0.1:5700', sendToken, operators = [], prefixes = [], self, middlewareTimeout = 10000, sessionTimeout = Infinity }: {
     receivePort: number, 
     receiveSecret?: string, 
     sendURL: string, 
@@ -18,10 +18,12 @@ export function init({ receivePort = 8080, receiveSecret, sendURL = 'http://127.
     operators?: number[],
     prefixes?: string[],
     self: number,
-    timeout?: number,
+    middlewareTimeout?: number,
+    sessionTimeout?: number,
 }) {
     initReceiver(receivePort, receiveSecret)
     initSender(sendURL, sendToken)
+    initSession(sessionTimeout)
     BotWhen.init({ operators, prefixes, self })
     useMiddleware(async (ctx, next) => {
         if (ctx.message as ICQCode[]|string instanceof Array) ctx.message = CQCodeUtils.arrayToString(ctx.message as ICQCode[])
@@ -31,9 +33,9 @@ export function init({ receivePort = 8080, receiveSecret, sendURL = 'http://127.
     receiver.on('post', ctx => 
         queue.then(() => new Promise(async resolve => {
             setTimeout(() => {
-                console.warn(`[WARN] Middlewares didn't finish processing message within ${timeout} ms.`)
+                console.warn(`[WARN] Middlewares didn't finish processing message within ${middlewareTimeout} ms.`)
                 resolve()
-            }, timeout)
+            }, middlewareTimeout)
             await runMiddleware(ctx)
             resolve()
         }))
