@@ -1,5 +1,4 @@
 import { SingleSessionManager, ConcurrentSessionManager, MessageStream } from '../classes/session'
-import { Sender, ISendResult } from '../classes/sender'
 import { ICommandArguments } from '../classes/command'
 import { contextTypeOf, unionIdOf, IMessage } from '../classes/receiver'
 import { ICQCode, Utils } from '../classes/cqcode'
@@ -63,7 +62,7 @@ export function use(when: When, { override = false, identifier = 'default', conc
                 ctx.message = Utils.arrayToString(message.map(i => typeof i === 'string' ? { type: 'text', data: { text: i } } : i))
                 return run(ctx)
             }
-            try { await session({ init, sender, stream, get, reply, question, forward }) }
+            try { await session({ init, sender: boundSender, stream, get, reply, question, forward }) }
             catch (err) {
                 console.error('[ERROR] An uncaught error is thrown by your session code:')
                 console.error(err)

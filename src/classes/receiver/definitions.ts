@@ -1,5 +1,4 @@
 import { IPluginStatusResult, IInfoResult } from '../sender'
-import { ICQCode } from '../cqcode'
 
 /** CQHTTP Message */
 export interface IMessage {
