@@ -15,7 +15,14 @@ when.command('命令名', '参数列表', { ... /* 附加选项 */ })
 - [API: *function* init: 加载配置](/api/functions.html#init)
 :::
 
-在 `ionjs.init()` 中，你可以指定 `prefixes` 字段为一个数组，则在注册命令时，会自动将这些前缀添加到命令前。
+在 `ionjs.init({ ... })` 中，你可以指定 `prefixes` 字段为一个数组，则在注册命令时，会自动将这些前缀添加到命令前。
+
+> e.g.
+> ```js
+> ionjs.init({
+>     prefixes: ['!', '！', '!!'],
+>     ...
+> })
 
 同时，在 `when.command()` 中，你可以将命令名（i.e. 第一个参数）指定为一个数组，则它们都会被注册为命令。
 

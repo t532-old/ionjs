@@ -40,3 +40,11 @@ useMiddleware(async (ctx, next) => {
     else return
 })
 ```
+
+## 中间件超时
+Ion.js 默认在中间件处理超过 10s 后中止对这条信息的处理并记录一条 warning。你可以在 `ionjs.init()` 中更改这个超时（单位为 ms）：
+```js
+ionjs.init({
+    ...,
+    timeout: 20000,
+})

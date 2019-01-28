@@ -34,7 +34,9 @@ const ionjs = require('@ionjs/core')
 ```js
 ionjs.init({
     receivePort: 8080, // ionjs 将监听的端口，i.e. CQHTTP 配置中的 post_url 的端口
+    receiveSecret: '<your-secret>', // CQHTTP 配置的 secret。没有则忽略。
     sendURL: 'http://localhost:5700', // CQHTTP API 所在的 URL
+    sendToken: '<your-token>', // CQHTTP 配置的 token。没有则忽略。
     operators: [YOUR_QQ_ID, ...], // 添加 Bot 管理者
     self: BOT_QQ_ID, // Bot 自身的 QQ 号
 })
