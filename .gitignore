@@ -57,9 +57,7 @@ typings/
 # dotenv environment variables file
 .env
 
-# compiled JS
+# compiled files
 *.d.ts
 *.js
-
-# compiled docs
-/docs/.vuepress/dist
+dist/
