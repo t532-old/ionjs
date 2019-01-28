@@ -6,6 +6,15 @@ let friend: boolean = true,
     userBlacklist: (id: number) => boolean = () => false,
     groupBlacklist: (id: number) => boolean = () => false
 
+/**
+ * Initialize this module with configuration.
+ * @param config The configuration.
+ *  friend: auto accept friend requests
+ *  groupAdd: auto accept group add requests
+ *  groupInvite: auto accept group invitations
+ *  userBlacklist: a list of qqids, or a function that determines whether a qqid is in blacklist
+ *  groupBlacklist: same as userBlacklist, but for group ids
+ */
 export function init(config: {
     friend?: boolean,
     groupAdd?: boolean,
@@ -28,6 +37,10 @@ export function init(config: {
     else groupBlacklist = config.groupBlacklist
 }
 
+/**
+ * Load this module.
+ * @param ionjs The object you get by `import * as ionjs from '@ionjs/core'`.
+ */
 export function load({ useSession, when }: {
     useSession: typeof ionjs.useSession
     when: typeof ionjs.when

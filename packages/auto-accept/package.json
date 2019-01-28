@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "An auto-accept module for Ion.js",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "test": "jest --config jest.config.json --coverage --detectOpenHandles --forceExit",
     "build": "tsc"
