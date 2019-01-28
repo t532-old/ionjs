@@ -2,19 +2,20 @@
 import { Sender } from '../src/classes/sender'
 import * as Koa from 'koa'
 import * as koaBody from 'koa-bodyparser'
+const PORT_OFFSET = 2
 const special = ['constructor', 'to', '_post', '_checkContext']
 const token = Math.random().toString()
 let sender: Sender
 
-const fakeServer = new Koa().use(koaBody()).use(ctx => {
+new Koa().use(koaBody()).use(ctx => {
     ctx.assert(ctx.request.headers['authorization'] !== undefined, 401)
     ctx.assert(ctx.request.headers['authorization'] === `Token ${token}`, 403)
     if (ctx.request.body.title === '__test_fail__') ctx.body = { status: 'failed', retcode: -1 }
     else ctx.body = { status: 'success', retcode: 0 }
-}).listen(5700)
+}).listen(5700 + PORT_OFFSET)
 
 test('Create Sender', () => {
-    expect(() => sender = new Sender('http://localhost:5700', token)).not.toThrow()
+    expect(() => sender = new Sender(`http://localhost:${5700 + PORT_OFFSET}`, token)).not.toThrow()
 })
 
 test(`Send ill-formed message`, async () => {

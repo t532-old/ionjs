@@ -9,7 +9,7 @@ interface ITestContext {
 }
 let manager: ConcurrentSessionManager<ITestContext>
 
-function wasteTime(time = 500) { return new Promise(resolve => setTimeout(resolve, time)) }
+function wasteTime(time = 100) { return new Promise(resolve => setTimeout(resolve, time)) }
 
 test('Create ConcurrentSessionManager', () => {
     expect(() => manager = new ConcurrentSessionManager((ctx: ITestContext) => ctx.id)).not.toThrow()

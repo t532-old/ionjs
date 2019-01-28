@@ -1,18 +1,18 @@
 /// <reference types="jest" />
 import * as Koa from 'koa'
 import * as koaBody from 'koa-bodyparser'
-import axios from 'axios'
 import { EventEmitter } from 'events'
 import { BotWhen } from '../src/classes/when'
 import { processCommandString } from '../src/classes/when/utils'
 import { init as initSender } from '../src/instances/sender'
+const PORT_OFFSET = 3
 let when: BotWhen
 const bus = new EventEmitter()
-const fakeServer = new Koa().use(koaBody()).use(async ctx => {
+new Koa().use(koaBody()).use(async ctx => {
     ctx.status = 200
     bus.emit('receive', ctx.request.body)
-}).listen(5701)
-initSender('http://localhost:5701')
+}).listen(5700 + PORT_OFFSET)
+initSender(`http://localhost:${5700 + PORT_OFFSET}`)
 
 test('Create BotWhen instance', () => expect(() => when = new BotWhen()).not.toThrow())
 

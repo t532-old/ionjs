@@ -4,7 +4,7 @@
   "description": "An auto-accept module for Ion.js",
   "main": "dist/index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --config jest.config.json --coverage --detectOpenHandles --forceExit",
     "build": "tsc"
   },
   "files": [
@@ -23,10 +23,14 @@
   },
   "homepage": "https://github.com/ionjs-dev/ionjs#readme",
   "dependencies": {
-    "@ionjs/core": "^0.3.0"
+    "@ionjs/core": "^0.3.1"
   },
   "devDependencies": {
+    "axios": "^0.18.0",
     "jest": "^24.0.0",
+    "koa": "^2.6.2",
+    "koa-bodyparser": "^4.2.1",
+    "ts-jest": "^23.10.5",
     "typescript": "^3.2.4"
   }
 }

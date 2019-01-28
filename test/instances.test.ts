@@ -4,13 +4,13 @@ import axios from 'axios'
 import { EventEmitter } from 'events'
 import { IMessage } from '../src/classes/receiver'
 
+const PORT_OFFSET = 0
 const bus = new EventEmitter
-function wasteTime(time = 500) { return new Promise(resolve => setTimeout(resolve, time)) }
 
 test('Initialize bot', () => {
     expect(() => ionjs.init({
-        receivePort: 8081,
-        sendURL: 'http://localhost:5700',
+        receivePort: 8080 + PORT_OFFSET,
+        sendURL: `http://localhost:${5700 + PORT_OFFSET}`,
         operators: [114514],
         self: 1919810,
     })).not.toThrow()
@@ -26,7 +26,7 @@ test('Use Middleware', async done => {
         await next()
         done()
     })).not.toThrow()
-    axios.post('http://localhost:8081', { message: [] })
+    axios.post(`http://localhost:${8080 + PORT_OFFSET}`, { message: [] })
 })
 
 test('Create Session Manager', () => {

@@ -9,7 +9,7 @@ interface ITestContext {
 }
 let manager: SingleSessionManager<ITestContext>
 
-function wasteTime(time = 500) { return new Promise(resolve => setTimeout(resolve, time)) }
+function wasteTime(time = 100) { return new Promise(resolve => setTimeout(resolve, time)) }
 
 test('Create SingleSessionManager', () => {
     expect(() => manager = new SingleSessionManager((ctx: ITestContext) => ctx.id)).not.toThrow()
