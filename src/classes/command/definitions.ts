@@ -13,9 +13,9 @@ export interface ICommandParameters {
 /** A list of given arguments */
 export interface ICommandArguments {
     /** The specified options */
-    options: any[]
+    options: string[]
     /** The specified arguments */
-    arguments: { [param: string]: any }
+    arguments: { [param: string]: string }
     /** Rest unparsed items */
-    rest: any[]
+    rest: string[]
 }

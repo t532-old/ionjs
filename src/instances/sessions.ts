@@ -1,5 +1,4 @@
 import { SingleSessionManager, ConcurrentSessionManager, MessageStream } from '../classes/session'
-import { ICommandArguments } from '../classes/command'
 import { contextTypeOf, unionIdOf, IMessage } from '../classes/receiver'
 import { ICQCode, Utils } from '../classes/cqcode'
 import { When } from '../classes/when'
@@ -38,7 +37,7 @@ export function use(when: When, { override = false, identifier = 'default', conc
         const manager = concurrent ? managers[identifier].concurrent : managers[identifier].single
         async function wrapper(stream: MessageStream<TExtensibleMessage>) {
             async function get(condition: (ctx: TExtensibleMessage) => boolean = () => true) { return deepCopy(await stream.get(condition)) as TExtensibleMessage }
-            let raw: TExtensibleMessage, init: ICommandArguments
+            let raw: TExtensibleMessage, init: ISessionContext['init']
             try { raw = await get() }
             catch (err) {
                 console.warn('[WARN] Failed when trying to get initial message:')

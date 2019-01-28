@@ -2,6 +2,7 @@ import { IMessage } from '../classes/receiver'
 import { Sender, ISendResult } from '../classes/sender'
 import { MessageStream } from '../classes/session'
 import { ICQCode } from '../classes/cqcode'
+import { BotWhen } from '../classes/when'
 
 /** IMessage that has been extended */
 export type TExtensibleMessage = IMessage&{ [x: string]: any }
@@ -9,7 +10,7 @@ export type TExtensibleMessage = IMessage&{ [x: string]: any }
 /** Contexts that'll be passed into essions */
 export interface ISessionContext {
     /** The first context */
-    init: { [x: string]: any }
+    init: { [x in keyof Partial<Pick<BotWhen, 'raw'|'command'|'contain'>>]: any }
     /** Sender bound to this.init.raw */
     sender: Sender
     /** Stream of messages */
