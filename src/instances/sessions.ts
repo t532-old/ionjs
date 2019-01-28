@@ -71,6 +71,7 @@ export function use(when: When, { override = false, identifier = 'default', conc
         if (manager instanceof SingleSessionManager) manager.use(wrapper, ctx => when.validate(ctx), override)
         else if (manager instanceof ConcurrentSessionManager) manager.use(wrapper, ctx => when.validate(ctx))
         else throw new Error(`Session manager '${identifier}' does not exist`)
+        console.log(`[INFO] ${manager.length} Session templates loaded on session manager '${identifier}'`)
     }
 }
 
