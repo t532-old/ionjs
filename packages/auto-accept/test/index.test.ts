@@ -8,10 +8,10 @@ import * as ionjs from '@ionjs/core'
 
 const PORT_OFFSET = 4
 const bus = new EventEmitter()
-let count = 1
 new Koa().use(koaBody()).use(async ctx => {
     bus.emit(ctx.request.body.flag, ctx.request.body)
     ctx.status = 200
+    console.log(ctx.body)
 }).listen(5700 + PORT_OFFSET)
 function wasteTime(time = 100) { return new Promise(resolve => setTimeout(resolve, time)) }
 
@@ -34,7 +34,7 @@ test('Initialize', () => {
     expect(() => init({
         friend: true,
         groupAdd: true,
-        groupInvite: false,
+        groupInvite: true,
         userBlacklist: [1919810],
         groupBlacklist: [114514],
     })).not.toThrow()
@@ -94,8 +94,8 @@ test('Request Group Add', async (done) => {
         user_id: 1919810,
         group_id: 1919810,
         post_type: 'request',
-        request_type: 'friend',
-        sub_type: 'add'
+        request_type: 'group',
+        sub_type: 'add',
     })
     await wasteTime()
     await axios.post(`http://localhost:${8080 + PORT_OFFSET}`, {
@@ -125,7 +125,7 @@ test('Request Group Invite', async (done) => {
         group_id: 114514,
         post_type: 'request',
         request_type: 'group',
-        sub_type: 'add',
+        sub_type: 'invite',
     })
     await wasteTime()
     await axios.post(`http://localhost:${8080 + PORT_OFFSET}`, {
@@ -133,8 +133,8 @@ test('Request Group Invite', async (done) => {
         user_id: 1919810,
         group_id: 1919810,
         post_type: 'request',
-        request_type: 'friend',
-        sub_type: 'add'
+        request_type: 'group',
+        sub_type: 'invite',
     })
     await wasteTime()
     await axios.post(`http://localhost:${8080 + PORT_OFFSET}`, {
@@ -143,6 +143,6 @@ test('Request Group Invite', async (done) => {
         group_id: 8931919810,
         post_type: 'request',
         request_type: 'group',
-        sub_type: 'add',
+        sub_type: 'invite',
     })
 })
