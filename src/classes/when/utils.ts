@@ -30,7 +30,7 @@ export function processCommandString(msg: string) {
 }
 
 export async function processArgs(
-    { arguments: args }: ICommandArguments, 
+    { arguments: args }: Record<keyof ICommandArguments, any>, 
     notGiven: string[], 
     { prompts, types, validators }: { 
         prompts: { [param: string]: string }, 
