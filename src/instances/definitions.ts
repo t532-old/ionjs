@@ -18,7 +18,7 @@ export interface ISessionContext {
     /** Get a copy of the next message from this.stream */
     get(condition?: (ctx: IMessage) => boolean): Promise<TExtensibleMessage>
     /** Reply to user */
-    reply(...message: (string|ICQCode)[]): Promise<ISendResult> 
+    reply(...message: (string|ICQCode)[]): Promise<ISendResult>
     /** Question user and get an answer */
     question(...prompt: (string|ICQCode)[]): Promise<TExtensibleMessage>
     /** Forward to other sessions */

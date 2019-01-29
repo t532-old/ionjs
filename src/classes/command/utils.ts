@@ -21,7 +21,7 @@ export function split(string: string) {
                     inStr = i
                 } else regular = true
             } else {
-                if (delimiters.includes(i)) { 
+                if (delimiters.includes(i)) {
                     inStr = ''
                 } else regular = true
             }

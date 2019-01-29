@@ -7,8 +7,8 @@ import { Codes, ICQCode } from '../cqcode'
 import * as Result from './definitions'
 import { IMessage } from '../receiver'
 
-const debug = Debug('ionjs:sender'), 
-      debugVerbose = Debug('verbose-ionjs:sender'), 
+const debug = Debug('ionjs:sender'),
+      debugVerbose = Debug('verbose-ionjs:sender'),
       debugExVerbose = Debug('ex-verbose-ionjs:sender')
 
 export class SenderError extends Error {
@@ -41,7 +41,7 @@ export class Sender {
     private async _post({ api, params = [] }: { api: string, params?: string[] }, args: { [x: string]: any } = {}) {
         const url = new URL(api, this._sendURL).toString()
         for (const param of params)
-            if (!(param in args)) 
+            if (!(param in args))
                 args[param] = this._context[param]
         debug('post %s %o', url, args)
         const result = (await axios.post(url, args, { headers: this._token ? { 'Authorization': `Token ${this._token}` } : {} })).data
@@ -64,7 +64,7 @@ export class Sender {
     'delete'(message_id: number): Promise<Result.INoneResult> { return this._post(CQHTTP_API.delete, { message_id }) }
     sendLike(times: number): Promise<Result.INoneResult> { return this._post(CQHTTP_API.sendLike, { times }) }
     kick(reject_add_request: boolean = false): Promise<Result.INoneResult> { return this._post(CQHTTP_API.kick, { reject_add_request }) }
-    ban(duration: number = 30 * 60): Promise<Result.INoneResult> { 
+    ban(duration: number = 30 * 60): Promise<Result.INoneResult> {
         if (this._context.anonymous) return this._post(CQHTTP_API.ban.anonymous, { duration })
         else return this._post(CQHTTP_API.ban.member, { duration })
     }
@@ -79,7 +79,7 @@ export class Sender {
     deleteCard(): Promise<Result.INoneResult> { return this._post(CQHTTP_API.deleteCard, { card: '' }) }
     setSpecialTitle(title: string = ''): Promise<Result.INoneResult> { return this._post(CQHTTP_API.setSpecialTitle, { title }) }
     deleteSpecialTitle(): Promise<Result.INoneResult> { return this._post(CQHTTP_API.setSpecialTitle, { title: '' }) }
-    leave(is_dismiss: boolean = false): Promise<Result.INoneResult> { 
+    leave(is_dismiss: boolean = false): Promise<Result.INoneResult> {
         this._checkContext('message_type')
         return this._post(CQHTTP_API.leave[this._context.message_type], { is_dismiss })
     }
@@ -101,5 +101,5 @@ export class Sender {
     restart(clean_log: boolean = true, clean_cache: boolean = true, clean_event: boolean = true): Promise<Result.INoneResult> { return this._post(CQHTTP_API.restart, { clean_log, clean_cache, clean_event }) }
     restartPlugin(delay: number = 0): Promise<Result.INoneResult> { return this._post(CQHTTP_API.restartPlugin, { delay }) }
     cleanDataDir(data_dir: string): Promise<Result.INoneResult> { return this._post(CQHTTP_API.cleanDataDir, { data_dir }) }
-    cleanPluginLog(): Promise<Result.INoneResult> { return this._post(CQHTTP_API.cleanPluginLog) } 
+    cleanPluginLog(): Promise<Result.INoneResult> { return this._post(CQHTTP_API.cleanPluginLog) }
 }

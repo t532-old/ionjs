@@ -10,15 +10,15 @@ export function compare(matcher: any, obj: any) {
     if (matcher instanceof RegExp) return matcher.test(obj)
     else if (matcher instanceof Function) return matcher(obj)
     else if (typeof matcher !== 'object' || !matcher) return matcher === obj
-    else 
+    else
         for (const i in matcher)
             if (!compare(matcher[i], obj[i])) return false
     return true
 }
 
 export function processCommandString(msg: string) {
-    let str = Utils.arrayToString(Utils.stringToArray(msg).map(i => i.type === 'text' ? i : { 
-        type: i.type, 
+    let str = Utils.arrayToString(Utils.stringToArray(msg).map(i => i.type === 'text' ? i : {
+        type: i.type,
         data: Object.keys(i.data).reduce((acc, val) => {
             acc[`${val}\\\\`] = escapeArgument(i.data[val])
             return acc
@@ -30,21 +30,21 @@ export function processCommandString(msg: string) {
 }
 
 export async function processArgs(
-    { arguments: args }: Record<keyof ICommandArguments, any>, 
-    notGiven: string[], 
-    { prompts, types, validators }: { 
-        prompts: { [param: string]: string }, 
-        types: { [param: string]: string }, 
+    { arguments: args }: Record<keyof ICommandArguments, any>,
+    notGiven: string[],
+    { prompts, types, validators }: {
+        prompts: { [param: string]: string },
+        types: { [param: string]: string },
         validators: { [param: string]: TValidator },
     },
-    { init, stream }: { 
-        init: TExtensibleMessage, 
-        stream: MessageStream<TExtensibleMessage> 
+    { init, stream }: {
+        init: TExtensibleMessage,
+        stream: MessageStream<TExtensibleMessage>
     }
 ) {
     notGiven = [
-        ...notGiven, 
-        ...Object.keys(args).filter(i => !Utils.filterType(Utils.stringToArray(args[i]), types[i] || 'string')), 
+        ...notGiven,
+        ...Object.keys(args).filter(i => !Utils.filterType(Utils.stringToArray(args[i]), types[i] || 'string')),
         ...Object.keys(args).filter(i => validators[i]).filter(i => {
             const data = Utils.filterType(Utils.stringToArray(args[i]), types[i] || 'string')
             return data && validators[i](data)

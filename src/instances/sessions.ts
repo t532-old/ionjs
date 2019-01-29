@@ -13,7 +13,7 @@ function defaultIdentifier(ctx) {
 }
 function groupIdentifier(ctx) { return `${ctx.group_id || ctx.discuss_id}` }
 function userIdentifier(ctx) { return `${ctx.user_id}` }
-const managers: { [x: string]: { single: SingleSessionManager<TExtensibleMessage>, concurrent: ConcurrentSessionManager<TExtensibleMessage> } } = { 
+const managers: { [x: string]: { single: SingleSessionManager<TExtensibleMessage>, concurrent: ConcurrentSessionManager<TExtensibleMessage> } } = {
     default: { single: new SingleSessionManager<TExtensibleMessage>(defaultIdentifier), concurrent: new ConcurrentSessionManager<TExtensibleMessage>(defaultIdentifier) },
     group: { single: new SingleSessionManager<TExtensibleMessage>(groupIdentifier), concurrent: new ConcurrentSessionManager<TExtensibleMessage>(groupIdentifier) },
     user: { single: new SingleSessionManager<TExtensibleMessage>(userIdentifier), concurrent: new ConcurrentSessionManager<TExtensibleMessage>(userIdentifier) },
@@ -71,20 +71,20 @@ export function use(when: When, { override = false, identifier = 'default', conc
                 return run(ctx)
             }
             let sessionTimeout = setTimeout(() => stream.free(), timeout)
-            try { 
+            try {
                 await session({
-                    init, 
-                    sender: boundSender, 
-                    stream, 
-                    get, 
-                    reply, 
-                    question, 
+                    init,
+                    sender: boundSender,
+                    stream,
+                    get,
+                    reply,
+                    question,
                     forward,
-                    set timeout(timeout: number) { 
+                    set timeout(timeout: number) {
                         clearTimeout(sessionTimeout)
                         sessionTimeout = setTimeout(() => stream.free(), timeout)
                     }
-                }) 
+                })
             }
             catch (err) {
                 console.error('[ERROR] An uncaught error is thrown by your session code:')
@@ -103,9 +103,9 @@ export function use(when: When, { override = false, identifier = 'default', conc
  * @param name the session manager's name
  * @param identifier the session manager's identifier
  */
-export function create(name: string, identifier: (ctx: IMessage) => any) { 
-    managers[name] = { 
-        single: new SingleSessionManager<TExtensibleMessage>(identifier), 
+export function create(name: string, identifier: (ctx: IMessage) => any) {
+    managers[name] = {
+        single: new SingleSessionManager<TExtensibleMessage>(identifier),
         concurrent: new ConcurrentSessionManager<TExtensibleMessage>(identifier),
     }
 }

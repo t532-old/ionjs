@@ -15,8 +15,8 @@ export class SingleSessionManager<T> extends SessionStore<T> {
      * @param session the function for generating sessions
      * @param match determines whether the session should be created or not
      * @param override determines when the condition is matched,
-     *                 whether to force end the previous session (true) 
-     *                 or ignore this context (false or not determined) 
+     *                 whether to force end the previous session (true)
+     *                 or ignore this context (false or not determined)
      */
     use(session: TSessionFn<T>, match: TSessionMatcher<T>, override: boolean = false) {
         this._templates.push({ session, match, override })
@@ -51,7 +51,7 @@ export class SingleSessionManager<T> extends SessionStore<T> {
             execute()
         } else if (getter()) {
             debugExVerbose('next (exist)')
-            if (!getter().write(ctx)) 
+            if (!getter().write(ctx))
                 getter().once('drain', () => getter().write(ctx))
         }
         debugVerbose('finish')

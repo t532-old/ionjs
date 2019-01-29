@@ -20,4 +20,4 @@ git commit -m "AppVeyor CI Automated Deploy" # Commit
 git remote add origin-gh-pages "https://$env:GITHUB_TOKEN@github.com/ionjs-dev/ionjs-dev.github.io.git" # Add Remote
 git push --quiet --set-upstream origin-gh-pages master # Push
 # Prevent Side-effects
-cd ../ionjs 
+cd ../ionjs

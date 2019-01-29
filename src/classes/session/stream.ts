@@ -11,7 +11,7 @@ export class MessageStream<T> extends PassThrough {
         super({ objectMode: true })
         this.deleter = deleter
     }
-    /** 
+    /**
      * get an object asynchronously.
      * if there is an object in the stream, it'll be directly resolved;
      * else it'll be resolved when a new object is pushed into the stream.

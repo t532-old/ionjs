@@ -18,7 +18,7 @@ export interface ISessionTemplate<T> {
 }
 
 export interface IConcurrentSessionTemplate<T> extends ISessionTemplate<T> {
-    /** 
+    /**
      * (Only avaliable in class ConcurrentSessionManager)
      * A unique symbol of the session template
      */
@@ -26,11 +26,11 @@ export interface IConcurrentSessionTemplate<T> extends ISessionTemplate<T> {
 }
 
 export interface ISingleSessionTemplate<T> extends ISessionTemplate<T> {
-    /** 
+    /**
      * (Only avaliable in class SingleSessionManager)
      * determines when the condition is matched,
-     * whether to force end the previous session (true) 
-     * or ignore this context (false or not determined) 
+     * whether to force end the previous session (true)
+     * or ignore this context (false or not determined)
      */
     override?: boolean
 }

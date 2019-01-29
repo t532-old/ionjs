@@ -8,11 +8,11 @@ export type TValidatorCallback<T = any> = (ctx: T, ...extraArgs: any[]) => void
 export type TParser<T = any, R = any> = (ctx: T, ...extraArgs: any[]) => R|Promise<R>
 
 /** A type alias for class When and its derived classes */
-export type TWhenClass<T> = Function&{ 
+export type TWhenClass<T> = Function&{
     new({ validate, parse, validCallback, invalidCallback }: {
-        validate?: TValidator[], 
+        validate?: TValidator[],
         parse?: TParser[],
         validCallback?: TValidatorCallback[],
         invalidCallback?: TValidatorCallback[],
-    }): T 
+    }): T
 }

@@ -8,9 +8,9 @@ const manager = new MiddlewareManager<TExtensibleMessage>()
  * Use a list of middlewares (or only one)
  * @param middlewares the middlewares
  */
-export function use(...middlewares: TMiddleware<TExtensibleMessage>[]) { 
+export function use(...middlewares: TMiddleware<TExtensibleMessage>[]) {
     for (const mw of middlewares)
-        manager.use(mw) 
+        manager.use(mw)
     console.log(`[INFO] ${manager.length} Middlewares loaded`)
 }
 
@@ -18,9 +18,9 @@ export function use(...middlewares: TMiddleware<TExtensibleMessage>[]) {
  * Use a list of middlewares last (or only one)
  * @param middlewares the middlewares
  */
-export function useLast(...middlewares: TMiddleware<TExtensibleMessage>[]) { 
+export function useLast(...middlewares: TMiddleware<TExtensibleMessage>[]) {
     for (const mw of middlewares)
-        manager.useLast(mw) 
+        manager.useLast(mw)
     console.log(`[INFO] ${manager.length} Middlewares loaded`)
 }
 

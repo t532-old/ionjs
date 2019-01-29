@@ -77,7 +77,7 @@ Ion.js 提供了更强大的命令声明与解析，包括一系列特性：具�
     .homepage-header--positioner {
         width: auto;
     }
-    
+
     @media (min-width: 700px) {
         .homepage-header {
             background-image: url("/static/background-wide.svg");

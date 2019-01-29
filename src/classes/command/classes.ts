@@ -44,7 +44,7 @@ export class Command {
         /** A regexp that matches a key-value pair in a command */
         KEY_VALUE: /^(.*[^\\])=(.+)$/,
     }
-    get parameters() { return this._parameters } 
+    get parameters() { return this._parameters }
     /** @param declaration The command declaration */
     constructor(declaration: string) {
         debug('init %s', declaration)
@@ -120,5 +120,5 @@ export class Command {
         if (notGiven.length) throw new CommandParseError('No enough required arguments', args, notGiven)
         debugVerbose('finish %s %o', command, args)
         return args
-    }  
+    }
 }

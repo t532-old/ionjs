@@ -38,9 +38,9 @@ test('Create Session Manager', () => {
 test('Register Session', () => {
     expect(() =>
         ionjs.useSession(ionjs.when.ever()) (
-            async function(ctx) { 
+            async function(ctx) {
                 await ctx.forward('test-concurrent')
-                bus.emit('session', ctx.init.raw) 
+                bus.emit('session', ctx.init.raw)
             }
         )
     ).not.toThrow()

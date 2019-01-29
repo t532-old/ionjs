@@ -36,7 +36,7 @@ export class MiddlewareManager<T> {
      */
     async run(ctx: T) {
         debugVerbose('start %o', ctx)
-        if (this._middlewares.length) 
+        if (this._middlewares.length)
             await nextExecutor<T>([...this._middlewares, ...this._lastMiddlewares][Symbol.iterator](), ctx)()
         debugVerbose('finish')
     }

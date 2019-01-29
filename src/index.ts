@@ -11,10 +11,10 @@ const queue = new Promise(resolve => resolve())
  * @param config the bot's configuration
  */
 export function init({ receivePort = 8080, receiveSecret, sendURL = 'http://127.0.0.1:5700', sendToken, operators = [], prefixes = [], self, middlewareTimeout = 10000, sessionTimeout = Infinity }: {
-    receivePort: number, 
-    receiveSecret?: string, 
-    sendURL: string, 
-    sendToken?: string, 
+    receivePort: number,
+    receiveSecret?: string,
+    sendURL: string,
+    sendToken?: string,
     operators?: number[],
     prefixes?: string[],
     self: number,
@@ -30,7 +30,7 @@ export function init({ receivePort = 8080, receiveSecret, sendURL = 'http://127.
         await next()
     })
     useMiddlewareLast(async ctx => await runSession(ctx))
-    receiver.on('post', ctx => 
+    receiver.on('post', ctx =>
         queue.then(() => new Promise(async resolve => {
             setTimeout(() => {
                 console.warn(`[WARN] Middlewares didn't finish processing message within ${middlewareTimeout} ms.`)

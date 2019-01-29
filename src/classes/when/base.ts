@@ -12,7 +12,7 @@ export class When {
     protected readonly _invalidCallbacks: TValidatorCallback[] = []
     /** @param fns functions for When */
     constructor({ validate = [], parse = [], validCallback = [], invalidCallback = [] }: {
-        validate?: TValidator[], 
+        validate?: TValidator[],
         parse?: TParser[],
         validCallback?: TValidatorCallback[],
         invalidCallback?: TValidatorCallback[],

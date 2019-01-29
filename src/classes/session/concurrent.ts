@@ -42,7 +42,7 @@ export class ConcurrentSessionManager<T> extends SessionStore<T> {
                   }
             if (getter() && getter().writable) {
                 debugExVerbose('next(exist)')
-                if (!getter().write(ctx)) 
+                if (!getter().write(ctx))
                     getter().once('drain', () => getter().write(ctx))
             } else if (await template.match(ctx)) {
                 debugExVerbose('next(new)')

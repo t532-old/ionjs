@@ -36,7 +36,7 @@
 - [Fix] 修复 `Utils` 中 `filterType()` 的 bug
 - [Security] 使用 Promise-based 处理队列来保证会话处理的稳定性
 
-## 0.1.0, 0.1.1 
+## 0.1.0, 0.1.1
 - [Add] 迁移 `ionjs-dev/adapter-cqhttp` => `classes/receiver`, `classes/sender`, `classes/cqcode`
 - [Add] 迁移 `ionjs-dev/flow` => `classes/session`
 - [Add] 迁移 `ionjs-dev/command` => `classes/command`
@@ -48,7 +48,7 @@
 - [Add] 增加了 `CommandParseError` 类作为 `Command#parse()` 抛出的错误类型
 - [Add] 增加了 `Command#parse()` 的第二个参数作为参数处理器
 - [Change] 将 `Command#parse()` 改为异步函数
-- [Fix] 使用与 koa 相同的正确的中间件实现 
+- [Fix] 使用与 koa 相同的正确的中间件实现
 - [Add] 增加类型别名 `TMiddleware`
 - [Change] `SessionManager` 改为 `SessionStore` 抽象基类
 - [Change] `SessionStore#addBehavior(IBehavior)` 改为 `SessionStore#use(...any)`，`SessionStore#push(any)` 改为 `SessionStore#run(any)`

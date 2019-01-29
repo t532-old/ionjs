@@ -26,7 +26,7 @@ export class BotWhen extends When {
     /** Return a When instance with no conditions */
     ever() { return this.derive({}) }
     /** Add the raw message to the parsed result */
-    raw() { 
+    raw() {
         return this.derive({ parse: function raw(ctx: TExtensibleMessage) { return ctx } })
     }
     /**
@@ -50,7 +50,7 @@ export class BotWhen extends When {
             validate: function contain(ctx: TExtensibleMessage) {
                 if (keywords0 instanceof RegExp) return keywords0.test(ctx.message)
                 else return keywords.some(i => ctx.message.indexOf(i as string) >= 0)
-            }, 
+            },
             parse: function contain(ctx: TExtensibleMessage) {
                 if (keywords0 instanceof RegExp) return keywords0.test(ctx.message)
                 else return keywords.filter(i => ctx.message.indexOf(i as string) >= 0)
@@ -62,13 +62,13 @@ export class BotWhen extends When {
      * @param type The expected content type(s)
      */
     type(...types: string[]) {
-        return this.derive({ 
+        return this.derive({
             validate: function type(ctx: TExtensibleMessage) {
                 const ctxTypes = contextTypeOf(ctx)
                 for (const i of types)
                     if (ctxTypes.includes(i)) return true
                 return false
-            }, 
+            },
             parse: function type(ctx: TExtensibleMessage) { return contextTypeOf(ctx) },
         })
     }
@@ -79,11 +79,11 @@ export class BotWhen extends When {
      */
     role(role: 'everyone'|'admin'|'owner'|'operator', ...failMessage: (string|ICQCode)[]) {
         const requiredRole = ['everyone', 'admin', 'owner', 'operator'].indexOf(role)
-        return this.derive({ 
+        return this.derive({
             validate: async function role(ctx: TExtensibleMessage) {
                 let actualRole: number
                 if (config.operators.includes(ctx.user_id)) actualRole = 3
-                else if (ctx.message_type === 'group') 
+                else if (ctx.message_type === 'group')
                     actualRole = ['member', 'admin', 'owner'].indexOf((await sender.to(ctx).getInfo()).data.role)
                 else actualRole = 2
                 if (actualRole < requiredRole) return false
@@ -117,11 +117,11 @@ export class BotWhen extends When {
             commands.push(new Command(`"${name}"${params ? ` ${params}` : ''}`))
         if (typeof prompts === 'string') prompts = { $default: prompts }
         if (!prompts.$default) prompts.$default = 'Please enter the parameter {}.'
-        return this.derive({ 
+        return this.derive({
             validate: function command(ctx: TExtensibleMessage) {
                 const msg = processCommandString(ctx.message)
                 return commands.some(i => i.is(msg))
-            }, 
+            },
             parse: async function command(ctx: TExtensibleMessage, stream: MessageStream<TExtensibleMessage>) {
                 const msg = processCommandString(ctx.message)
                 const comm = commands.find(i => i.is(msg))

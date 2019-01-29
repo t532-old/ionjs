@@ -45,10 +45,10 @@ Codes.Image('/path/to/file') // => { type: 'image', data: { url: 'path/to/file' 
 ``` js {3,5}
 import { Utils } from '@ionjs/core'
 // 字符串消息转为数组
-Utils.stringToArray('&amp;message[CQ:image,url=https://example.com/test.jpg]') 
+Utils.stringToArray('&amp;message[CQ:image,url=https://example.com/test.jpg]')
 // 数组消息转为字符串
 Utils.arrayToString([
     { type: 'text', data: { text: '&message' } },
     { type: 'image', data: { url: 'https://example.com/test.jpg' } },
-]) 
+])
 ```

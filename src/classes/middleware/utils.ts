@@ -1,7 +1,7 @@
 import { TMiddleware } from './definitions'
 /**
- * Generate a function that calls a function in an array, 
- * records the call and pass a function that calls the next function, etc recursively 
+ * Generate a function that calls a function in an array,
+ * records the call and pass a function that calls the next function, etc recursively
  * until the end of the funciton array
  * @param iter the iterator of the function array
  * @param context the context that'll be passed to the function
