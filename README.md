@@ -3,6 +3,7 @@
 [![Docs](https://img.shields.io/badge/docs-ion.js.org-yellow.svg)](https://ion.js.org)
 [![Build status](https://ci.appveyor.com/api/projects/status/hngl103v209a313f?svg=true)](https://ci.appveyor.com/project/trustgit/ionjs)
 [![codecov](https://codecov.io/gh/ionjs-dev/ionjs/branch/master/graph/badge.svg)](https://codecov.io/gh/ionjs-dev/ionjs)
+[![CodeFactor](https://www.codefactor.io/repository/github/ionjs-dev/ionjs/badge/master)](https://www.codefactor.io/repository/github/ionjs-dev/ionjs/overview/master)
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/ionjs-dev/ionjs.svg)](https://lgtm.com/projects/g/ionjs-dev/ionjs/context:javascript)
 [![npm (scoped)](https://img.shields.io/npm/v/@ionjs/core.svg)](https://npmjs.org/package/@ionjs/core)
 [![install size](https://packagephobia.now.sh/badge?p=@ionjs/core)](https://packagephobia.now.sh/result?p=@ionjs/core)
