@@ -171,13 +171,15 @@ class MessageStreamError extends Error {
 ## MiddlewareManager [<Badge text="classes/middleware/classes" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/middleware/classes.ts)
 类似 [koa](https://koajs.com) 的中间件管理器。
 
-```ts {2,11,16,21}
+```ts {2,8,13,18,23}
 /** A middleware manager */
 class MiddlewareManager<T> {
     /** The list of middlewares */
     private _middlewares
     /** The list of middlewares that runs at last */
     private _lastMiddlewares
+    /** Returns how many middlewares there are */
+    readonly length: number
     /**
      * add a middleware to the middleware list
      * @param middleware the middleware
@@ -194,7 +196,6 @@ class MiddlewareManager<T> {
      */
     run(ctx: T): Promise<void>
 }
-
 ```
 
 ## Receiver [<Badge text="classes/receiver/classes" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/receiver/classes.ts)
@@ -272,7 +273,7 @@ class SenderError extends Error {
 ## SessionStore [<Badge text="classes/session/base" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/session/base.ts)
 会话管理器的抽象基类。
 
-```ts {2,10,12,17}
+```ts {2,10,12,14,19}
 /** The base class that represents an object that stores Behaviors */
 abstract class SessionStore<T> {
     /** The list of the stored session templates */
@@ -281,6 +282,8 @@ abstract class SessionStore<T> {
     })[]
     /** Generates a session id for a context */
     protected readonly _identifier: (ctx: any) => any
+    /** Returns how many session templates there are */
+    readonly length: number
     /** @param identifier A function that generates a session id for a context */
     constructor(identifier: (ctx: any) => any)
     /** Push a session template into the list */
@@ -291,7 +294,6 @@ abstract class SessionStore<T> {
      */
     abstract run(ctx: any): void
 }
-
 ```
 
 ## SingleSessionManager [<Badge text="classes/session/single" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/session/single.ts)

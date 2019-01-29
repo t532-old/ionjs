@@ -33,7 +33,7 @@ type TMiddleware = (ctx: any, next: () => Promise<void>) => void
 
 ```ts {2}
 /** A type alias for a parser function */
-type TParser = (ctx: any, ...extraArgs: any[]) => any | Promise<any>
+type TParser<T = any, R = any> = (ctx: T, ...extraArgs: any[]) => R | Promise<R>
 ```
 
 ## TSessionFn [<Badge text="classes/session/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/session/definitions.ts)
@@ -55,7 +55,7 @@ type TSessionMatcher<T> = (ctx: T) => boolean | Promise<boolean>
 
 ```ts {2}
 /** A type alias for a validator function */
-type TValidator = (ctx: any, ...extraArgs: any[]) => boolean | Promise<boolean>
+type TValidator<T = any> = (ctx: T, ...extraArgs: any[]) => boolean | Promise<boolean>
 ```
 
 ## TValidatorCallback [<Badge text="classes/when/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/when/definitions.ts)
@@ -63,6 +63,6 @@ type TValidator = (ctx: any, ...extraArgs: any[]) => boolean | Promise<boolean>
 
 ```ts {2}
 /** A type alias for a validator callback function */
-type TValidatorCallback = (ctx: any, ...extraArgs: any[]) => void
+type TValidatorCallback<T = any> = (ctx: T, ...extraArgs: any[]) => void
 ```
 

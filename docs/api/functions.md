@@ -20,7 +20,7 @@ function create(name: string, identifier: (ctx: IMessage) => any): void
  * Initialize the bot
  * @param config the bot's configuration
  */
-function init({ receivePort, receiveSecret, sendURL, sendToken, operators, prefixes, self, timeout }: {
+function init({ receivePort, receiveSecret, sendURL, sendToken, operators, prefixes, self, middlewareTimeout, sessionTimeout }: {
     receivePort: number
     receiveSecret?: string
     sendURL: string
@@ -28,7 +28,8 @@ function init({ receivePort, receiveSecret, sendURL, sendToken, operators, prefi
     operators?: number[]
     prefixes?: string[]
     self: number
-    timeout?: number
+    middlewareTimeout?: number
+    sessionTimeout?: number
 }): void
 ```
 
@@ -51,7 +52,7 @@ function run(ctx: IMessage): Promise<void>
  * Pass a context through the sessions
  * @param ctx the context
  */
-function run(ctx: TExtensibleMessage): Promise<void[]>
+function run(ctx: TExtensibleMessage): Promise<void>
 ```
 
 ## start [<Badge text="instances/receiver" />](https://github.com/ionjs-dev/ionjs/tree/master/src/instances/receiver.ts)
