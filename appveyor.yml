@@ -4,11 +4,11 @@ environment:
 
 install:
   - ps: Install-Product node $env:nodejs_version
-  - ps: ./ci/install
+  - npm install
   - npm install -g codecov
 
 build_script:
-  - ps: ./ci/build
+  - npm run build
 
 test_script:
   - node --version

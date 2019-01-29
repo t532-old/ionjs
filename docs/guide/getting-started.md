@@ -17,13 +17,6 @@ npm init
 npm install --save @ionjs/core
 ```
 
-同时还可以安装一系列可选 package（见[@ionjs package 列表](/packages/index.md)），如：
-```bash
-npm install --save @ionjs/permission # 权限管理（MongoDB）
-npm install --save @ionjs/auto-accept # 自动同意加群/拉群/好友请求
-# ...
-```
-
 ## 编写
 在你的 bot 项目下创建入口文件 `index.js` 并导入 Ion.js：
 ```js
