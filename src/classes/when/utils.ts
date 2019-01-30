@@ -56,7 +56,7 @@ export async function processArgs(
         args[i] = await stream.get(async ({ message }) => {
             const converted = Utils.filterType(Utils.stringToArray(message), types[i] || 'string')
             if (!converted) return false
-            if (validators[i]) return await validators[i](converted)
+            if (validators[i]) return validators[i](converted)
             else return true
         })
     }

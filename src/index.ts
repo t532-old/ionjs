@@ -29,7 +29,7 @@ export function init({ receivePort = 8080, receiveSecret, sendURL = 'http://127.
         if (ctx.message as ICQCode[]|string instanceof Array) ctx.message = CQCodeUtils.arrayToString(ctx.message as ICQCode[])
         await next()
     })
-    useMiddlewareLast(async ctx => await runSession(ctx))
+    useMiddlewareLast(async ctx => runSession(ctx))
     receiver.on('post', ctx =>
         queue.then(() => new Promise(async resolve => {
             setTimeout(() => {

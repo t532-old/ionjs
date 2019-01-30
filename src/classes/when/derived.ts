@@ -124,7 +124,6 @@ export class BotWhen extends When {
             },
             parse: async function command(ctx: TExtensibleMessage, stream: MessageStream<TExtensibleMessage>) {
                 const msg = processCommandString(ctx.message)
-                const comm = commands.find(i => i.is(msg))
                 let args: ICommandArguments
                 let notGiven: string[] = []
                 try { args = commands.find(i => i.is(msg)).parse(msg) }

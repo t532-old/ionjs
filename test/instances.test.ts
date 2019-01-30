@@ -5,7 +5,7 @@ import { EventEmitter } from 'events'
 import { IMessage } from '../src/classes/receiver'
 
 const PORT_OFFSET = 0
-const bus = new EventEmitter
+const bus = new EventEmitter()
 
 test('Initialize bot', () => {
     expect(() => ionjs.init({
