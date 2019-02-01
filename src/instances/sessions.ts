@@ -5,14 +5,16 @@ import { When } from '../classes/when'
 import { sender } from './sender'
 import { TExtensibleMessage, ISessionContext } from './definitions'
 
+export let sessionCount = 0
+
 export type TExtensibleMessage = IMessage&{ [x: string]: any }
 
-function defaultIdentifier(ctx) {
+function defaultIdentifier(ctx: TExtensibleMessage) {
     const contextType = contextTypeOf(ctx)
     return `${ctx.user_id}${contextType[contextType.length - 1]}${unionIdOf(ctx)}`
 }
-function groupIdentifier(ctx) { return `${ctx.group_id || ctx.discuss_id}` }
-function userIdentifier(ctx) { return `${ctx.user_id}` }
+function groupIdentifier(ctx: TExtensibleMessage) { return `${ctx.group_id || ctx.discuss_id}` }
+function userIdentifier(ctx: TExtensibleMessage) { return `${ctx.user_id}` }
 const managers: { [x: string]: { single: SingleSessionManager<TExtensibleMessage>, concurrent: ConcurrentSessionManager<TExtensibleMessage> } } = {
     default: { single: new SingleSessionManager<TExtensibleMessage>(defaultIdentifier), concurrent: new ConcurrentSessionManager<TExtensibleMessage>(defaultIdentifier) },
     group: { single: new SingleSessionManager<TExtensibleMessage>(groupIdentifier), concurrent: new ConcurrentSessionManager<TExtensibleMessage>(groupIdentifier) },
@@ -70,8 +72,10 @@ export function use(when: When, { override = false, identifier = 'default', conc
                 ctx.message = Utils.arrayToString(message.map(i => typeof i === 'string' ? { type: 'text', data: { text: i } } : i))
                 return run(ctx)
             }
-            let sessionTimeout = setTimeout(() => stream.free(), timeout)
+            let sessionTimeout: NodeJS.Timeout
+            if (timeout <= Number.MAX_SAFE_INTEGER) sessionTimeout = setTimeout(() => stream.free(), timeout)
             try {
+                sessionCount++
                 await session({
                     init,
                     sender: boundSender,
@@ -82,14 +86,14 @@ export function use(when: When, { override = false, identifier = 'default', conc
                     forward,
                     set timeout(timeout: number) {
                         clearTimeout(sessionTimeout)
-                        sessionTimeout = setTimeout(() => stream.free(), timeout)
+                        if (timeout <= Number.MAX_SAFE_INTEGER) sessionTimeout = setTimeout(() => stream.free(), timeout)
                     }
                 })
             }
             catch (err) {
                 console.error('[ERROR] An uncaught error is thrown by your session code:')
                 console.error(err)
-            }
+            } finally { sessionCount-- }
         }
         if (manager instanceof SingleSessionManager) manager.use(wrapper, ctx => when.validate(ctx), override)
         else if (manager instanceof ConcurrentSessionManager) manager.use(wrapper, ctx => when.validate(ctx))
