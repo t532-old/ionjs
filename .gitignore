@@ -58,6 +58,8 @@ typings/
 .env
 
 # compiled files
-*.d.ts
-*.js
+/classes/
+/instances/
+/index.js
+/index.d.ts
 dist/
