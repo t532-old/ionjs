@@ -20,9 +20,9 @@ export class Command {
     /** The delcared parameters */
     private readonly _parameters: ICommandParameters = {
         /** The keys are the aliases and the values are param names  */
-        aliases: {},
+        aliases: new Map(),
         /** The keys are param names and the values are default values */
-        defaults: {},
+        defaults: new Map(),
         /** An array of ordered params */
         ordered: [],
         /** An array of required params */
@@ -57,8 +57,8 @@ export class Command {
                 const [, required, unordered, name, alias, , defaultVal] = matched
                 if (required === '<') this._parameters.required.push(name)
                 if (!unordered) this._parameters.ordered.push(name)
-                if (alias) this._parameters.aliases[name] = alias
-                if (defaultVal) this._parameters.defaults[name] = defaultVal
+                if (alias) this._parameters.aliases.set(name, alias)
+                if (defaultVal) this._parameters.defaults.set(name, defaultVal)
             } else {
                 this._options.push(i)
             }
@@ -86,9 +86,9 @@ export class Command {
                 args.options.push(arg)
                 specialArg = true
             }
-            for (const param in this._parameters.aliases)
-                if (arg.startsWith(this._parameters.aliases[param])) {
-                    args.arguments[param] = arg.slice(this._parameters.aliases[param].length)
+            for (const [param, alias] of this._parameters.aliases)
+                if (arg.startsWith(alias)) {
+                    args.arguments[param] = arg.slice(alias.length)
                     const indexOfParam = unusedParams.indexOf(param)
                     if (indexOfParam >= 0) unusedParams.splice(indexOfParam, 1)
                     specialArg = true
@@ -108,9 +108,9 @@ export class Command {
                 }
             }
         }
-        for (const param in this._parameters.defaults)
+        for (const [param, val] of this._parameters.defaults)
             if (!(param in args.arguments)) {
-                args.arguments[param] = this._parameters.defaults[param]
+                args.arguments[param] = val
             }
         for (const arg in args.arguments)
             args.arguments[arg] = args.arguments[arg].replace(/\\=/g, '=')
