@@ -5,6 +5,7 @@
 - [Fix] 修复了在将 setter `ISessionContext#timeout` 设为大于 `Number.MAX_SAFE_INT` 值时仍然运行 `setTimeout()` 的问题
 - [Add] 增加了导出变量 `sessionCount`，为正在进行的会话计数。
 - [Change] 使用 Map 而不是原生 Object 存储命令形参数据
+- [Change] 使用 Map 而不是原生 Object 存储会话管理器
 
 ## 0.4.0
 - [Change] 将处理队列的超时在 `init({...})` 中更名为 `middlewareTimeout`

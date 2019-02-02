@@ -15,11 +15,10 @@ function defaultIdentifier(ctx: TExtensibleMessage) {
 }
 function groupIdentifier(ctx: TExtensibleMessage) { return `${ctx.group_id || ctx.discuss_id}` }
 function userIdentifier(ctx: TExtensibleMessage) { return `${ctx.user_id}` }
-const managers: { [x: string]: { single: SingleSessionManager<TExtensibleMessage>, concurrent: ConcurrentSessionManager<TExtensibleMessage> } } = {
-    default: { single: new SingleSessionManager<TExtensibleMessage>(defaultIdentifier), concurrent: new ConcurrentSessionManager<TExtensibleMessage>(defaultIdentifier) },
-    group: { single: new SingleSessionManager<TExtensibleMessage>(groupIdentifier), concurrent: new ConcurrentSessionManager<TExtensibleMessage>(groupIdentifier) },
-    user: { single: new SingleSessionManager<TExtensibleMessage>(userIdentifier), concurrent: new ConcurrentSessionManager<TExtensibleMessage>(userIdentifier) },
-}
+const managers: Map<string, { single: SingleSessionManager<TExtensibleMessage>, concurrent: ConcurrentSessionManager<TExtensibleMessage> }> = new Map()
+    .set('default', { single: new SingleSessionManager<TExtensibleMessage>(defaultIdentifier), concurrent: new ConcurrentSessionManager<TExtensibleMessage>(defaultIdentifier) })
+    .set('group', { single: new SingleSessionManager<TExtensibleMessage>(groupIdentifier), concurrent: new ConcurrentSessionManager<TExtensibleMessage>(groupIdentifier) })
+    .set('user', { single: new SingleSessionManager<TExtensibleMessage>(userIdentifier), concurrent: new ConcurrentSessionManager<TExtensibleMessage>(userIdentifier) })
 
 let timeout: number
 
@@ -45,7 +44,7 @@ export function init(sessionTimeout: number) { timeout = sessionTimeout }
  */
 export function use(when: When, { override = false, identifier = 'default', concurrent = false } = {}) {
     return function useHandler(session: (ctx: ISessionContext) => void) {
-        const manager = concurrent ? managers[identifier].concurrent : managers[identifier].single
+        const manager = concurrent ? managers.get(identifier).concurrent : managers.get(identifier).single
         async function wrapper(stream: MessageStream<TExtensibleMessage>) {
             async function get(condition: (ctx: TExtensibleMessage) => boolean = () => true) { return deepCopy(await stream.get(condition)) as TExtensibleMessage }
             let raw: TExtensibleMessage, init: ISessionContext['init']
@@ -108,10 +107,10 @@ export function use(when: When, { override = false, identifier = 'default', conc
  * @param identifier the session manager's identifier
  */
 export function create(name: string, identifier: (ctx: IMessage) => any) {
-    managers[name] = {
+    managers.set(name, {
         single: new SingleSessionManager<TExtensibleMessage>(identifier),
         concurrent: new ConcurrentSessionManager<TExtensibleMessage>(identifier),
-    }
+    })
 }
 
 /**
@@ -120,9 +119,9 @@ export function create(name: string, identifier: (ctx: IMessage) => any) {
  */
 export async function run(ctx: TExtensibleMessage) {
     const promises: Promise<void>[] = []
-    for (const i in managers) {
-        promises.push(managers[i].single.run(ctx))
-        promises.push(managers[i].concurrent.run(ctx))
+    for (const [, val] of managers) {
+        promises.push(val.single.run(ctx))
+        promises.push(val.concurrent.run(ctx))
     }
     try { await Promise.all(promises) }
     catch (err) {
