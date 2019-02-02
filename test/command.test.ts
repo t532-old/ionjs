@@ -63,3 +63,8 @@ test('Name Error', () => {
 test('Arg Error', () => {
     expect(() => command.parse('comm')).toThrow()
 })
+
+test('toString() and get parameters()', () => {
+    expect(new Command('comm <a>').toString()).toBe('comm <a>')
+    expect(new Command('comm <a>').parameters).toEqual({ aliases: new Map(), defaults: new Map(), ordered: ['a'], required: ['a'] })
+})

@@ -17,8 +17,10 @@ test('Create ConcurrentSessionManager', () => {
 
 test('Use Session Templates', () => {
     expect(() => manager.use(async stream => {
+        stream.waste()
         bus.emit('first:start')
         while (1) {
+            stream.keep()
             const ctx = await stream.get()
             bus.emit(`first:get:${ctx.id}-${ctx.data}`, ctx)
         }
