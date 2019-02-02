@@ -16,6 +16,13 @@ Ion.js 使用的消息发送端实例。
 let sender: Sender
 ```
 
+## sessionCount [<Badge text="0.5.0+" /> <Badge text="instances/session" />](https://github.com/ionjs-dev/ionjs/tree/master/src/instances/session.ts)
+目前运行中的会话计数。
+
+```ts {1}
+let sessionCount: number
+```
+
 ## when [<Badge text="instances/when" />](https://github.com/ionjs-dev/ionjs/tree/master/src/index.ts)
 Ion.js 使用的条件判断器实例。
 
