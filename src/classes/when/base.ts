@@ -27,8 +27,8 @@ export class When {
         const original = {
             validate: Array.from(this._validators),
             parse: Array.from(this._parsers),
-            valid: Array.from(this._validCallbacks),
-            invalid: Array.from(this._invalidCallbacks),
+            validCallback: Array.from(this._validCallbacks),
+            invalidCallback: Array.from(this._invalidCallbacks),
         }
         for (const name in original) {
             if (derivation[name]) {

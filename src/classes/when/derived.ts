@@ -5,7 +5,7 @@ import { sender } from '../../instances/sender'
 import { Command, ICommandArguments } from '../command'
 import { MessageStream } from '../session'
 import { contextTypeOf } from '../receiver'
-import { TExtensibleMessage } from '../../instances/sessions'
+import { TExtensibleMessage } from '../../instances/definitions'
 import { ICQCode } from '../cqcode'
 
 export const config: { operators?: number[], prefixes?: string[], self?: number, atSelf?: string } = {}
