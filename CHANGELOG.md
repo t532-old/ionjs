@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.1
+- [Fix] 修复了会话管理器预置标识符生成器的错误逻辑
+- [Fix] 修复了 `ISessionContext#init` 错误的 typings
+
 ## 0.5.0
 - [Remove] 移除一切附属 package 并停止开发附属 package
 - [Fix] 修复了在将 setter `ISessionContext#timeout` 设为大于 `Number.MAX_SAFE_INT` 值时仍然运行 `setTimeout()` 的问题

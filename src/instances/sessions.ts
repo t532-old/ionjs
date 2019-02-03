@@ -2,9 +2,10 @@ import { SingleSessionManager, ConcurrentSessionManager, MessageStream } from '.
 import { contextTypeOf, unionIdOf, IMessage } from '../classes/receiver'
 import { Sender, ISendResult } from '../classes/sender'
 import { ICQCode, Utils } from '../classes/cqcode'
-import { When, BotWhen } from '../classes/when'
+import { When } from '../classes/when'
 import { sender } from './sender'
 import { TExtensibleMessage } from './definitions'
+import { ICommandArguments } from '../classes/command'
 
 export let sessionCount = 0
 
@@ -12,8 +13,14 @@ function defaultIdentifier(ctx: TExtensibleMessage) {
     const contextType = contextTypeOf(ctx)
     return `${ctx.user_id}${contextType[contextType.length - 1]}${unionIdOf(ctx)}`
 }
-function groupIdentifier(ctx: TExtensibleMessage) { return `${ctx.group_id || ctx.discuss_id}` }
-function userIdentifier(ctx: TExtensibleMessage) { return `${ctx.user_id}` }
+function groupIdentifier(ctx: TExtensibleMessage) {
+    const contextType = contextTypeOf(ctx)
+    return `${contextType[contextType.length - 1]}${unionIdOf(ctx)}`
+}
+function userIdentifier(ctx: TExtensibleMessage) {
+    const contextType = contextTypeOf(ctx)
+    return `${contextType[contextType.length - 1]}${ctx.user_id}`
+}
 const managers: Map<string, { single: SingleSessionManager<TExtensibleMessage>, concurrent: ConcurrentSessionManager<TExtensibleMessage> }> = new Map()
     .set('default', { single: new SingleSessionManager<TExtensibleMessage>(defaultIdentifier), concurrent: new ConcurrentSessionManager<TExtensibleMessage>(defaultIdentifier) })
     .set('group', { single: new SingleSessionManager<TExtensibleMessage>(groupIdentifier), concurrent: new ConcurrentSessionManager<TExtensibleMessage>(groupIdentifier) })
@@ -39,7 +46,11 @@ export function init(sessionTimeout: number) { timeout = sessionTimeout }
 /** Contexts that'll be passed into essions */
 export interface ISessionContext {
     /** The first context */
-    init: { [x in keyof Partial<Pick<BotWhen, 'raw'|'command'|'contain'>>]: any }
+    init: {
+        raw?: TExtensibleMessage,
+        command?: ICommandArguments,
+        contain?: string[]&RegExpMatchArray,
+    }
     /** Sender bound to this.init.raw */
     sender: Sender
     /** Stream of messages */
