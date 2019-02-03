@@ -1,4 +1,4 @@
-import axios from 'axios'
+import { post } from 'httpie'
 import Debug from 'debug'
 import { URL } from 'url'
 import { ok as assert } from 'assert'
@@ -44,7 +44,7 @@ export class Sender {
             if (!(param in args))
                 args[param] = this._context[param]
         debug('post %s %o', url, args)
-        const result = (await axios.post(url, args, { headers: this._token ? { 'Authorization': `Token ${this._token}` } : {} })).data
+        const result = (await post(url, { body: args, headers: this._token ? { 'Authorization': `Token ${this._token}` } : {} })).data
         if (result.status === 'failed') throw new SenderError(args, url, result.retcode)
         else return result
     }

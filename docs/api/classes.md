@@ -210,7 +210,7 @@ class Receiver extends EventEmitter {
 ```
 
 ## Sender [<Badge text="classes/sender/classes" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/sender/classes.ts)
-内部使用 `axios` 的 CQHTTP API 请求端。
+内部使用 `httpie` 的 CQHTTP API 请求端。
 
 ```ts {1,5,6,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38}
 class Sender {

@@ -38,8 +38,8 @@
     "cqhttp"
   ],
   "dependencies": {
-    "axios": "^0.18.0",
     "debug": "^4.1.1",
+    "httpie": "^1.0.2",
     "koa": "^2.6.2",
     "koa-bodyparser": "^4.2.1"
   },
@@ -52,6 +52,7 @@
     "@types/node": "^10.12.15",
     "@types/sinon": "^7.0.3",
     "acorn": "^6.0.5",
+    "axios": "^0.18.0",
     "jest": "^23.6.0",
     "sinon": "^7.2.2",
     "ts-jest": "^23.10.5",
