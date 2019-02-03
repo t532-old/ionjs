@@ -33,6 +33,7 @@ API 的描述是 TypeScript 自动生成的 `.d.ts`，如果不了解 TypeScript
 :::
 - [receiver: 上报接收端默认实例](objects.html#receiver)
 - [sender: 消息发送端默认实例](objects.html#sender)
+- [sessionCount: 会话计数](objects.html#sessioncount) <Badge text="0.5.0+" />
 - [when: 条件判断器默认实例](objects.html#when)
 
 ## 函数 (*function*)
