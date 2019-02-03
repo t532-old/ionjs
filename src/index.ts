@@ -47,7 +47,8 @@ export { start }
 export { sender, receiver }
 export { runMiddleware, runSession, createSessionManager }
 export { useMiddleware, useSession }
-export { ISessionContext, TExtensibleMessage } from './instances/definitions'
+export { ISessionContext } from './instances/sessions'
+export { TExtensibleMessage } from './instances/definitions'
 export * from './classes/sender'
 export * from './classes/receiver'
 export * from './classes/cqcode'

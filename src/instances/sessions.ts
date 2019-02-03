@@ -1,13 +1,12 @@
 import { SingleSessionManager, ConcurrentSessionManager, MessageStream } from '../classes/session'
 import { contextTypeOf, unionIdOf, IMessage } from '../classes/receiver'
+import { Sender, ISendResult } from '../classes/sender'
 import { ICQCode, Utils } from '../classes/cqcode'
-import { When } from '../classes/when'
+import { When, BotWhen } from '../classes/when'
 import { sender } from './sender'
-import { TExtensibleMessage, ISessionContext } from './definitions'
+import { TExtensibleMessage } from './definitions'
 
 export let sessionCount = 0
-
-export type TExtensibleMessage = IMessage&{ [x: string]: any }
 
 function defaultIdentifier(ctx: TExtensibleMessage) {
     const contextType = contextTypeOf(ctx)
@@ -37,6 +36,25 @@ function deepCopy(obj: { [x: string]: any }): { [x: string]: any } {
  */
 export function init(sessionTimeout: number) { timeout = sessionTimeout }
 
+/** Contexts that'll be passed into essions */
+export interface ISessionContext {
+    /** The first context */
+    init: { [x in keyof Partial<Pick<BotWhen, 'raw'|'command'|'contain'>>]: any }
+    /** Sender bound to this.init.raw */
+    sender: Sender
+    /** Stream of messages */
+    stream: MessageStream<TExtensibleMessage>
+    /** Get a copy of the next message from this.stream */
+    get(condition?: (ctx: IMessage) => boolean): Promise<TExtensibleMessage>
+    /** Reply to user */
+    reply(...message: (string|ICQCode)[]): Promise<ISendResult>
+    /** Question user and get an answer */
+    question(...prompt: (string|ICQCode)[]): Promise<TExtensibleMessage>
+    /** Forward to other sessions */
+    forward(...message: (string|ICQCode)[]): Promise<void>
+    /** Reset the stream deletion timeout */
+    timeout: number
+}
 /**
  * Use a session template
  * @param when when to start the session

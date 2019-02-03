@@ -242,7 +242,7 @@ interface ISendResult extends IBaseResult {
 }
 ```
 
-## ISessionContext [<Badge text="instances/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/instances/definitions.ts)
+## ISessionContext [<Badge text="instances/sessions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/instances/sessions.ts)
 传入使用 `useSession` 注册的会话中的上下文。
 
 ```ts {2,4,8,10,12,14,16,18,20}
