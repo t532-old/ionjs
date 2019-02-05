@@ -12,8 +12,8 @@
 function create(name: string, identifier: (ctx: IMessage) => any): void
 ```
 
-## init [<Badge text="index" />](https://github.com/ionjs-dev/ionjs/tree/master/src/index.ts)
-加载 Ion.js 的一系列配置。
+## init [<Badge text="app" />](https://github.com/ionjs-dev/ionjs/tree/master/src/app.ts)
+加载 Ion.js 的一系列配置，初始化 Ion.js 应用。
 
 ```ts {5}
 /**

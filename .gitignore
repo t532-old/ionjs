@@ -62,4 +62,6 @@ typings/
 /instances/
 /index.js
 /index.d.ts
+/app.js
+/app.d.ts
 dist/
