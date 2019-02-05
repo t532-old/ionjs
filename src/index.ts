@@ -3,18 +3,18 @@ export { when } from './instances/when'
 export { sender } from './instances/sender'
 export {
     start,
-    receiver
+    receiver,
 } from './instances/receiver'
 export {
     run as runMiddleware,
-    use as useMiddleware
+    use as useMiddleware,
 } from './instances/middlewares'
 export {
     run as runSession,
     use as useSession,
     create as createSessionManager,
     sessionCount,
-    ISessionContext
+    ISessionContext,
 } from './instances/sessions'
 export {
     useModule as useModuleMetadata,
@@ -22,7 +22,9 @@ export {
     getModule as getModuleMetadata,
     getAllModules as getAllModuleMetadata,
     getRegistration as getRegistrationMetadata,
-    getAllRegistrations as getAllRegistrationMetadata
+    getAllRegistrations as getAllRegistrationMetadata,
+    IModuleMetadata,
+    IRegistrationMetadata,
 } from './instances/metadata'
 export { TExtensibleMessage } from './instances/definitions'
 export * from './classes/sender'

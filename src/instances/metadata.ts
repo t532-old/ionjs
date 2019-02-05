@@ -1,16 +1,16 @@
 export interface IModuleMetadata {
     name: string
-    author: string
-    version: string
-    license: string
+    author?: string
+    version?: string
+    license?: string
     description?: string
-    registrations: string[]
+    registrations?: string[]
 }
 
 export interface IRegistrationMetadata {
     name: string
     module: string
-    usage: string
+    usage?: string
 }
 
 const modulesMetadata: IModuleMetadata[] = []
