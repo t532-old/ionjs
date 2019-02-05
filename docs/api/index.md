@@ -41,11 +41,17 @@ API 的描述是 TypeScript 自动生成的 `.d.ts`，如果不了解 TypeScript
 - camelCased
 :::
 - [createSessionManager: 根据会话标识符生成器创建会话管理器](functions.html#createsessionmanager)
+- [getAllModuleMetadata: 获取模块元信息列表](functions.html#getmodulemetadata) <Badge text="0.6.0+" />
+- [getAllRegistrationMetadata: 获取模块注册元信息列表](functions.html#getmodulemetadata) <Badge text="0.6.0+" />
+- [getModuleMetadata: 获取模块元信息](functions.html#getmodulemetadata) <Badge text="0.6.0+" />
+- [getRegistrationMetadata: 获取单注册元信息](functions.html#getregistrationmetadata) <Badge text="0.6.0+" />
 - [init: 加载配置](functions.html#init)
 - [runMiddleware: 将给定的上下文传入中间件管理器](functions.html#runmiddlewares)
 - [runSession: 将给定的上下文传入会话管理器](functions.html#runsession)
 - [start: 接收端开始监听](functions.html#start)
 - [useMiddleware: 注册中间件](functions.html#usemiddleware)
+- [useModuleMetadata: 注册模块元信息](functions.html#usemodulemetadata) <Badge text="0.6.0+" />
+- [useRegistrationMetadata: 注册单注册元信息](functions.html#useregistrationmetadata) <Badge text="0.6.0+" />
 - [useSession: 注册会话](functions.html#usesession)
 
 ## 类型别名 (*type*)
@@ -94,10 +100,12 @@ API 的描述是 TypeScript 自动生成的 `.d.ts`，如果不了解 TypeScript
 - [IInfoResult: CQHTTP用户信息响应](interfaces.html#iinforesult) <Badge text="0.2.0+" />
 - [IMemberInfoResult: CQHTTP群成员信息响应](interfaces.html#imemberinforesult) <Badge text="0.2.0-" type="error" />
 - [IMessage: CQHTTP上报消息](interfaces.html#imessage) <Badge text="0.2.0+" />
+- [IModuleMetadata: 模块元信息](interfaces.html#imodulemetadata) <Badge text="0.6.0+" />
 - [INoneResult: CQHTTP无附加信息响应](interfaces.html#inoneresult)
 - [IPluginStatusResult: CQHTTP插件状态响应](interfaces.html#ipluginstatusresult)
 - [IPluginVersionInfoResult: CQHTTP插件版本信息响应](interfaces.html#ipluginversioninforesult)
 - [IRecordResult: CQHTTP语音转换响应](interfaces.html#irecordresult)
+- [IRegistrationMetadata: 单注册元信息](interfaces.html#iregistrationmetadata) <Badge text="0.6.0+" />
 - [ISelfInfoResult: CQHTTP登录号信息响应](interfaces.html#iselfinforesult)
 - [ISendResult: CQHTTP发信响应](interfaces.html#isendresult)
 - [ISessionContext: Ion.js 扩展会话上下文](interfaces.html#isessioncontext)

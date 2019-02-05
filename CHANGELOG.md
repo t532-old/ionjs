@@ -1,7 +1,8 @@
 # Changelog
 
-## Unreleased
+## 0.6.0
 - [Change] 将 `BotWhen.init()` 改为 `BotWhen#init()`
+- [Add] 添加了 `use*Metadata` 与 `get*Metadata` 等元信息管理函数
 
 ## 0.5.1
 - [Fix] 修复了会话管理器预置标识符生成器的错误逻辑

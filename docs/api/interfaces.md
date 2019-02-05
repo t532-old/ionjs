@@ -167,6 +167,20 @@ interface IMessage {
 }
 ```
 
+## IModuleMetadata [<Badge text="0.6.0+" /> <Badge text="instances/metadata" />](https://github.com/ionjs-dev/ionjs/tree/master/src/instances/metadata.ts)
+模块的元信息。
+
+```ts {1}
+interface IModuleMetadata {
+    name: string
+    author?: string
+    version?: string
+    license?: string
+    description?: string
+    registrations?: string[]
+}
+```
+
 ## INoneResult [<Badge text="classes/receiver/definitions" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/receiver/definitions.ts)
 CQHTTP 无附加响应信息的 API 的响应数据。
 
@@ -216,6 +230,17 @@ interface IRecordResult extends IBaseResult {
     data: {
         file: string
     }
+}
+```
+
+## IRegistrationMetadata [<Badge text="0.6.0+" /> <Badge text="instances/metadata" />](https://github.com/ionjs-dev/ionjs/tree/master/src/instances/metadata.ts)
+单次注册的元信息。
+
+```ts {1}
+interface IRegistrationMetadata {
+    name: string
+    module: string
+    usage?: string
 }
 ```
 
