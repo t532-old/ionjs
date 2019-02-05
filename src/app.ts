@@ -1,5 +1,5 @@
 import { Utils as CQCodeUtils, ICQCode } from './classes/cqcode'
-import { BotWhen } from './classes/when'
+import { init as initWhen } from './instances/when' 
 import { init as initSender } from './instances/sender'
 import { init as initReceiver, receiver } from './instances/receiver'
 import { use as useMiddleware, useLast as useMiddlewareLast, run as runMiddleware } from './instances/middlewares'
@@ -24,7 +24,7 @@ export function init({ receivePort = 8080, receiveSecret, sendURL = 'http://127.
     initReceiver(receivePort, receiveSecret)
     initSender(sendURL, sendToken)
     initSession(sessionTimeout)
-    BotWhen.init({ operators, prefixes, self })
+    initWhen({ operators, prefixes, self })
     useMiddleware(async (ctx, next) => {
         if (ctx.message instanceof Array) ctx.message = CQCodeUtils.arrayToString(ctx.message as ICQCode[])
         await next()

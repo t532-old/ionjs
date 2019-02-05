@@ -1,7 +1,5 @@
-import { BotWhen } from './classes/when'
-/** An object for determining when should a session start */
-export const when: BotWhen = new BotWhen().raw().type('message')
 export { init } from './app'
+export { when } from './instances/when'
 export { sender } from './instances/sender'
 export { start, receiver } from './instances/receiver'
 export { run as runMiddleware, use as useMiddleware } from './instances/middlewares'

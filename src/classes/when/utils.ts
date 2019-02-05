@@ -1,4 +1,3 @@
-import { config } from './derived'
 import { sender } from '../../instances/sender'
 import { MessageStream } from '../session'
 import { Utils as Utils } from '../cqcode'
@@ -16,7 +15,7 @@ export function compare(matcher: any, obj: any) {
     return true
 }
 
-export function processCommandString(msg: string) {
+export function processCommandString(msg: string, atSelf: string) {
     let str = Utils.arrayToString(Utils.stringToArray(msg).map(i => i.type === 'text' ? i : {
         type: i.type,
         data: Object.keys(i.data).reduce((acc, val) => {
@@ -24,7 +23,7 @@ export function processCommandString(msg: string) {
             return acc
         }, {})
     })).trim().replace(/\[/g, '"[').replace(/\]/g, ']"')
-    const escapedAtSelf = config.atSelf.replace(/=/g, '\\\\=')
+    const escapedAtSelf = atSelf.replace(/=/g, '\\\\=')
     if (str.startsWith(escapedAtSelf)) str = str.slice(escapedAtSelf.length).trim()
     return str
 }

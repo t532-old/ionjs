@@ -8,21 +8,27 @@ import { contextTypeOf } from '../receiver'
 import { TExtensibleMessage } from '../../instances/definitions'
 import { ICQCode } from '../cqcode'
 
-export const config: { operators?: number[], prefixes?: string[], self?: number, atSelf?: string } = {}
-
 /** A class that represents conditions that determines whether a session should start ot not */
 export class BotWhen extends When {
-    static init({ operators, prefixes, self }: {
+    private config: { operators?: number[], prefixes?: string[], self?: number, atSelf?: string } = {}
+    init({ operators, prefixes, self }: {
         operators: number[],
         prefixes: string[],
         self: number,
     }) {
-        config.operators = operators
-        config.prefixes = prefixes
-        config.self = self
-        config.atSelf = `[CQ:at,qq=${self}]`
+        this.config.operators = operators
+        this.config.prefixes = prefixes
+        this.config.self = self
+        this.config.atSelf = `[CQ:at,qq=${self}]`
+        return this
     }
-    private derive(obj: { validate?: TValidator<TExtensibleMessage>, parse?: TParser<TExtensibleMessage>, validCallback?: TValidatorCallback<TExtensibleMessage>, invalidCallback?: TValidatorCallback<TExtensibleMessage> }) { return this.deriveFromType<BotWhen>(obj) }
+    private derive(obj: { validate?: TValidator<TExtensibleMessage>, parse?: TParser<TExtensibleMessage>, validCallback?: TValidatorCallback<TExtensibleMessage>, invalidCallback?: TValidatorCallback<TExtensibleMessage> }) {
+        return this.deriveFromType<BotWhen>(obj).init({ 
+            operators: this.config.operators, 
+            prefixes: this.config.prefixes,
+            self: this.config.self,
+        })
+    }
     /** Return a When instance with no conditions */
     ever() { return this.derive({}) }
     /** Add the raw message to the parsed result */
@@ -82,7 +88,7 @@ export class BotWhen extends When {
         return this.derive({
             validate: async function role(ctx: TExtensibleMessage) {
                 let actualRole: number
-                if (config.operators.includes(ctx.user_id)) actualRole = 3
+                if (this.config.operators.includes(ctx.user_id)) actualRole = 3
                 else if (ctx.message_type === 'group')
                     actualRole = ['member', 'admin', 'owner'].indexOf((await sender.to(ctx).getInfo()).data.role)
                 else actualRole = 2
@@ -107,7 +113,7 @@ export class BotWhen extends When {
         names = names instanceof Array ? names : [names]
         if (withPrefixes) {
             const prefixedNames: string[] = []
-            for (const i of config.prefixes)
+            for (const i of this.config.prefixes)
                 for (const j of names)
                     prefixedNames.push(`${i}${j}`)
             names = prefixedNames
@@ -117,13 +123,14 @@ export class BotWhen extends When {
             commands.push(new Command(`"${name}"${params ? ` ${params}` : ''}`))
         if (typeof prompts === 'string') prompts = { $default: prompts }
         if (!prompts.$default) prompts.$default = 'Please enter the parameter {}.'
+        const { atSelf } = this.config
         return this.derive({
             validate: function command(ctx: TExtensibleMessage) {
-                const msg = processCommandString(ctx.message)
+                const msg = processCommandString(ctx.message, atSelf)
                 return commands.some(i => i.is(msg))
             },
             parse: async function command(ctx: TExtensibleMessage, stream: MessageStream<TExtensibleMessage>) {
-                const msg = processCommandString(ctx.message)
+                const msg = processCommandString(ctx.message, atSelf)
                 let args: ICommandArguments
                 let notGiven: string[] = []
                 try { args = commands.find(i => i.is(msg)).parse(msg) }
@@ -138,9 +145,10 @@ export class BotWhen extends When {
      * @param failMessage message that'll be sent to user when invalid
      */
     at(...failMessage: (string|ICQCode)[]) {
+        const { atSelf } = this.config
         return this.derive({
             validate: function at(ctx: TExtensibleMessage) {
-                if (!ctx.message.startsWith(config.atSelf)) return false
+                if (!ctx.message.startsWith(atSelf)) return false
                 return true
             },
             invalidCallback: function at(ctx: TExtensibleMessage) { if (failMessage.length) sender.to(ctx).send(...failMessage) },

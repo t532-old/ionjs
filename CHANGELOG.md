@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+- [Change] 将 `BotWhen.init()` 改为 `BotWhen#init()`
+
 ## 0.5.1
 - [Fix] 修复了会话管理器预置标识符生成器的错误逻辑
 - [Fix] 修复了 `ISessionContext#init` 错误的 typings

@@ -3,14 +3,20 @@
 ## BotWhen [<Badge text="classes/when/derived" />](https://github.com/ionjs-dev/ionjs/tree/master/src/classes/when/derived.ts)
 针对QQ机器人特化的条件判断器 `When`，带有一系列实用方法。
 
-```ts {2,3,10,12,18,25,30,36,43,59}
+```ts {2,9,16,18,24,31,36,42,49,65}
 /** A class that represents conditions that determines whether a session should start ot not */
 class BotWhen extends When {
-    static init({ operators, prefixes, self }: {
+    private config: {
+        operators?: number[]
+        prefixes?: string[]
+        self?: number
+        atSelf?: string
+    }
+    init({ operators, prefixes, self }: {
         operators: number[]
         prefixes: string[]
         self: number
-    }): void
+    }): this
     private derive
     /** Return a When instance with no conditions */
     ever(): BotWhen
