@@ -16,6 +16,14 @@ export {
     sessionCount,
     ISessionContext
 } from './instances/sessions'
+export {
+    useModule as useModuleMetadata,
+    useRegistration as useRegistrationMetadata,
+    getModule as getModuleMetadata,
+    getAllModules as getAllModuleMetadata,
+    getRegistration as getRegistrationMetadata,
+    getAllRegistrations as getAllRegistrationMetadata
+} from './instances/metadata'
 export { TExtensibleMessage } from './instances/definitions'
 export * from './classes/sender'
 export * from './classes/receiver'
