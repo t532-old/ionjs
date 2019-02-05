@@ -1,5 +1,5 @@
 import { Utils as CQCodeUtils, ICQCode } from './classes/cqcode'
-import { init as initWhen } from './instances/when' 
+import { init as initWhen } from './instances/when'
 import { init as initSender } from './instances/sender'
 import { init as initReceiver, receiver } from './instances/receiver'
 import { use as useMiddleware, useLast as useMiddlewareLast, run as runMiddleware } from './instances/middlewares'

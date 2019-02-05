@@ -23,8 +23,8 @@ export class BotWhen extends When {
         return this
     }
     private derive(obj: { validate?: TValidator<TExtensibleMessage>, parse?: TParser<TExtensibleMessage>, validCallback?: TValidatorCallback<TExtensibleMessage>, invalidCallback?: TValidatorCallback<TExtensibleMessage> }) {
-        return this.deriveFromType<BotWhen>(obj).init({ 
-            operators: this.config.operators, 
+        return this.deriveFromType<BotWhen>(obj).init({
+            operators: this.config.operators,
             prefixes: this.config.prefixes,
             self: this.config.self,
         })
