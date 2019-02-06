@@ -148,8 +148,8 @@ export class BotWhen extends When {
         const { atSelf } = this.config
         return this.derive({
             validate: function at(ctx: TExtensibleMessage) {
-                if (!ctx.message.startsWith(atSelf)) return false
-                return true
+                if (ctx.message.startsWith(atSelf) || ctx.message_type === 'private') return true
+                return false
             },
             invalidCallback: function at(ctx: TExtensibleMessage) { if (failMessage.length) sender.to(ctx).send(...failMessage) },
         })
