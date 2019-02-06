@@ -1,7 +1,6 @@
 import { post } from 'httpie'
 import Debug from 'debug'
 import { URL } from 'url'
-import { ok as assert } from 'assert'
 import { CQHTTP_API } from './api'
 import { Codes, ICQCode } from '../cqcode'
 import * as Result from './definitions'
@@ -48,18 +47,15 @@ export class Sender {
         if (result.status === 'failed') throw new SenderError(args, url, result.retcode)
         else return result
     }
-    private _checkContext(...keys: string[]) {
-        for (const key of keys)
-            assert(this._context[key])
-   }
     send(...mixedMessage: (string|ICQCode)[]): Promise<Result.ISendResult> {
-        this._checkContext('message_type')
         const message = []
         for (const i of mixedMessage) {
             if (typeof i === 'string') message.push(Codes.Text(i))
             else message.push(i)
         }
-        return this._post(CQHTTP_API.send[this._context.message_type], { message })
+        if (this._context.group_id) return this._post(CQHTTP_API.send.group, { message })
+        else if (this._context.discuss_id) return this._post(CQHTTP_API.send.discuss, { message })
+        else return this._post(CQHTTP_API.send.private, { message })
     }
     'delete'(message_id: number): Promise<Result.INoneResult> { return this._post(CQHTTP_API.delete, { message_id }) }
     sendLike(times: number): Promise<Result.INoneResult> { return this._post(CQHTTP_API.sendLike, { times }) }
@@ -80,13 +76,10 @@ export class Sender {
     setSpecialTitle(title: string = ''): Promise<Result.INoneResult> { return this._post(CQHTTP_API.setSpecialTitle, { title }) }
     deleteSpecialTitle(): Promise<Result.INoneResult> { return this._post(CQHTTP_API.setSpecialTitle, { title: '' }) }
     leave(is_dismiss: boolean = false): Promise<Result.INoneResult> {
-        this._checkContext('message_type')
-        return this._post(CQHTTP_API.leave[this._context.message_type], { is_dismiss })
+        if (this._context.group_id) return this._post(CQHTTP_API.leave.group, { is_dismiss })
+        else return this._post(CQHTTP_API.leave.discuss, { is_dismiss })
     }
-    solveRequest(approve: boolean = true, remarkOrReason: string = ''): Promise<Result.INoneResult> {
-        this._checkContext('request_type')
-        return this._post(CQHTTP_API.solveRequest[this._context.request_type], { approve, remark: remarkOrReason })
-    }
+    solveRequest(approve: boolean = true, remarkOrReason: string = ''): Promise<Result.INoneResult> { return this._post(CQHTTP_API.solveRequest[this._context.request_type], { approve, remark: remarkOrReason }) }
     getSelfInfo(): Promise<Result.ISelfInfoResult> { return this._post(CQHTTP_API.getSelfInfo) }
     getInfo(no_cache: boolean = false): Promise<Result.IInfoResult> {
         if (this._context.group_id) return this._post(CQHTTP_API.getInfo.member, { no_cache })

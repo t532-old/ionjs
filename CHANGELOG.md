@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+- [Change] 重写了文档的“指南”部分
+- [Fix] 修复了 `Sender#send()` 只对 `post_type: 'message'` 的上报消息有效的 Bug
+- [Add] 增加了示例项目（`/example/`，inspired from `richardchien/nonebot/demo/`）
+
 ## 0.6.0
 - [Change] 将 `BotWhen.init()` 改为 `BotWhen#init()`
 - [Add] 添加了 `use*Metadata` 与 `get*Metadata` 等元信息管理函数
