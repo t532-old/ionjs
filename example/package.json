@@ -1,0 +1,22 @@
+{
+  "name": "@ionjs/example",
+  "version": "0.1.0",
+  "description": "Example project for Ion.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ionjs-dev/ionjs.git"
+  },
+  "author": "ionjs-dev",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ionjs-dev/ionjs/issues"
+  },
+  "homepage": "https://github.com/ionjs-dev/ionjs#readme",
+  "dependencies": {
+    "@ionjs/core": "^0.6.0"
+  }
+}
