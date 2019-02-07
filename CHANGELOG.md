@@ -1,7 +1,7 @@
 # Changelog
 
-## Unreleased
-- [Change] 重写了文档的“指南”部分
+## 0.6.1
+- [Fix] 修复了 `BotWhen#at()` 在私聊中永远不会被触发的 Bug
 - [Fix] 修复了 `Sender#send()` 只对 `post_type: 'message'` 的上报消息有效的 Bug
 - [Add] 增加了示例项目（`/example/`，inspired from `richardchien/nonebot/demo/`）
 
