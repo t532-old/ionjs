@@ -4,6 +4,7 @@ environment:
 
 install:
   - ps: Install-Product node $env:nodejs_version
+  - ps: "$env:NPM_TOKEN = if ($env:NPM_TOKEN) { $env:NPM_TOKEN } else { \"dummy\" }"
   - npm install
   - npm install -g codecov
 
