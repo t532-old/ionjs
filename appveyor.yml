@@ -17,4 +17,5 @@ test_script:
 
 on_success:
   - codecov
+  - npm run release
   - ps: ./ci/deploy-docs
