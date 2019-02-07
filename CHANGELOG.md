@@ -1,4 +1,4 @@
-# Changelog
+> Warning: The content below are NOT conventional changelog.
 
 ## 0.6.1
 - [Fix] 修复了 `BotWhen#at()` 在私聊中永远不会被触发的 Bug

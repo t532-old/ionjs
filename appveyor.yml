@@ -20,3 +20,5 @@ on_success:
   - codecov
   - npm run release
   - ps: ./ci/deploy-docs
+
+skip_tags: true
