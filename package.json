@@ -1,6 +1,6 @@
 {
   "name": "@ionjs/core",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Yet another QQ bot framework based on CQHTTP & CoolQ.",
   "main": "index.js",
   "types": "index.d.ts",
@@ -48,6 +48,7 @@
   "devDependencies": {
     "@babel/core": "^7.2.2",
     "@semantic-release/changelog": "^3.0.2",
+    "@semantic-release/git": "^7.0.8",
     "@types/debug": "^0.0.31",
     "@types/jest": "^23.3.10",
     "@types/koa": "^2.0.47",

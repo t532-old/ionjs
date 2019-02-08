@@ -1,6 +1,8 @@
 environment:
   nodejs_version: "10"
   CODECOV_TOKEN: "7628da08-1b43-47a1-accb-d38df3827f81"
+  GIT_AUTHOR_NAME: t532 via CI
+  GIT_AUTHOR_EMAIL: trustq@qq.com
 
 install:
   - ps: Install-Product node $env:nodejs_version
