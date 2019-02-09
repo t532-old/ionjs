@@ -24,13 +24,8 @@ module.exports = {
                 children: [
                     '',
                     'getting-started',
-                    'structure',
-                    'what-happened',
-                    'using-sessions',
-                    'using-middlewares',
-                    'using-commands',
-                    'using-sender-receiver',
-                    'more-about-sessions'
+                    'using-receiver-and-sender',
+                    'using-session',
                 ],
             }],
             '/api/': [{

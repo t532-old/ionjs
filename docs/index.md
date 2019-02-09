@@ -2,7 +2,7 @@
     <div class="homepage-header--positioner">
         <h1 class="homepage-header-title">Ionjs</h1>
         <div class="homepage-header-link">
-            <a href="/guide/getting-started.html" class="homepage-header-link-item homepage-header-link-item--start">起步</a>
+            <a href="/guide/" class="homepage-header-link-item homepage-header-link-item--start">起步</a>
             <a href="https://github.com/ionjs-dev/ionjs" class="homepage-header-link-item homepage-header-link-item--gh">GITHUB</a>
         </div>
     </div>
