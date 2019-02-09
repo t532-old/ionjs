@@ -18,20 +18,15 @@
 ## 用户
 指与 Bot 在 IM 中对话的账号。
 
-## 会话 / session
+## session
 依照上下文，可能指：
 - 在满足一定条件时触发的，触发后可以与用户持续交互的行为。
-- `ionjs.useSession(...)(...)` 中的参数。运行它将产生一个会话。
+- 通过 `ionjs.useSession(...)(...)` 注册的 session 模板，在特定情况下被触发。
 
-## （会话）上下文 / ctx
-视情况指两个之一：
-- CQHTTP 的上报消息；
-- 传进会话的对象，即 `ISessionContext`。
+## ctx / context
+指传入会话的，用于与用户交互的 `ISessionContext` 对象。
 
-## 条件判断器 / when
-即 `class When` 以及所有派生类（以及它们的实例）。
+*有时候，也会偶尔指代 CQHTTP 上报对象。*
 
-若指的是实例，则它通常会被作为 `ionjs.useSession(...)` 的第一个参数。这将给 Ion.js 提供判断消息是否应该触发一个会话的依据，并可能向传入会话的上下文的 `init` 对象增加一些解析后的信息。
-
-## 中间件 / middleware
+## middleware
 指消息在传入会话前经过的一系列异步函数。这些函数通过 `useMiddleware(...)` 注册，对上下文进行适当的处理，并可以控制下一个被注册的中间件的执行。
