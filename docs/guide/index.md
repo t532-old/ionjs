@@ -1,18 +1,64 @@
 # 欢迎
-> Yet another QQ bot framework based on CQHTTP &amp; CoolQ.
+欢迎来到 Ion.js 教程！在这个教程里，我们将通过编写一个真实的 QQ Bot 来学习 Ion.js。
 
-## 介绍
-Ion.js 是一个用 TypeScript 写就，在 Node.js 环境下运行，基于 [CQHTTP](https://github.com/richardchien/coolq-http-api) 和 [酷Q](https://cqp.cc) 的 QQ 机器人框架。
+::: tip 前置知识
+本文档假定你知道如何使用 JavaScript（包括 ES6/7 的新语法）、[Node.js](https://nodejs.org)、[npm](https://npmjs.com)，并且拥有一定的自主理解能力。
+:::
 
-Ion.js 提供两类消息处理器：中间件和会话。接收到的消息将经过中间件依次处理，并最终分发给会话。得益于 JavaScript 的异步 I/O 与对消息流的封装，开发者可以便捷地创建与用户持续交互的会话；同时，Ion.js 提供了一系列实用工具（甚至一个用以声明命令的 DSL），以更加方便地描述、书写消息处理器。
+## 预先准备
+Ion.js 的这些依赖项需要你手动安装：
 
-Ion.js 使用 koa 来与 CQHTTP 通信，同时使用了 Node.js 原生的 `stream.PassThrough` 简单流来构造持续的消息流。
+- CoolQ（[网站](https://cqp.cc)）用来发送 QQ 信息；
+- CoolQ HTTP API（CQHTTP）（[网站](https://cqhttp.cc)）用来实现本框架与 CoolQ 的交互。
 
-需要注意的是，Ion.js 仍使用的是传统的 HTTP 通信方式，且不内置对会话状态的长期存储（即仅有内存存储）；Ion.js 要求 Node.js 环境支持 ES2017，CQHTTP 插件在版本 4 以上。
+你应该需要对 CQHTTP 进行一些配置，确保 [CQHTTP 作为 HTTP 服务器](https://cqhttp.cc/docs/4.7/#/CommunicationMethods?id=%E6%8F%92%E4%BB%B6%E4%BD%9C%E4%B8%BA-http-%E6%9C%8D%E5%8A%A1%E7%AB%AF)。
 
-## 特性
-- **是可引入的 CommonJS 模块**，因此无需遵循特定的路径结构；
-- **有一系列实用工具**，包括获取消息时的条件判断与CQ码的处理等；
-- **支持真正的中间件**，数据传至下游、控制传回上游；
-- **提供更强大的命令声明与解析**，包括具名参数、引号转义、默认值等；
-- **支持创建与用户持续交互的会话**，使用友好的异步 I/O。
+然后，创建一个项目并通过 npm 安装本框架：
+```bash
+# 创建目录和入口文件
+mkdir my-awesome-bot
+cd my-awesome-bot
+touch index.js
+# 初始化项目
+npm init
+# 安装 Ion.js
+npm install --save @ionjs/core
+```
+
+## 导入
+指南中所有的示例代码都假定在开头添加了这一段：
+```js
+import * as ionjs from '@ionjs/core'
+for (const i in ionjs)
+    global[i] = ionjs[i]
+```
+
+在实际使用中，你可以依照需要来导入部分对象：
+```js
+import { sender, receiver } from '@ionjs/core'
+// sender, receiver 全局可用
+```
+
+或使用命名空间导入：
+```js
+import * as ionjs from '@ionjs/core'
+// 使用 ionjs.<name>
+```
+
+若使用 CommonJS 导入，则可以使用这两种之一：
+```js
+const { sender, receiver } = require('@ionjs/core') // 部分导入
+const ionjs = require('@ionjs/core') // 命名空间导入
+```
+
+## 参见
+每个标题下都会提供像这样的*参见*，你可以访问它们以获得关于该标题下所介绍内容的更详细信息：
+
+::: tip 参见
+- 前置知识 *是你需要预先了解的内容*
+    - ...到其他页面的链接
+- 拓展阅读 *在了解后可以有更好的使用体验*
+    - ...到其他页面的链接
+- API 定义 *提供了更严谨的定义*
+    - ...到其他页面的链接
+:::
