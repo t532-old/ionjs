@@ -18,7 +18,8 @@
     "package.json",
     "classes/",
     "instances/",
-    "index.*"
+    "index.*",
+    "app.*"
   ],
   "repository": {
     "type": "git",
