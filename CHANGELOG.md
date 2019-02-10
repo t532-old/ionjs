@@ -1,3 +1,10 @@
+## [0.6.2](https://github.com/ionjs-dev/ionjs/compare/v0.6.1...v0.6.2) (2019-02-10)
+
+
+### Bug Fixes
+
+* add "app.*" to package.json#files ([ee932b4](https://github.com/ionjs-dev/ionjs/commit/ee932b4))
+
 > Warning: The content below are NOT conventional changelog.
 
 ## 0.6.1
