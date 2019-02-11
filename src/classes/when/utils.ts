@@ -52,12 +52,12 @@ export async function processArgs(
     for (const i of notGiven) {
         const prompt = prompts[i] || prompts.$default.replace(/\{\}/g, i)
         await sender.to(init).send(prompt)
-        args[i] = await stream.get(async ({ message }) => {
+        args[i] = (await stream.get(async ({ message }) => {
             const converted = Utils.filterType(Utils.stringToArray(message), types[i] || 'string')
             if (!converted) return false
             if (validators[i]) return validators[i](converted)
             else return true
-        })
+        })).message
     }
     for (const i in args) args[i] = Utils.filterType(Utils.stringToArray(args[i]), types[i] || 'string')
 }
