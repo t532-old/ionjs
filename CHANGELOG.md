@@ -1,3 +1,10 @@
+## [0.6.3](https://github.com/ionjs-dev/ionjs/compare/v0.6.2...v0.6.3) (2019-02-11)
+
+
+### Bug Fixes
+
+* **dependencies:** put [@types](https://github.com/types)/* in dependencies instead of devDependencies ([d21cd25](https://github.com/ionjs-dev/ionjs/commit/d21cd25))
+
 ## [0.6.2](https://github.com/ionjs-dev/ionjs/compare/v0.6.1...v0.6.2) (2019-02-10)
 
 
