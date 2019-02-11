@@ -116,7 +116,7 @@ export class BotWhen extends When {
             for (const i of this.config.prefixes)
                 for (const j of names)
                     prefixedNames.push(`${i}${j}`)
-            names = prefixedNames
+            if (prefixedNames.length) names = prefixedNames
         }
         const commands: Command[] = []
         for (const name of names)
