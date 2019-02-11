@@ -1,3 +1,10 @@
+## [0.6.4](https://github.com/ionjs-dev/ionjs/compare/v0.6.3...v0.6.4) (2019-02-11)
+
+
+### Performance Improvements
+
+* **dependencies:** remove [@types](https://github.com/types)/sinon from dependencies ([c6297c2](https://github.com/ionjs-dev/ionjs/commit/c6297c2))
+
 ## [0.6.3](https://github.com/ionjs-dev/ionjs/compare/v0.6.2...v0.6.3) (2019-02-11)
 
 
