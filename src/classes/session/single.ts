@@ -1,6 +1,6 @@
 import { SessionStore } from './base'
 import { MessageStream } from './stream'
-import { TSessionFn, TSessionMatcher, ISingleSessionTemplate } from './definitions'
+import { ISessionFn, ISessionMatcher, ISingleSessionTemplate } from './definitions'
 import Debug from 'debug'
 const debug = Debug('ionjs:session'),
       debugVerbose = Debug('verbose-ionjs:session'),
@@ -18,7 +18,7 @@ export class SingleSessionManager<T> extends SessionStore<T> {
      *                 whether to force end the previous session (true)
      *                 or ignore this context (false or not determined)
      */
-    use(session: TSessionFn<T>, match: TSessionMatcher<T>, override: boolean = false) {
+    use(session: ISessionFn<T>, match: ISessionMatcher<T>, override: boolean = false) {
         this._templates.push({ session, match, override })
         debug('use (+%d)', this._templates.length)
         return this

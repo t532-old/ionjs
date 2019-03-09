@@ -1,2 +1,2 @@
 export { MiddlewareManager } from './classes'
-export { TMiddleware } from './definitions'
+export { IMiddleware } from './definitions'

@@ -1,9 +1,9 @@
 import { sender } from '../../instances/sender'
 import { MessageStream } from '../session'
 import { Utils as Utils } from '../cqcode'
-import { TExtensibleMessage } from '../../instances/definitions'
+import { IExtensibleMessage } from '../../instances/definitions'
 import { escapeArgument, ICommandArguments } from '../command'
-import { TValidator } from './definitions'
+import { IValidator } from './definitions'
 
 export function compare(matcher: any, obj: any) {
     if (matcher instanceof RegExp) return matcher.test(obj)
@@ -34,11 +34,11 @@ export async function processArgs(
     { prompts, types, validators }: {
         prompts: { [param: string]: string },
         types: { [param: string]: string },
-        validators: { [param: string]: TValidator },
+        validators: { [param: string]: IValidator },
     },
     { init, stream }: {
-        init: TExtensibleMessage,
-        stream: MessageStream<TExtensibleMessage>
+        init: IExtensibleMessage,
+        stream: MessageStream<IExtensibleMessage>
     }
 ) {
     notGiven = [

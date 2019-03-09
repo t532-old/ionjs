@@ -1,21 +1,21 @@
-import { TValidator, TValidatorCallback, TParser, TWhenClass } from './definitions'
+import { IValidator, IValidatorCallback, IParser, IWhenClass } from './definitions'
 
 /** A class that represents a series of conditions */
 export class When {
     /** The validators */
-    protected readonly _validators: TValidator[] = []
+    protected readonly _validators: IValidator[] = []
     /** The parsers */
-    protected readonly _parsers: TParser[] = []
+    protected readonly _parsers: IParser[] = []
     /** The validator callback (when valid) */
-    protected readonly _validCallbacks: TValidatorCallback[] = []
+    protected readonly _validCallbacks: IValidatorCallback[] = []
     /** The validator callback (when invalid) */
-    protected readonly _invalidCallbacks: TValidatorCallback[] = []
+    protected readonly _invalidCallbacks: IValidatorCallback[] = []
     /** @param fns functions for When */
     constructor({ validate = [], parse = [], validCallback = [], invalidCallback = [] }: {
-        validate?: TValidator[],
-        parse?: TParser[],
-        validCallback?: TValidatorCallback[],
-        invalidCallback?: TValidatorCallback[],
+        validate?: IValidator[],
+        parse?: IParser[],
+        validCallback?: IValidatorCallback[],
+        invalidCallback?: IValidatorCallback[],
     } = {}) {
         this._validators = validate
         this._parsers = parse
@@ -23,7 +23,7 @@ export class When {
         this._invalidCallbacks = invalidCallback
     }
     /** Returns a new When instance based on this, with one more validator and/or parser */
-    protected deriveFromType<T extends When>(derivation: { validate?: TValidator, parse?: TParser, validCallback?: TValidatorCallback, invalidCallback?: TValidatorCallback }) {
+    protected deriveFromType<T extends When>(derivation: { validate?: IValidator, parse?: IParser, validCallback?: IValidatorCallback, invalidCallback?: IValidatorCallback }) {
         const original = {
             validate: Array.from(this._validators),
             parse: Array.from(this._parsers),
@@ -37,7 +37,7 @@ export class When {
                 original[name].push(derivation[name])
             }
         }
-        return new (this.constructor as TWhenClass<T>)(original)
+        return new (this.constructor as IWhenClass<T>)(original)
     }
     /** Validate a context */
     async validate(ctx: any, ...extraArgs: any[]) {

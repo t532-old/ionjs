@@ -4,27 +4,27 @@ import { Sender, ISendResult } from '../classes/sender'
 import { ICQCode, Utils } from '../classes/cqcode'
 import { When } from '../classes/when'
 import { sender } from './sender'
-import { TExtensibleMessage } from './definitions'
+import { IExtensibleMessage } from './definitions'
 import { ICommandArguments } from '../classes/command'
 
 export let sessionCount = 0
 
-function defaultIdentifier(ctx: TExtensibleMessage) {
+function defaultIdentifier(ctx: IExtensibleMessage) {
     const contextType = contextTypeOf(ctx)
     return `${ctx.user_id}${contextType[contextType.length - 1]}${unionIdOf(ctx)}`
 }
-function groupIdentifier(ctx: TExtensibleMessage) {
+function groupIdentifier(ctx: IExtensibleMessage) {
     const contextType = contextTypeOf(ctx)
     return `${contextType[contextType.length - 1]}${unionIdOf(ctx)}`
 }
-function userIdentifier(ctx: TExtensibleMessage) {
+function userIdentifier(ctx: IExtensibleMessage) {
     const contextType = contextTypeOf(ctx)
     return `${contextType[contextType.length - 1]}${ctx.user_id}`
 }
-const managers: Map<string, { single: SingleSessionManager<TExtensibleMessage>, concurrent: ConcurrentSessionManager<TExtensibleMessage> }> = new Map()
-    .set('default', { single: new SingleSessionManager<TExtensibleMessage>(defaultIdentifier), concurrent: new ConcurrentSessionManager<TExtensibleMessage>(defaultIdentifier) })
-    .set('group', { single: new SingleSessionManager<TExtensibleMessage>(groupIdentifier), concurrent: new ConcurrentSessionManager<TExtensibleMessage>(groupIdentifier) })
-    .set('user', { single: new SingleSessionManager<TExtensibleMessage>(userIdentifier), concurrent: new ConcurrentSessionManager<TExtensibleMessage>(userIdentifier) })
+const managers: Map<string, { single: SingleSessionManager<IExtensibleMessage>, concurrent: ConcurrentSessionManager<IExtensibleMessage> }> = new Map()
+    .set('default', { single: new SingleSessionManager<IExtensibleMessage>(defaultIdentifier), concurrent: new ConcurrentSessionManager<IExtensibleMessage>(defaultIdentifier) })
+    .set('group', { single: new SingleSessionManager<IExtensibleMessage>(groupIdentifier), concurrent: new ConcurrentSessionManager<IExtensibleMessage>(groupIdentifier) })
+    .set('user', { single: new SingleSessionManager<IExtensibleMessage>(userIdentifier), concurrent: new ConcurrentSessionManager<IExtensibleMessage>(userIdentifier) })
 
 let timeout: number
 
@@ -47,20 +47,20 @@ export function init(sessionTimeout: number) { timeout = sessionTimeout }
 export interface ISessionContext {
     /** The first context */
     init: {
-        raw?: TExtensibleMessage,
+        raw?: IExtensibleMessage,
         command?: ICommandArguments,
         contain?: string[]&RegExpMatchArray,
     }
     /** Sender bound to this.init.raw */
     sender: Sender
     /** Stream of messages */
-    stream: MessageStream<TExtensibleMessage>
+    stream: MessageStream<IExtensibleMessage>
     /** Get a copy of the next message from this.stream */
-    get(condition?: (ctx: IMessage) => boolean): Promise<TExtensibleMessage>
+    get(condition?: (ctx: IMessage) => boolean): Promise<IExtensibleMessage>
     /** Reply to user */
     reply(...message: (string|ICQCode)[]): Promise<ISendResult>
     /** Question user and get an answer */
-    question(...prompt: (string|ICQCode)[]): Promise<TExtensibleMessage>
+    question(...prompt: (string|ICQCode)[]): Promise<IExtensibleMessage>
     /** Forward to other sessions */
     forward(...message: (string|ICQCode)[]): Promise<void>
     /** Reset the stream deletion timeout */
@@ -74,9 +74,9 @@ export interface ISessionContext {
 export function use(when: When, { override = false, identifier = 'default', concurrent = false } = {}) {
     return function useHandler(session: (ctx: ISessionContext) => void) {
         const manager = concurrent ? managers.get(identifier).concurrent : managers.get(identifier).single
-        async function wrapper(stream: MessageStream<TExtensibleMessage>) {
-            async function get(condition: (ctx: TExtensibleMessage) => boolean = () => true) { return deepCopy(await stream.get(condition)) as TExtensibleMessage }
-            let raw: TExtensibleMessage, init: ISessionContext['init']
+        async function wrapper(stream: MessageStream<IExtensibleMessage>) {
+            async function get(condition: (ctx: IExtensibleMessage) => boolean = () => true) { return deepCopy(await stream.get(condition)) as IExtensibleMessage }
+            let raw: IExtensibleMessage, init: ISessionContext['init']
             try { raw = await get() }
             catch (err) {
                 console.warn('[WARN] Failed when trying to get initial message:')
@@ -137,8 +137,8 @@ export function use(when: When, { override = false, identifier = 'default', conc
  */
 export function create(name: string, identifier: (ctx: IMessage) => any) {
     managers.set(name, {
-        single: new SingleSessionManager<TExtensibleMessage>(identifier),
-        concurrent: new ConcurrentSessionManager<TExtensibleMessage>(identifier),
+        single: new SingleSessionManager<IExtensibleMessage>(identifier),
+        concurrent: new ConcurrentSessionManager<IExtensibleMessage>(identifier),
     })
 }
 
@@ -146,7 +146,7 @@ export function create(name: string, identifier: (ctx: IMessage) => any) {
  * Pass a context through the sessions
  * @param ctx the context
  */
-export async function run(ctx: TExtensibleMessage) {
+export async function run(ctx: IExtensibleMessage) {
     const promises: Promise<void>[] = []
     for (const [, val] of managers) {
         promises.push(val.single.run(ctx))

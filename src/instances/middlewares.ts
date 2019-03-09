@@ -1,14 +1,14 @@
-import { MiddlewareManager, TMiddleware } from '../classes/middleware'
+import { MiddlewareManager, IMiddleware } from '../classes/middleware'
 import { IMessage } from '../classes/receiver'
-import { TExtensibleMessage } from './definitions'
+import { IExtensibleMessage } from './definitions'
 
-const manager = new MiddlewareManager<TExtensibleMessage>()
+const manager = new MiddlewareManager<IExtensibleMessage>()
 
 /**
  * Use a list of middlewares (or only one)
  * @param middlewares the middlewares
  */
-export function use(...middlewares: TMiddleware<TExtensibleMessage>[]) {
+export function use(...middlewares: IMiddleware<IExtensibleMessage>[]) {
     for (const mw of middlewares)
         manager.use(mw)
     console.log(`[INFO] ${manager.length} Middlewares loaded`)
@@ -18,7 +18,7 @@ export function use(...middlewares: TMiddleware<TExtensibleMessage>[]) {
  * Use a list of middlewares last (or only one)
  * @param middlewares the middlewares
  */
-export function useLast(...middlewares: TMiddleware<TExtensibleMessage>[]) {
+export function useLast(...middlewares: IMiddleware<IExtensibleMessage>[]) {
     for (const mw of middlewares)
         manager.useLast(mw)
     console.log(`[INFO] ${manager.length} Middlewares loaded`)

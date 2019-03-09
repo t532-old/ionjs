@@ -26,7 +26,7 @@ export {
     IModuleMetadata,
     IRegistrationMetadata,
 } from './instances/metadata'
-export { TExtensibleMessage } from './instances/definitions'
+export { IExtensibleMessage } from './instances/definitions'
 export * from './classes/sender'
 export * from './classes/receiver'
 export * from './classes/cqcode'

@@ -1,11 +1,11 @@
 import { When } from './base'
 import { compare, processArgs, processCommandString } from './utils'
-import { TValidator, TParser, TValidatorCallback } from './definitions'
+import { IValidator, IParser, IValidatorCallback } from './definitions'
 import { sender } from '../../instances/sender'
 import { Command, ICommandArguments } from '../command'
 import { MessageStream } from '../session'
 import { contextTypeOf } from '../receiver'
-import { TExtensibleMessage } from '../../instances/definitions'
+import { IExtensibleMessage } from '../../instances/definitions'
 import { ICQCode } from '../cqcode'
 
 /** A class that represents conditions that determines whether a session should start ot not */
@@ -22,7 +22,7 @@ export class BotWhen extends When {
         this.config.atSelf = `[CQ:at,qq=${self}]`
         return this
     }
-    private derive(obj: { validate?: TValidator<TExtensibleMessage>, parse?: TParser<TExtensibleMessage>, validCallback?: TValidatorCallback<TExtensibleMessage>, invalidCallback?: TValidatorCallback<TExtensibleMessage> }) {
+    private derive(obj: { validate?: IValidator<IExtensibleMessage>, parse?: IParser<IExtensibleMessage>, validCallback?: IValidatorCallback<IExtensibleMessage>, invalidCallback?: IValidatorCallback<IExtensibleMessage> }) {
         return this.deriveFromType<BotWhen>(obj).init({
             operators: this.config.operators,
             prefixes: this.config.prefixes,
@@ -33,7 +33,7 @@ export class BotWhen extends When {
     ever() { return this.derive({}) }
     /** Add the raw message to the parsed result */
     raw() {
-        return this.derive({ parse: function raw(ctx: TExtensibleMessage) { return ctx } })
+        return this.derive({ parse: function raw(ctx: IExtensibleMessage) { return ctx } })
     }
     /**
      * Add a custom matcher
@@ -42,8 +42,8 @@ export class BotWhen extends When {
      */
     match(condition: { [x: string]: any }, ...failMessage: (string|ICQCode)[]) {
         return this.derive({
-            validate: function match(ctx: TExtensibleMessage) { return compare(condition, ctx) },
-            invalidCallback: function match(ctx: TExtensibleMessage) { if (failMessage.length) sender.to(ctx).send(...failMessage) },
+            validate: function match(ctx: IExtensibleMessage) { return compare(condition, ctx) },
+            invalidCallback: function match(ctx: IExtensibleMessage) { if (failMessage.length) sender.to(ctx).send(...failMessage) },
         })
     }
     /**
@@ -53,11 +53,11 @@ export class BotWhen extends When {
     contain(...keywords: (RegExp|string)[]) {
         const keywords0 = keywords[0]
         return this.derive({
-            validate: function contain(ctx: TExtensibleMessage) {
+            validate: function contain(ctx: IExtensibleMessage) {
                 if (keywords0 instanceof RegExp) return keywords0.test(ctx.message)
                 else return keywords.some(i => ctx.message.indexOf(i as string) >= 0)
             },
-            parse: function contain(ctx: TExtensibleMessage) {
+            parse: function contain(ctx: IExtensibleMessage) {
                 if (keywords0 instanceof RegExp) return keywords0.test(ctx.message)
                 else return keywords.filter(i => ctx.message.indexOf(i as string) >= 0)
             },
@@ -69,13 +69,13 @@ export class BotWhen extends When {
      */
     type(...types: string[]) {
         return this.derive({
-            validate: function type(ctx: TExtensibleMessage) {
+            validate: function type(ctx: IExtensibleMessage) {
                 const ctxTypes = contextTypeOf(ctx)
                 for (const i of types)
                     if (ctxTypes.includes(i)) return true
                 return false
             },
-            parse: function type(ctx: TExtensibleMessage) { return contextTypeOf(ctx) },
+            parse: function type(ctx: IExtensibleMessage) { return contextTypeOf(ctx) },
         })
     }
     /**
@@ -86,7 +86,7 @@ export class BotWhen extends When {
     role(role: 'everyone'|'admin'|'owner'|'operator', ...failMessage: (string|ICQCode)[]) {
         const requiredRole = ['everyone', 'admin', 'owner', 'operator'].indexOf(role)
         return this.derive({
-            validate: async function role(ctx: TExtensibleMessage) {
+            validate: async function role(ctx: IExtensibleMessage) {
                 let actualRole: number
                 if (this.config.operators.includes(ctx.user_id)) actualRole = 3
                 else if (ctx.message_type === 'group')
@@ -95,7 +95,7 @@ export class BotWhen extends When {
                 if (actualRole < requiredRole) return false
                 return true
             },
-            invalidCallback: function role(ctx: TExtensibleMessage) { if (failMessage.length) sender.to(ctx).send(...failMessage) },
+            invalidCallback: function role(ctx: IExtensibleMessage) { if (failMessage.length) sender.to(ctx).send(...failMessage) },
         })
     }
     /**
@@ -108,7 +108,7 @@ export class BotWhen extends When {
         withPrefixes?: boolean,
         types?: { [param: string]: any },
         prompts?: string|{ [params: string]: string },
-        validators?: { [params: string]: TValidator },
+        validators?: { [params: string]: IValidator },
     } = {}) {
         names = names instanceof Array ? names : [names]
         if (withPrefixes) {
@@ -125,11 +125,11 @@ export class BotWhen extends When {
         if (!prompts.$default) prompts.$default = 'Please enter the parameter {}.'
         const { atSelf } = this.config
         return this.derive({
-            validate: function command(ctx: TExtensibleMessage) {
+            validate: function command(ctx: IExtensibleMessage) {
                 const msg = processCommandString(ctx.message, atSelf)
                 return commands.some(i => i.is(msg))
             },
-            parse: async function command(ctx: TExtensibleMessage, stream: MessageStream<TExtensibleMessage>) {
+            parse: async function command(ctx: IExtensibleMessage, stream: MessageStream<IExtensibleMessage>) {
                 const msg = processCommandString(ctx.message, atSelf)
                 let args: ICommandArguments
                 let notGiven: string[] = []
@@ -147,11 +147,11 @@ export class BotWhen extends When {
     at(...failMessage: (string|ICQCode)[]) {
         const { atSelf } = this.config
         return this.derive({
-            validate: function at(ctx: TExtensibleMessage) {
+            validate: function at(ctx: IExtensibleMessage) {
                 if (ctx.message.startsWith(atSelf) || ctx.message_type === 'private') return true
                 return false
             },
-            invalidCallback: function at(ctx: TExtensibleMessage) { if (failMessage.length) sender.to(ctx).send(...failMessage) },
+            invalidCallback: function at(ctx: IExtensibleMessage) { if (failMessage.length) sender.to(ctx).send(...failMessage) },
         })
     }
 }

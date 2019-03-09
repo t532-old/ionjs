@@ -1,4 +1,4 @@
-import { TMiddleware } from './definitions'
+import { IMiddleware } from './definitions'
 /**
  * Generate a function that calls a function in an array,
  * records the call and pass a function that calls the next function, etc recursively
@@ -6,7 +6,7 @@ import { TMiddleware } from './definitions'
  * @param iter the iterator of the function array
  * @param context the context that'll be passed to the function
  */
-export function nextExecutor<T>(iter: IterableIterator<TMiddleware<T>>, context: any) {
+export function nextExecutor<T>(iter: IterableIterator<IMiddleware<T>>, context: any) {
     const next = iter.next().value
     return async function executeNext() {
         if (next instanceof Function)

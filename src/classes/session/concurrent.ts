@@ -1,6 +1,6 @@
 import { SessionStore } from './base'
 import { MessageStream } from './stream'
-import { TSessionFn, TSessionMatcher, IConcurrentSessionTemplate } from './definitions'
+import { ISessionFn, ISessionMatcher, IConcurrentSessionTemplate } from './definitions'
 import Debug from 'debug'
 const debug = Debug('ionjs:session'),
       debugVerbose = Debug('verbose-ionjs:session'),
@@ -15,7 +15,7 @@ export class ConcurrentSessionManager<T> extends SessionStore<T> {
      * @param session the function for generating sessions
      * @param match determines whether the session should be created or not
      */
-    use(session: TSessionFn<T>, match: TSessionMatcher<T>) {
+    use(session: ISessionFn<T>, match: ISessionMatcher<T>) {
         const symbol = Symbol()
         this._streams.set(symbol, new Map())
         this._templates.push({ session, match, symbol })

@@ -1,5 +1,5 @@
 import { nextExecutor } from './utils'
-import { TMiddleware } from './definitions'
+import { IMiddleware } from './definitions'
 import Debug from 'debug'
 const debug = Debug('ionjs:middleware'),
       debugVerbose = Debug('verbose-ionjs:middleware')
@@ -7,16 +7,16 @@ const debug = Debug('ionjs:middleware'),
 /** A middleware manager */
 export class MiddlewareManager<T> {
     /** The list of middlewares */
-    private _middlewares: TMiddleware<T>[] = []
+    private _middlewares: IMiddleware<T>[] = []
     /** The list of middlewares that runs at last */
-    private _lastMiddlewares: TMiddleware<T>[] = []
+    private _lastMiddlewares: IMiddleware<T>[] = []
     /** Returns how many middlewares there are */
     get length() { return this._middlewares.length + this._lastMiddlewares.length }
     /**
      * add a middleware to the middleware list
      * @param middleware the middleware
      */
-    use(middleware: TMiddleware<T>) {
+    use(middleware: IMiddleware<T>) {
         this._middlewares = [...(this._middlewares || []), middleware]
         debug('use (+%d)', this._middlewares.length)
         return this
@@ -25,7 +25,7 @@ export class MiddlewareManager<T> {
      * add a middleware to another middleware list that'll be run at last
      * @param middleware the middleware
      */
-    useLast(middleware: TMiddleware<T>) {
+    useLast(middleware: IMiddleware<T>) {
         this._lastMiddlewares = [...(this._lastMiddlewares || []), middleware]
         debug('use last (+%d)', this._lastMiddlewares.length)
         return this

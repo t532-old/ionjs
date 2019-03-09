@@ -1,20 +1,20 @@
 import { MessageStream } from './stream'
 
-export type TSessionFn<T> = (stream: MessageStream<T>) => void
+export interface ISessionFn<T> { (stream: MessageStream<T>): void }
 
-export type TSessionMatcher<T> = (ctx: T) => boolean|Promise<boolean>
+export interface ISessionMatcher<T> { (ctx: T): boolean|Promise<boolean> }
 
 export interface ISessionTemplate<T> {
     /**
      * determines whether the session should be created or not
      * @param ctx the context
      */
-    match: TSessionMatcher<T>
+    match: ISessionMatcher<T>
     /**
      * the function for generating sessions
      * @param stream the stream for contexts matches the session id
      */
-    session: TSessionFn<T>
+    session: ISessionFn<T>
 }
 
 export interface IConcurrentSessionTemplate<T> extends ISessionTemplate<T> {
