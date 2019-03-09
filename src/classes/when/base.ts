@@ -1,15 +1,15 @@
-import { IValidator, IValidatorCallback, IParser, IWhenClass } from './definitions'
+import { IValidator, IValidatorCallback, IParser, IWhen } from './definitions'
 
 /** A class that represents a series of conditions */
-export class When {
+export class When implements IWhen {
     /** The validators */
-    protected readonly _validators: IValidator[] = []
+    private readonly _validators: IValidator[] = []
     /** The parsers */
-    protected readonly _parsers: IParser[] = []
+    private readonly _parsers: IParser[] = []
     /** The validator callback (when valid) */
-    protected readonly _validCallbacks: IValidatorCallback[] = []
+    private readonly _validCallbacks: IValidatorCallback[] = []
     /** The validator callback (when invalid) */
-    protected readonly _invalidCallbacks: IValidatorCallback[] = []
+    private readonly _invalidCallbacks: IValidatorCallback[] = []
     /** @param fns functions for When */
     constructor({ validate = [], parse = [], validCallback = [], invalidCallback = [] }: {
         validate?: IValidator[],
@@ -23,7 +23,7 @@ export class When {
         this._invalidCallbacks = invalidCallback
     }
     /** Returns a new When instance based on this, with one more validator and/or parser */
-    protected deriveFromType<T extends When>(derivation: { validate?: IValidator, parse?: IParser, validCallback?: IValidatorCallback, invalidCallback?: IValidatorCallback }) {
+    derive(derivation: { validate?: IValidator, parse?: IParser, validCallback?: IValidatorCallback, invalidCallback?: IValidatorCallback }) {
         const original = {
             validate: Array.from(this._validators),
             parse: Array.from(this._parsers),
@@ -37,7 +37,7 @@ export class When {
                 original[name].push(derivation[name])
             }
         }
-        return new (this.constructor as IWhenClass<T>)(original)
+        return new When(original)
     }
     /** Validate a context */
     async validate(ctx: any, ...extraArgs: any[]) {

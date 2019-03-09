@@ -1,6 +1,6 @@
 import { When } from './base'
 import { compare, processArgs, processCommandString } from './utils'
-import { IValidator, IParser, IValidatorCallback } from './definitions'
+import { IWhen, IValidator, IParser, IValidatorCallback } from './definitions'
 import { sender } from '../../instances/sender'
 import { Command, ICommandArguments } from '../command'
 import { MessageStream } from '../session'
@@ -9,26 +9,33 @@ import { IExtensibleMessage } from '../../instances/definitions'
 import { ICQCode } from '../cqcode'
 
 /** A class that represents conditions that determines whether a session should start ot not */
-export class BotWhen extends When {
+export class BotWhen implements IWhen {
     private config: { operators?: number[], prefixes?: string[], self?: number, atSelf?: string } = {}
-    init({ operators, prefixes, self }: {
-        operators: number[],
-        prefixes: string[],
-        self: number,
-    }) {
+    private when: When
+    constructor(
+        { operators, prefixes, self }: {
+            operators: number[],
+            prefixes: string[],
+            self: number,
+        }, obj: {
+            validate?: IValidator[],
+            parse?: IParser[],
+            validCallback?: IValidatorCallback[],
+            invalidCallback?: IValidatorCallback[],
+        } = {}
+    ) {
         this.config.operators = operators
         this.config.prefixes = prefixes
         this.config.self = self
         this.config.atSelf = `[CQ:at,qq=${self}]`
+        this.when = new When(obj)
+    }
+    derive(obj: { validate?: IValidator<IExtensibleMessage>, parse?: IParser<IExtensibleMessage>, validCallback?: IValidatorCallback<IExtensibleMessage>, invalidCallback?: IValidatorCallback<IExtensibleMessage> }) {
+        this.when = this.when.derive(obj)
         return this
     }
-    private derive(obj: { validate?: IValidator<IExtensibleMessage>, parse?: IParser<IExtensibleMessage>, validCallback?: IValidatorCallback<IExtensibleMessage>, invalidCallback?: IValidatorCallback<IExtensibleMessage> }) {
-        return this.deriveFromType<BotWhen>(obj).init({
-            operators: this.config.operators,
-            prefixes: this.config.prefixes,
-            self: this.config.self,
-        })
-    }
+    validate(ctx: any, ...extraArgs: any[]) { return this.when.validate(ctx, ...extraArgs) }
+    parse(ctx: any, ...extraArgs: any[]) { return this.when.parse(ctx, ...extraArgs) }
     /** Return a When instance with no conditions */
     ever() { return this.derive({}) }
     /** Add the raw message to the parsed result */
@@ -43,7 +50,7 @@ export class BotWhen extends When {
     match(condition: { [x: string]: any }, ...failMessage: (string|ICQCode)[]) {
         return this.derive({
             validate: function match(ctx: IExtensibleMessage) { return compare(condition, ctx) },
-            invalidCallback: function match(ctx: IExtensibleMessage) { if (failMessage.length) sender.to(ctx).send(...failMessage) },
+            invalidCallback: function match(ctx: IExtensibleMessage) { if (failMessage.length) sender().to(ctx).send(...failMessage) },
         })
     }
     /**
@@ -90,12 +97,12 @@ export class BotWhen extends When {
                 let actualRole: number
                 if (this.config.operators.includes(ctx.user_id)) actualRole = 3
                 else if (ctx.message_type === 'group')
-                    actualRole = ['member', 'admin', 'owner'].indexOf((await sender.to(ctx).getInfo()).data.role)
+                    actualRole = ['member', 'admin', 'owner'].indexOf((await sender().to(ctx).getInfo()).data.role)
                 else actualRole = 2
                 if (actualRole < requiredRole) return false
                 return true
             },
-            invalidCallback: function role(ctx: IExtensibleMessage) { if (failMessage.length) sender.to(ctx).send(...failMessage) },
+            invalidCallback: function role(ctx: IExtensibleMessage) { if (failMessage.length) sender().to(ctx).send(...failMessage) },
         })
     }
     /**
@@ -151,7 +158,7 @@ export class BotWhen extends When {
                 if (ctx.message.startsWith(atSelf) || ctx.message_type === 'private') return true
                 return false
             },
-            invalidCallback: function at(ctx: IExtensibleMessage) { if (failMessage.length) sender.to(ctx).send(...failMessage) },
+            invalidCallback: function at(ctx: IExtensibleMessage) { if (failMessage.length) sender().to(ctx).send(...failMessage) },
         })
     }
 }

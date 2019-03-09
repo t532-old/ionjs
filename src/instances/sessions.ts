@@ -2,7 +2,7 @@ import { SingleSessionManager, ConcurrentSessionManager, MessageStream } from '.
 import { contextTypeOf, unionIdOf, IMessage } from '../classes/receiver'
 import { Sender, ISendResult } from '../classes/sender'
 import { ICQCode, Utils } from '../classes/cqcode'
-import { When } from '../classes/when'
+import { IWhen } from '../classes/when'
 import { sender } from './sender'
 import { IExtensibleMessage } from './definitions'
 import { ICommandArguments } from '../classes/command'
@@ -71,7 +71,7 @@ export interface ISessionContext {
  * @param when when to start the session
  * @param params Another info of the session template
  */
-export function use(when: When, { override = false, identifier = 'default', concurrent = false } = {}) {
+export function use(when: IWhen, { override = false, identifier = 'default', concurrent = false } = {}) {
     return function useHandler(session: (ctx: ISessionContext) => void) {
         const manager = concurrent ? managers.get(identifier).concurrent : managers.get(identifier).single
         async function wrapper(stream: MessageStream<IExtensibleMessage>) {
@@ -89,7 +89,7 @@ export function use(when: When, { override = false, identifier = 'default', conc
                 console.error(err)
                 return
             }
-            const boundSender = sender.to(raw)
+            const boundSender = sender().to(raw)
             function reply(...message: (string|ICQCode)[]) { return boundSender.send(...message) }
             async function question(...prompt: (string|ICQCode)[]) {
                 await reply(...prompt)
