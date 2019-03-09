@@ -51,7 +51,7 @@ export async function processArgs(
     ]
     for (const i of notGiven) {
         const prompt = prompts[i] || prompts.$default.replace(/\{\}/g, i)
-        await sender.to(init).send(prompt)
+        await sender().to(init).send(prompt)
         args[i] = (await stream.get(async ({ message }) => {
             const converted = Utils.filterType(Utils.stringToArray(message), types[i] || 'string')
             if (!converted) return false
