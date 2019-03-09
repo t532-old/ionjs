@@ -1,3 +1,12 @@
+## [0.6.5](https://github.com/ionjs-dev/ionjs/compare/v0.6.4...v0.6.5) (2019-03-09)
+
+
+### Bug Fixes
+
+* **BotWhen:** use a no-prefix command when none is given in config, even withPrefixes ([2dbadd6](https://github.com/ionjs-dev/ionjs/commit/2dbadd6))
+* **BotWhen#command:** args should be message content instead of message objects ([cbff21e](https://github.com/ionjs-dev/ionjs/commit/cbff21e))
+* **middleware timeout:** only log middleware timeout warn when the run isn't finished ([1cc52e1](https://github.com/ionjs-dev/ionjs/commit/1cc52e1))
+
 ## [0.6.4](https://github.com/ionjs-dev/ionjs/compare/v0.6.3...v0.6.4) (2019-02-11)
 
 
