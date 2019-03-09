@@ -15,7 +15,7 @@ new Koa().use(koaBody()).use(async ctx => {
 initSender(`http://localhost:${5700 + PORT_OFFSET}`)
 
 function getBotWhen() {
-    return new BotWhen().init({
+    return new BotWhen({
         operators: [114514],
         prefixes: ['!'],
         self: 1919810,

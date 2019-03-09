@@ -8,12 +8,14 @@ const PORT_OFFSET = 0
 const bus = new EventEmitter()
 
 test('Initialize bot', () => {
-    expect(() => ionjs.init({
-        receivePort: 8080 + PORT_OFFSET,
-        sendURL: `http://localhost:${5700 + PORT_OFFSET}`,
-        operators: [114514],
-        self: 1919810,
-    })).not.toThrow()
+    expect(() => {
+        ionjs.init({
+            receivePort: 8080 + PORT_OFFSET,
+            sendURL: `http://localhost:${5700 + PORT_OFFSET}`,
+            operators: [114514],
+            self: 1919810,
+        })
+    }).not.toThrow()
 })
 
 test('Start server', () => {
@@ -37,7 +39,7 @@ test('Create Session Manager', () => {
 
 test('Register Session', () => {
     expect(() =>
-        ionjs.useSession(ionjs.when.ever()) (
+        ionjs.useSession(ionjs.when().ever()) (
             async function(ctx) {
                 await ctx.forward('test-concurrent')
                 bus.emit('session', ctx.init.raw)
@@ -45,12 +47,12 @@ test('Register Session', () => {
         )
     ).not.toThrow()
     expect(() =>
-        ionjs.useSession(ionjs.when.match({ message: /concurrent/ }), { concurrent: true }) (
+        ionjs.useSession(ionjs.when().match({ message: /concurrent/ }), { concurrent: true }) (
             async function(ctx) { bus.emit('session-concurrent', ctx.init.raw) }
         )
     ).not.toThrow()
     expect(() =>
-        ionjs.useSession(ionjs.when.ever(), { identifier: 'not-exist' }) (
+        ionjs.useSession(ionjs.when().ever(), { identifier: 'not-exist' }) (
             async function(ctx) { bus.emit('session-concurrent', ctx.init.raw) }
         )
     ).toThrow()

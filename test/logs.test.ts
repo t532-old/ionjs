@@ -17,7 +17,7 @@ ionjs.useMiddleware(async (ctx, next) => {
     if (ctx.message === 'mw-throw') throw new Error()
     else await next()
 })
-ionjs.useSession(ionjs.when.ever()) (
+ionjs.useSession(ionjs.when().ever()) (
     async function() {
         throw new Error()
     }
