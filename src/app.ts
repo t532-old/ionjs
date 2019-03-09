@@ -5,7 +5,7 @@ import { init as initReceiver, receiver } from './instances/receiver'
 import { use as useMiddleware, useLast as useMiddlewareLast, run as runMiddleware } from './instances/middlewares'
 import { init as initSession, run as runSession } from './instances/sessions'
 
-const queue = new Promise(resolve => resolve())
+let queue = new Promise(resolve => resolve())
 /**
  * Initialize the bot
  * @param config the bot's configuration
@@ -31,7 +31,7 @@ export function init({ receivePort = 8080, receiveSecret, sendURL = 'http://127.
     })
     useMiddlewareLast(async ctx => runSession(ctx))
     receiver.on('post', ctx =>
-        queue.then(() => new Promise(async resolve => {
+        queue = queue.then(() => new Promise(async resolve => {
             let finished = false
             setTimeout(() => {
                 if (!finished) {
