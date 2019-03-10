@@ -1,15 +1,30 @@
-import { SessionStore } from './base'
+import { ISessionManager } from './base'
 import { MessageStream } from './stream'
-import { ISessionFn, ISessionMatcher, IConcurrentSessionTemplate } from './definitions'
+import { ISessionFn, ISessionMatcher, ISessionTemplate, ISessionIdentifier } from './definitions'
 import Debug from 'debug'
 const debug = Debug('ionjs:session'),
       debugVerbose = Debug('verbose-ionjs:session'),
       debugExVerbose = Debug('ex-verbose-ionjs:session')
 
+export interface IConcurrentSessionTemplate<T> extends ISessionTemplate<T> {
+    /**
+     * (Only avaliable in class ConcurrentSessionManager)
+     * A unique symbol of the session template
+     */
+    symbol?: symbol
+}
+
 /** A session manager that allows multi processes */
-export class ConcurrentSessionManager<T> extends SessionStore<T> {
+export class ConcurrentSessionManager<T = any> implements ISessionManager<T> {
     /** Stores streams of active sessions */
     private readonly _streams: Map<symbol, Map<any, MessageStream<T>>> = new Map()
+    /** Stores session templates */
+    private readonly _templates: IConcurrentSessionTemplate<T>[] = []
+    /** The identifier generator */
+    private readonly _identifier: ISessionIdentifier<T>
+    get length() { return this._templates.length }
+    get identifier() { return this._identifier }
+    constructor(identifier: ISessionIdentifier<T>) { this._identifier = identifier }
     /**
      * set an empty Stream Map and the symbol when new template is added
      * @param session the function for generating sessions

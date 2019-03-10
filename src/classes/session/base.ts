@@ -1,19 +1,19 @@
-import { ISessionTemplate } from './definitions'
-/** The base class that represents an object that stores Behaviors */
-export abstract class SessionStore<T> {
-    /** The list of the stored session templates */
-    protected readonly _templates: (ISessionTemplate<T>&{ [x: string]: any })[] = []
-    /** Generates a session id for a context */
-    protected readonly _identifier: (ctx: any) => any
-    /** Returns how many session templates there are */
-    get length() { return this._templates.length }
-    /** @param identifier A function that generates a session id for a context */
-    constructor(identifier: (ctx: any) => any) { this._identifier = identifier }
-    /** Push a session template into the list */
-    abstract use(...params: any[]): void
+import { ISessionFn, ISessionMatcher, ISessionIdentifier } from './definitions'
+/** The interface that represents an object that stores sessions */
+export interface ISessionManager<T> {
+    /** total number of registered session templates */
+    length: number
+    /** the identifier generator */
+    identifier: ISessionIdentifier<T>
     /**
-     * Pass a context to sessions
-     * @param ctx the context that'll be passed
+     * register a session template
+     * @param session the session function
+     * @param match the condition that determines when should the session be started
      */
-    abstract run(ctx: any): void
+    use(session: ISessionFn<T>, match: ISessionMatcher<T>, ...params: any[]): void
+    /**
+     * pass a context to interested sessions
+     * @param ctx the context
+     */
+    run(ctx: T): void
 }

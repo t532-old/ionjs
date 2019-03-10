@@ -1,15 +1,34 @@
-import { SessionStore } from './base'
+import { ISessionManager } from './base'
 import { MessageStream } from './stream'
-import { ISessionFn, ISessionMatcher, ISingleSessionTemplate } from './definitions'
+import { ISessionFn, ISessionMatcher, ISessionTemplate, ISessionIdentifier } from './definitions'
 import Debug from 'debug'
 const debug = Debug('ionjs:session'),
       debugVerbose = Debug('verbose-ionjs:session'),
       debugExVerbose = Debug('ex-verbose-ionjs:session')
 
+export interface ISingleSessionTemplate<T> extends ISessionTemplate<T> {
+    /**
+     * (Only avaliable in class SingleSessionManager)
+     * determines when the condition is matched,
+     * whether to force end the previous session (true)
+     * or ignore this context (false or not determined)
+     */
+    override?: boolean
+}
+
 /** A session manager that is single-process for each user */
-export class SingleSessionManager<T> extends SessionStore<T> {
+export class SingleSessionManager<T = any> implements ISessionManager<T> {
     /** Stores streams of active sessions */
     private readonly _streams: Map<any, MessageStream<T>> = new Map()
+    /** Stores session templates */
+    private readonly _templates: ISingleSessionTemplate<T>[] = []
+    /** The identifier generator */
+    private readonly _identifier: ISessionIdentifier<T>
+    get length() { return this._templates.length }
+    get identifier() { return this._identifier }
+    constructor(identifier: ISessionIdentifier<T>) {
+        this._identifier = identifier
+    }
     /**
      * set an empty Stream Map and the symbol when new template is added
      * @param session the function for generating sessions
