@@ -56,8 +56,9 @@ export class SingleSessionManager<T = any> implements ISessionManager<T> {
               setter = () => this._streams.set(msgId, new MessageStream<T>(deleter.bind(this))),
               deleter = () => this._streams.delete(msgId),
               execute = async () => {
-                await finalBehavior.session(getter())
-                deleter()
+                const stream = getter()
+                await finalBehavior.session(stream)
+                stream.free()
               }
         for (const template of this._templates)
             if (await template.match(ctx) && (!getter() || template.override))

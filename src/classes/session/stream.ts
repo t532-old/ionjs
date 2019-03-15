@@ -6,10 +6,12 @@ export class MessageStreamError extends Error {}
 /** A class that extends PassThrough stream, supports async message fetching */
 export class MessageStream<T> extends PassThrough {
     /** Deleter is a function that'll called by free() */
-    private readonly deleter: () => void
+    private readonly _deleter: () => void
+    /** Whether this.free() has been called */
+    private _isFree = false
     constructor(deleter: () => void) {
         super({ objectMode: true })
-        this.deleter = deleter
+        this._deleter = deleter
     }
     /**
      * get an object asynchronously.
@@ -38,7 +40,10 @@ export class MessageStream<T> extends PassThrough {
     keep() { this.pause() }
     /** End the stream and free related resources */
     free() {
-        this.end()
-        this.deleter()
+        if (!this._isFree) {
+            this.end()
+            this._deleter()
+            this._isFree = true
+        }
     }
 }

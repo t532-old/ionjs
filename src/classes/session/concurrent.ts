@@ -52,8 +52,9 @@ export class ConcurrentSessionManager<T = any> implements ISessionManager<T> {
                   setter = () => this._streams.get(templateSymbol).set(msgId, new MessageStream<T>(deleter.bind(this))),
                   deleter = () => this._streams.get(templateSymbol).delete(msgId),
                   execute = async () => {
-                    await template.session(getter())
-                    deleter()
+                    const stream = getter()
+                    await template.session(stream)
+                    stream.free()
                   }
             if (getter() && getter().writable) {
                 debugExVerbose('next(exist)')
