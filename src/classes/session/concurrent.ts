@@ -74,9 +74,14 @@ export class ConcurrentSessionManager<T = any> implements ISessionManager<T> {
                   originalStream = stream.getter(),
                   streamOf = this._streamOf.bind(this, template.symbol)
             async function execute() {
-                const streamObj = stream.getter()
-                await template.session(streamObj, streamOf)
-                streamObj.free()
+                const streamObj = stream.getter(),
+                    inUse = [streamObj]
+                await template.session(streamObj, function (ctx) {
+                    const streamObj = streamOf(ctx) 
+                    inUse.push(streamObj)
+                    return streamObj
+                })
+                for (const i of inUse) i.references--
             }
             if (originalStream && originalStream.writable) {
                 debugExVerbose('next(exist)')

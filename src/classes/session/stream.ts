@@ -9,6 +9,8 @@ export class MessageStream<T> extends PassThrough {
     private readonly _deleter: () => void
     /** Whether this.free() has been called */
     private _isFree = false
+    /** Number of references */
+    private _references = 1
     constructor(deleter: () => void) {
         super({ objectMode: true })
         this._deleter = deleter
@@ -45,5 +47,11 @@ export class MessageStream<T> extends PassThrough {
             this._deleter()
             this._isFree = true
         }
+    }
+    /** Number of references */
+    get references() { return this._references }
+    set references(val) {
+        this._references = val
+        if (val === 0) this.free()
     }
 }

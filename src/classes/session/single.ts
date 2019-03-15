@@ -80,16 +80,22 @@ export class SingleSessionManager<T = any> implements ISessionManager<T> {
               originalStream = stream.getter(),
               generateStreamOf = () => this._streamOf.bind(this, finalBehavior)
         async function execute() {
-            const streamObj = stream.getter()
-            await finalBehavior.session(streamObj, generateStreamOf())
-            streamObj.free()
+            const streamObj = stream.getter(),
+                streamOf = generateStreamOf(),
+                inUse = [streamObj]
+            await finalBehavior.session(streamObj, function (ctx) {
+                const streamObj = streamOf(ctx)
+                inUse.push(streamObj)
+                return streamObj
+            })
+            for (const i of inUse) i.references--
         }
         for (const template of this._templates)
             if (await template.match(ctx) && (!originalStream || template.override))
                 finalBehavior = template
         if (finalBehavior) {
             debugExVerbose('next (new)')
-            if (originalStream) originalStream.free()
+            if (originalStream) originalStream.references--
             stream.setter()
             stream.getter().write(ctx)
             execute()
