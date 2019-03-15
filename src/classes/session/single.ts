@@ -1,4 +1,4 @@
-import { ISessionManager } from './base'
+import { ISessionManager, SessionManagerError } from './base'
 import { MessageStream } from './stream'
 import { ISessionFn, ISessionMatcher, ISessionTemplate, ISessionIdentifier } from './definitions'
 import Debug from 'debug'
@@ -13,7 +13,7 @@ export interface ISingleSessionTemplate<T> extends ISessionTemplate<T> {
      * whether to force end the previous session (true)
      * or ignore this context (false or not determined)
      */
-    override?: boolean
+    override: boolean
 }
 
 /** A session manager that is single-process for each user */
@@ -28,6 +28,30 @@ export class SingleSessionManager<T = any> implements ISessionManager<T> {
     get identifier() { return this._identifier }
     constructor(identifier: ISessionIdentifier<T>) {
         this._identifier = identifier
+    }
+    /**
+     * Get a set of operations on a particular MessageStream
+     * @param symbol the symbol of the session template
+     * @param identifier the identifier of the stream
+     */
+    private _operate(identifier: any) {
+        const getter = () => this._streams.get(identifier),
+              exists = () => this._streams.has(identifier),
+              setter = () => this._streams.set(identifier, new MessageStream<T>(deleter.bind(this))),
+              deleter = () => this._streams.delete(identifier)
+        return { getter, setter, deleter, exists }
+    }
+    /**
+     * Get a stream from a context (wraps this._operate())
+     * @param override whether to override or not
+     * @param ctx the context
+     */
+    private _streamOf(override: boolean, ctx: T) {
+        const stream = this._operate(this._identifier(ctx)),
+              streamObj = stream.getter()
+        if (!streamObj) stream.setter()
+        if (override || !streamObj) return stream.getter()
+        else throw new SessionManagerError('stream is currently locked by another session')
     }
     /**
      * set an empty Stream Map and the symbol when new template is added
@@ -52,27 +76,27 @@ export class SingleSessionManager<T = any> implements ISessionManager<T> {
         debugVerbose('start %o', ctx)
         const msgId = await this._identifier(ctx)
         let finalBehavior: ISingleSessionTemplate<T>
-        const getter = () => this._streams.get(msgId),
-              setter = () => this._streams.set(msgId, new MessageStream<T>(deleter.bind(this))),
-              deleter = () => this._streams.delete(msgId),
-              execute = async () => {
-                const stream = getter()
-                await finalBehavior.session(stream)
-                stream.free()
-              }
+        const stream = this._operate(msgId),
+              originalStream = stream.getter(),
+              generateStreamOf = () => this._streamOf.bind(this, finalBehavior)
+        async function execute() {
+            const streamObj = stream.getter()
+            await finalBehavior.session(streamObj, generateStreamOf())
+            streamObj.free()
+        }
         for (const template of this._templates)
-            if (await template.match(ctx) && (!getter() || template.override))
+            if (await template.match(ctx) && (!originalStream || template.override))
                 finalBehavior = template
         if (finalBehavior) {
             debugExVerbose('next (new)')
-            if (getter()) getter().free()
-            setter()
-            getter().write(ctx)
+            if (originalStream) originalStream.free()
+            stream.setter()
+            stream.getter().write(ctx)
             execute()
-        } else if (getter()) {
+        } else if (originalStream) {
             debugExVerbose('next (exist)')
-            if (!getter().write(ctx))
-                getter().once('drain', () => getter().write(ctx))
+            if (!originalStream.write(ctx))
+                originalStream.once('drain', () => originalStream.write(ctx))
         }
         debugVerbose('finish')
     }

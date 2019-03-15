@@ -1,6 +1,8 @@
 import { MessageStream } from './stream'
 
-export interface ISessionFn<T> { (stream: MessageStream<T>): void }
+export interface IStreamGetter<T> { (ctx: T): MessageStream<T> }
+
+export interface ISessionFn<T> { (stream: MessageStream<T>, streamOf: IStreamGetter<T>): void }
 
 export interface ISessionMatcher<T> { (ctx: T): boolean|Promise<boolean> }
 

@@ -17,3 +17,6 @@ export interface ISessionManager<T> {
      */
     run(ctx: T): void
 }
+
+/** A class that represents an error produced by an ISessionManager */
+export class SessionManagerError extends Error {}
