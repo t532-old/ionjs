@@ -40,5 +40,9 @@ export function split(string: string) {
  * @param str The string that needs to be escaped
  */
 export function escapeArgument(str: string) {
-    return str.replace(delimitersRegex, '\\$1').replace(' ', '\\ ')
+    let escaped = str
+        .replace(/\\/g, '\\\\')
+        .replace(delimitersRegex, '\\$1')
+        .replace(/ /g, '\\ ')
+    return escaped
 }
