@@ -77,7 +77,7 @@ export class ConcurrentSessionManager<T = any> implements ISessionManager<T> {
                 const streamObj = stream.getter(),
                     inUse = [streamObj]
                 await template.session(streamObj, function (ctx) {
-                    const streamObj = streamOf(ctx) 
+                    const streamObj = streamOf(ctx)
                     inUse.push(streamObj)
                     return streamObj
                 })

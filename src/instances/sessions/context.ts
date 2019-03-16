@@ -25,9 +25,9 @@ export class SessionContext {
     private _timeout: NodeJS.Timeout
     private _rawInit: IExtensibleMessage
     constructor({ stream, streamOf, rawInit, init, timeout }: {
-        stream: SessionContext['stream'], 
-        streamOf: SessionContext['streamOf'], 
-        rawInit: IExtensibleMessage, 
+        stream: SessionContext['stream'],
+        streamOf: SessionContext['streamOf'],
+        rawInit: IExtensibleMessage,
         init: SessionContext['init'],
         timeout: number
     }) {
@@ -59,10 +59,10 @@ export class SessionContext {
     async sessionOf(nextCtx: IExtensibleMessage, timeout = this._initialTimeout) {
         const stream = this.streamOf(nextCtx)
         return new SessionContext({
-            stream, 
-            streamOf: this.streamOf, 
-            rawInit: nextCtx, 
-            init: null, 
+            stream,
+            streamOf: this.streamOf,
+            rawInit: nextCtx,
+            init: null,
             timeout: timeout,
         })
     }
