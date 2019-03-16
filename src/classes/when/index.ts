@@ -1,3 +1,3 @@
-export { When } from './base'
-export { BotWhen } from './derived'
-export { IValidator, IParser, IValidatorCallback, IWhen } from './definitions'
+export { When, IWhen } from './base'
+export { BotWhen, IBotWhenParseResult } from './derived'
+export { IValidator, IParser, IValidatorCallback } from './definitions'

@@ -1,12 +1,18 @@
-import { When } from './base'
+import { When, IWhen } from './base'
 import { compare, processArgs, processCommandString } from './utils'
-import { IWhen, IValidator, IParser, IValidatorCallback } from './definitions'
+import { IValidator, IParser, IValidatorCallback } from './definitions'
 import { sender } from '../../instances/sender'
 import { Command, ICommandArguments } from '../command'
 import { MessageStream } from '../session'
 import { contextTypeOf } from '../receiver'
 import { IExtensibleMessage } from '../../instances/definitions'
 import { ICQCode } from '../cqcode'
+
+export interface IBotWhenParseResult {
+    raw?: IExtensibleMessage
+    command?: ICommandArguments
+    contain?: string[]&RegExpMatchArray
+}
 
 /** A class that represents conditions that determines whether a session should start ot not */
 export class BotWhen implements IWhen {
@@ -35,7 +41,7 @@ export class BotWhen implements IWhen {
         return this
     }
     validate(ctx: any, ...extraArgs: any[]) { return this.when.validate(ctx, ...extraArgs) }
-    parse(ctx: any, ...extraArgs: any[]) { return this.when.parse(ctx, ...extraArgs) }
+    parse(ctx: any, ...extraArgs: any[]): Promise<IBotWhenParseResult> { return this.when.parse(ctx, ...extraArgs) }
     /** Return a When instance with no conditions */
     ever() { return this.derive({}) }
     /** Add the raw message to the parsed result */
