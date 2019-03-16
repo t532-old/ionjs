@@ -14,7 +14,7 @@ export {
     use as useSession,
     create as createSessionManager,
     sessionCount,
-    ISessionContext,
+    SessionContext
 } from './instances/sessions'
 export {
     useModule as useModuleMetadata,

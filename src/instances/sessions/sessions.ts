@@ -1,13 +1,11 @@
-import { SingleSessionManager, ConcurrentSessionManager, MessageStream } from '../classes/session'
-import { contextTypeOf, unionIdOf, IMessage } from '../classes/receiver'
-import { Sender, ISendResult } from '../classes/sender'
-import { ICQCode, Utils } from '../classes/cqcode'
-import { IWhen } from '../classes/when'
-import { sender } from './sender'
-import { IExtensibleMessage } from './definitions'
-import { ICommandArguments } from '../classes/command'
+import { SingleSessionManager, ConcurrentSessionManager, MessageStream, IStreamGetter } from '../../classes/session'
+import { contextTypeOf, unionIdOf, IMessage } from '../../classes/receiver'
+import { IWhen, IBotWhenParseResult } from '../../classes/when'
+import { IExtensibleMessage } from '../definitions'
+import { SessionContext } from './context'
 
-export let sessionCount = 0
+let _sessionCount = 0
+export function sessionCount() { return _sessionCount }
 
 function defaultIdentifier(ctx: IExtensibleMessage) {
     const contextType = contextTypeOf(ctx)
@@ -28,56 +26,24 @@ const managers: Map<string, { single: SingleSessionManager<IExtensibleMessage>, 
 
 let timeout: number
 
-function deepCopy(obj: { [x: string]: any }): { [x: string]: any } {
-    const newObj = {}
-    for (const i in obj) {
-        if (typeof obj[i] === 'object' && obj[i] && obj[i] !== obj) newObj[i] = deepCopy(obj[i])
-        else newObj[i] = obj[i]
-    }
-    return newObj
-}
-
 /**
  * Initialize with default session timout
  * @param sessionTimeout the default session timeout
  */
 export function init(sessionTimeout: number) { timeout = sessionTimeout }
 
-/** Contexts that'll be passed into essions */
-export interface ISessionContext {
-    /** The first context */
-    init: {
-        raw?: IExtensibleMessage,
-        command?: ICommandArguments,
-        contain?: string[]&RegExpMatchArray,
-    }
-    /** Sender bound to this.init.raw */
-    sender: Sender
-    /** Stream of messages */
-    stream: MessageStream<IExtensibleMessage>
-    /** Get a copy of the next message from this.stream */
-    get(condition?: (ctx: IMessage) => boolean): Promise<IExtensibleMessage>
-    /** Reply to user */
-    reply(...message: (string|ICQCode)[]): Promise<ISendResult>
-    /** Question user and get an answer */
-    question(...prompt: (string|ICQCode)[]): Promise<IExtensibleMessage>
-    /** Forward to other sessions */
-    forward(...message: (string|ICQCode)[]): Promise<void>
-    /** Reset the stream deletion timeout */
-    timeout: number
-}
 /**
  * Use a session template
  * @param when when to start the session
  * @param params Another info of the session template
  */
 export function use(when: IWhen, { override = false, identifier = 'default', concurrent = false } = {}) {
-    return function useHandler(session: (ctx: ISessionContext) => void) {
+    return function useHandler(session: (ctx: SessionContext) => void) {
         const manager = concurrent ? managers.get(identifier).concurrent : managers.get(identifier).single
-        async function wrapper(stream: MessageStream<IExtensibleMessage>) {
-            async function get(condition: (ctx: IExtensibleMessage) => boolean = () => true) { return deepCopy(await stream.get(condition)) as IExtensibleMessage }
-            let raw: IExtensibleMessage, init: ISessionContext['init']
-            try { raw = await get() }
+        async function wrapper(stream: MessageStream<IExtensibleMessage>, streamOf: IStreamGetter<IExtensibleMessage>) {
+            let raw: IExtensibleMessage,
+                init: IBotWhenParseResult
+            try { raw = await stream.get() }
             catch (err) {
                 console.warn('[WARN] Failed when trying to get initial message:')
                 console.warn(err)
@@ -89,39 +55,20 @@ export function use(when: IWhen, { override = false, identifier = 'default', con
                 console.error(err)
                 return
             }
-            const boundSender = sender().to(raw)
-            function reply(...message: (string|ICQCode)[]) { return boundSender.send(...message) }
-            async function question(...prompt: (string|ICQCode)[]) {
-                await reply(...prompt)
-                return get()
-            }
-            function forward(...message: (string|ICQCode)[]) {
-                const ctx = deepCopy(raw)
-                ctx.message = Utils.arrayToString(message.map(i => typeof i === 'string' ? { type: 'text', data: { text: i } } : i))
-                return run(ctx)
-            }
-            let sessionTimeout: NodeJS.Timeout
-            if (timeout <= Number.MAX_SAFE_INTEGER) sessionTimeout = setTimeout(() => stream.free(), timeout)
             try {
-                sessionCount++
-                await session({
-                    init,
-                    sender: boundSender,
+                _sessionCount++
+                await session(new SessionContext({
                     stream,
-                    get,
-                    reply,
-                    question,
-                    forward,
-                    set timeout(timeout: number) {
-                        clearTimeout(sessionTimeout)
-                        if (timeout <= Number.MAX_SAFE_INTEGER) sessionTimeout = setTimeout(() => stream.free(), timeout)
-                    }
-                })
+                    streamOf,
+                    rawInit: raw,
+                    init,
+                    timeout,
+                }))
             }
             catch (err) {
                 console.error('[ERROR] An uncaught error is thrown by your session code:')
                 console.error(err)
-            } finally { sessionCount-- }
+            } finally { _sessionCount-- }
         }
         if (manager instanceof SingleSessionManager) manager.use(wrapper, ctx => when.validate(ctx), override)
         else if (manager instanceof ConcurrentSessionManager) manager.use(wrapper, ctx => when.validate(ctx))
