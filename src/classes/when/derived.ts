@@ -12,6 +12,7 @@ export interface IBotWhenParseResult {
     raw?: IExtensibleMessage
     command?: ICommandArguments
     contain?: string[]&RegExpMatchArray
+    type?: string[]
 }
 
 /** A class that represents conditions that determines whether a session should start ot not */
