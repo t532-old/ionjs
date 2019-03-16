@@ -1,1 +1,1 @@
-export interface IMiddleware<T> { (ctx: T, next: () => Promise<void>): T }
+export interface IMiddleware<T> { (ctx: T, next: () => Promise<void>): void }
