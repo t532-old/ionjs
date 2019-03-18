@@ -108,7 +108,14 @@ test('Command#parse() (various delimiters)', () => {
 })
 
 test('get Command#parameters', () => {
-    const instance = new Command(`name <required> <aliased(?)> <default>=value <?unordered> [optional] --opt`)
+    const instance = new Command(`name
+        <required>
+        <aliased(?)>
+        <default>=value
+        <?unordered>
+        [optional]
+        --opt
+    `)
     expect(instance.parameters.aliases.get('aliased')).toBe('?')
     expect(instance.parameters.defaults.get('default')).toBe('value')
     expect(instance.parameters.ordered).toEqual(['required', 'aliased', 'default', 'optional'])

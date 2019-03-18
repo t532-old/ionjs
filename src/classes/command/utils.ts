@@ -1,5 +1,7 @@
-const delimiters = ['\'', '"', '‘', '“', '’', '”']
-const delimitersRegex = new RegExp(`([${delimiters.join('')}])`, 'g')
+const delimiters = ['\'', '"', '‘', '“', '’', '”'],
+    delimitersRegex = new RegExp(`([${delimiters.join('')}])`, 'g')
+const separators = ['\r', '\n', ' '],
+    separatorsRegex = new RegExp(`([${separators.join('')}])`, 'g')
 /**
  * Split a string, by spaces, ASCII quotes and CJK quotes
  * @param string The string for splitting
@@ -13,7 +15,7 @@ export function split(string: string) {
         if (!escape) {
             if (i === '\\') escape = true
             else if (!inStr) {
-                if (i === ' ') {
+                if (separators.includes(i)) {
                     if (result[lastItem()]) {
                         result.push('')
                     }
@@ -43,6 +45,6 @@ export function escapeArgument(str: string) {
     let escaped = str
         .replace(/\\/g, '\\\\')
         .replace(delimitersRegex, '\\$1')
-        .replace(/ /g, '\\ ')
+        .replace(separatorsRegex, '\\$1')
     return escaped
 }
