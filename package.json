@@ -16,8 +16,12 @@
   "files": [
     "LICENSE",
     "package.json",
-    "classes/",
-    "instances/",
+    "app/",
+    "command/",
+    "middleware/",
+    "platform/",
+    "session/",
+    "when/",
     "index.*",
     "app.*"
   ],

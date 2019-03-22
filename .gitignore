@@ -58,10 +58,11 @@ typings/
 .env
 
 # compiled files
-/classes/
-/instances/
-/index.js
-/index.d.ts
-/app.js
-/app.d.ts
+/app/
+/command/
+/middleware/
+/platform/
+/session/
+/when/
+index.*
 dist/
