@@ -1,21 +1,21 @@
 export { init } from './app'
-export { when } from './instances/when'
-export { sender } from './instances/sender'
+export { SessionContext } from './app/context'
+export { when } from './app/instance/when'
+export { sender } from './app/instance/sender'
 export {
     start,
     receiver,
-} from './instances/receiver'
+} from './app/instance/receiver'
 export {
     run as runMiddleware,
     use as useMiddleware,
-} from './instances/middlewares'
+} from './app/instance/middleware'
 export {
     run as runSession,
     use as useSession,
     create as createSessionManager,
-    sessionCount,
-    SessionContext
-} from './instances/sessions'
+    sessionCount
+} from './app/instance/session'
 export {
     useModule as useModuleMetadata,
     useRegistration as useRegistrationMetadata,
@@ -25,12 +25,12 @@ export {
     getAllRegistrations as getAllRegistrationMetadata,
     IModuleMetadata,
     IRegistrationMetadata,
-} from './instances/metadata'
-export { IExtensibleMessage } from './instances/definitions'
-export * from './classes/sender'
-export * from './classes/receiver'
-export * from './classes/cqcode'
-export * from './classes/when'
-export * from './classes/command'
-export * from './classes/middleware'
-export * from './classes/session'
+} from './app/metadata'
+export { IExtensibleMessage } from './app/definition'
+export * from './platform/sender'
+export * from './platform/receiver'
+export * from './platform/cqcode'
+export * from './when'
+export * from './command'
+export * from './middleware'
+export * from './session'
