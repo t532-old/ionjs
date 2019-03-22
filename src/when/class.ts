@@ -1,73 +1,62 @@
 import { IValidator, IValidatorCallback, IParser } from './definition'
+import { MiddlewareManager, IMiddleware } from '../middleware'
 
 /** An object that represents a series of conditions and parsers */
-export interface IWhen {
-    /**
-     * add some functions (condition or parser) to the current collection.
-     * function name is identifier. a newer function with the same name will replace the old one.
-     * @param derivation the functions to be added
-     */
-    derive(derivation: { validate?: IValidator, parse?: IParser, validCallback?: IValidatorCallback, invalidCallback?: IValidatorCallback }): void
-    /** validate a context asynchronously */
-    validate(ctx: any, ...extraArgs: any[]): Promise<boolean>
-    /** parse a context asynchronously */
-    parse(ctx: any, ...extraArgs: any[]): Promise<any>
+export interface IWhen<T> {
+    validate(fn: IValidator<T>, { success, failure }?: {
+        success?: IValidatorCallback<T>,
+        failure?: IValidatorCallback<T>,
+    }): IWhen<T>
+    parse(fn: IParser<T>): IWhen<T>
+    process(ctx: T, ...extraArgs: any[]): Promise<T|null>
+}
+
+interface IWhenMiddlewareManagerContext<T> {
+    data: T
+    extraArgs: any[]
+    finished: boolean
 }
 
 /** A class that represents a series of conditions */
-export class When implements IWhen {
-    /** The validators */
-    private readonly _validators: IValidator[] = []
-    /** The parsers */
-    private readonly _parsers: IParser[] = []
-    /** The validator callback (when valid) */
-    private readonly _validCallbacks: IValidatorCallback[] = []
-    /** The validator callback (when invalid) */
-    private readonly _invalidCallbacks: IValidatorCallback[] = []
-    /** @param fns functions for When */
-    constructor({ validate = [], parse = [], validCallback = [], invalidCallback = [] }: {
-        validate?: IValidator[],
-        parse?: IParser[],
-        validCallback?: IValidatorCallback[],
-        invalidCallback?: IValidatorCallback[],
-    } = {}) {
-        this._validators = validate
-        this._parsers = parse
-        this._validCallbacks = validCallback
-        this._invalidCallbacks = invalidCallback
+export class When<T = any> implements IWhen<T> {
+    /** The middleware manager */
+    private _manager: MiddlewareManager<IWhenMiddlewareManagerContext<T>> = new MiddlewareManager<IWhenMiddlewareManagerContext<T>>()
+        .useLast(ctx => ctx.finished = true)
+    /** @param last construct from an existing instance */
+    constructor(last?: When<T>) {
+        if (last) this._manager = new MiddlewareManager(last._manager)
     }
-    /** Returns a new When instance based on this, with one more validator and/or parser */
-    derive(derivation: { validate?: IValidator, parse?: IParser, validCallback?: IValidatorCallback, invalidCallback?: IValidatorCallback }) {
-        const original = {
-            validate: Array.from(this._validators),
-            parse: Array.from(this._parsers),
-            validCallback: Array.from(this._validCallbacks),
-            invalidCallback: Array.from(this._invalidCallbacks),
-        }
-        for (const name in original) {
-            if (derivation[name]) {
-                const last = original[name].findIndex(fn => fn.name === derivation[name].name)
-                if (last >= 0) original[name].splice(last, 1)
-                original[name].push(derivation[name])
-            }
-        }
-        return new When(original)
+    use(fn: IMiddleware<IWhenMiddlewareManagerContext<T>>) { this._manager.use(fn) }
+    validate(fn: IValidator<T>, { success = () => {}, failure = () => {} }: {
+        success?: IValidatorCallback<T>,
+        failure?: IValidatorCallback<T>,
+    } = {}): When<T> {
+        const next = new When(this)
+        next._manager.use(async (ctx, next) => {
+            const flag = await fn(ctx.data, ...ctx.extraArgs)
+            if (flag) {
+                success(ctx.data, ...ctx.extraArgs)
+                await next()
+            } else failure(ctx.data, ...ctx.extraArgs)
+        })
+        return next
     }
-    /** Validate a context */
-    async validate(ctx: any, ...extraArgs: any[]) {
-        for (const validate in this._validators) {
-            if (!(await this._validators[validate](ctx, ...extraArgs))) {
-                if (this._invalidCallbacks[validate]) this._invalidCallbacks[validate](ctx, ...extraArgs)
-                return false
-            } else if (this._validCallbacks[validate]) this._validCallbacks[validate](ctx, ...extraArgs)
-        }
-        return true
+    parse(fn: IParser<T>): When<T> {
+        const next = new When(this)
+        next._manager.use(async (ctx, next) => {
+            await fn(ctx.data, ...ctx.extraArgs)
+            await next()
+        })
+        return next
     }
-    /** Parse a context */
-    async parse(ctx: any, ...extraArgs: any[]): Promise<any> {
-        const parsed = {}
-        for (const parse of this._parsers)
-            parsed[parse.name] = await parse(ctx, ...extraArgs)
-        return parsed
+    async process(ctx: T, ...extraArgs: any[]) {
+        const state = {
+            data: ctx,
+            extraArgs,
+            finished: false,
+        }
+        await this._manager.run(state)
+        if (state.finished) return state.data
+        else return null
     }
 }
