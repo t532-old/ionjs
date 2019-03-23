@@ -18,4 +18,6 @@ export interface ICommandArguments {
     arguments: { [param: string]: string }
     /** Rest unparsed items */
     rest: string[]
+    /** The command name */
+    name: string
 }
