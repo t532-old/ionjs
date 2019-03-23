@@ -2,6 +2,23 @@
 import { MiddlewareManager } from '../../src/middleware'
 import { spy as Spy } from 'sinon'
 
+test('MiddlewareManager() (construct from existing instance)', async () => {
+    expect.assertions(2)
+    const mgr = new MiddlewareManager<{ processed: boolean }>()
+    mgr.use(async (ctx, next) => {
+        await next()
+    })
+    const nextMgr = new MiddlewareManager(mgr)
+    nextMgr.use(async (ctx, next) => {
+        ctx.processed = true
+    })
+    const ctx = { processed: false }
+    await mgr.run(ctx)
+    expect(ctx.processed).toBe(false)
+    await nextMgr.run(ctx)
+    expect(ctx.processed).toBe(true)
+})
+
 test('MiddlewareManager#use() (flow control)', async () => {
     expect.assertions(2)
     const mgr = new MiddlewareManager<number>()
