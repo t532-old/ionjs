@@ -13,6 +13,7 @@ test('Command#parse() (required params)', () => {
         arguments: { param: 'arg' },
         options: [],
         rest: [],
+        name: 'name',
     })
     expect(() => instance.parse('name')).toThrow()
 })
@@ -26,6 +27,7 @@ test('Command#parse() (key-value-paired ordered params)', () => {
         },
         options: [],
         rest: [],
+        name: 'name',
     })
 })
 
@@ -35,11 +37,13 @@ test('Command#parse() (key-value-paired unordered params)', () => {
         arguments: { param: 'arg' },
         options: [],
         rest: [],
+        name: 'name',
     })
     expect(instance.parse('name arg')).toEqual({
         arguments: {},
         options: [],
         rest: ['arg'],
+        name: 'name',
     })
 })
 
@@ -52,6 +56,7 @@ test('Command#parse() (aliased params)', () => {
         },
         options: [],
         rest: [],
+        name: 'name',
     })
 })
 
@@ -61,6 +66,7 @@ test('Command#parse() (params with default values)', () => {
         arguments: { param: 'defaultarg' },
         options: [],
         rest: [],
+        name: 'name',
     })
 })
 
@@ -70,11 +76,13 @@ test('Command#parse() (options)', () => {
         arguments: {},
         options: ['--opt'],
         rest: [],
+        name: 'name',
     })
     expect(instance.parse('name --not-opt')).toEqual({
         arguments: {},
         options: [],
         rest: ['--not-opt'],
+        name: 'name',
     })
 })
 
@@ -84,26 +92,31 @@ test('Command#parse() (various delimiters)', () => {
         arguments: { param: 'escaped\\ \'"“”‘’' },
         options: [],
         rest: [],
+        name: 'name',
     })
     expect(instance.parse('name \'single quoted\'')).toEqual({
         arguments: { param: 'single quoted' },
         options: [],
         rest: [],
+        name: 'name',
     })
     expect(instance.parse('name "double quoted"')).toEqual({
         arguments: { param: 'double quoted' },
         options: [],
         rest: [],
+        name: 'name',
     })
     expect(instance.parse('name ‘CJK single quoted’')).toEqual({
         arguments: { param: 'CJK single quoted' },
         options: [],
         rest: [],
+        name: 'name',
     })
     expect(instance.parse('name “CJK double quoted”')).toEqual({
         arguments: { param: 'CJK double quoted' },
         options: [],
         rest: [],
+        name: 'name',
     })
 })
 
