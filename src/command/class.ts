@@ -1,6 +1,6 @@
 import { split } from './util'
-import { ICommandParameters, ICommandArguments, ICommand, ICommandData } from './definition'
-import { default as ObjectFrom } from 'deepmerge'
+import { ICommandParameters, ICommandArguments } from './definition'
+import * as ObjectFrom from 'deepmerge'
 import Debug from 'debug'
 const debug = Debug('ionjs:command'),
       debugVerbose = Debug('verbose-ionjs:command')
@@ -15,22 +15,24 @@ export class CommandParseError extends Error {
     }
 }
 /** A class that represents a shell-like-command and is able to parse commands */
-export class Command implements ICommand, ICommandData {
-    /** The raw declaration of the command instance */
-    private readonly _raw: string
-    parameters: ICommandParameters = {
-        /** The keys are the aliases and the values are param names  */
-        aliases: new Map(),
+export class Command {
+    private _parameters: ICommandParameters = {
+        /** The keys are the param names and the values are aliases  */
+        aliases: {},
         /** The keys are param names and the values are default values */
-        defaults: new Map(),
+        defaults: {},
         /** An array of ordered params */
         ordered: [],
         /** An array of required params */
         required: [],
     }
-    options: string[] = []
-    name: string
-    readonly is = (command: string) => split(command)[0] === this.name
+    private _options: string[] = []
+    private _names: string[]
+    /**
+     * Check if a command matches the name
+     * @param command the command for checking
+     */
+    readonly is = (command: string) => this._names.includes(split(command)[0])
     /** Regexps for parsing declarations and commands */
     private static readonly _REGEXES = {
         /** A regexp that matches a parameter in the declaration */
@@ -39,56 +41,68 @@ export class Command implements ICommand, ICommandData {
         KEY_VALUE: /^(.*[^\\])=(.+)$/,
     }
     /** Construct from existing instance */
-    static from(data: ICommandData) {
-        const next = new Command('placeholder')
-        next.name = data.name
-        next.options = ObjectFrom(data.options, {})
-        next.parameters = ObjectFrom(data.parameters, {})
+    static from(data: Command) {
+        const next = new Command(...data._names)
+        next._options = Array.from(data._options)
+        next._parameters = ObjectFrom(data._parameters, {})
+        return next
     }
-    /** @param declaration The command declaration */
-    constructor(declaration: string) {
-        debug('init %s', declaration)
-        this._raw = declaration
-        const command = split(declaration)
-        this.name = command.shift()
-        for (const i of command) {
-            const matched = i.match(Command._REGEXES.PARAMETER)
-            if (matched) {
-                const [, required, unordered, name, alias, , defaultVal] = matched
-                if (required === '<') this.parameters.required.push(name)
-                if (!unordered) this.parameters.ordered.push(name)
-                if (alias) this.parameters.aliases.set(name, alias)
-                if (defaultVal) this.parameters.defaults.set(name, defaultVal)
-            } else {
-                this.options.push(i)
-            }
-        }
+    /** @param names The command names */
+    constructor(...names: string[]) { this._names = names }
+    /** Add an option to the command declaration */
+    option(opt: string) {
+        const next = Command.from(this)
+        next._options.push(opt)
+        return next
     }
-    toString() { return this._raw }
+    /**
+     * Add a parameter to the command declaration
+     * @param name the param name
+     * @param options options of the parameter
+     */
+    param(name: string, { optional = false, unordered = false, defaultVal, alias }: {
+        optional?: boolean
+        unordered?: boolean
+        defaultVal?: string
+        alias?: string
+    } = {}) {
+        const next = Command.from(this)
+        if (!optional) next._parameters.required.push(name)
+        if (!unordered) next._parameters.ordered.push(name)
+        if (typeof defaultVal === 'string') next._parameters.defaults[name] = defaultVal
+        if (typeof alias === 'string') next._parameters.aliases[name] = alias
+        return next
+    }
+    /**
+     * Parse a command
+     * @param command The command for parsing
+     */
     parse(command: string): ICommandArguments {
         let rawArgs = split(command)
-        if (rawArgs[0] !== this.name) throw new CommandParseError('Wrong command name', null, null)
-        rawArgs = rawArgs.slice(1)
+        if (!this._names.includes(rawArgs[0])) throw new CommandParseError('Wrong command name', null, null)
         const args = {
             options: [],
             arguments: {},
             rest: [],
-            name: this.name,
+            name: rawArgs[0],
         }
-        const unusedParams = Array.from(this.parameters.ordered)
+        rawArgs = rawArgs.slice(1)
+        const unusedParams = Array.from(this._parameters.ordered)
         for (const arg of rawArgs) {
             let specialArg = false
-            if (this.options.includes(arg)) {
+            if (this._options.includes(arg)) {
                 args.options.push(arg)
                 specialArg = true
             }
-            for (const [param, alias] of this.parameters.aliases)
+            for (const param in this._parameters.aliases) {
+                const alias = this._parameters.aliases[param]
                 if (arg.startsWith(alias)) {
                     args.arguments[param] = arg.slice(alias.length)
                     const indexOfParam = unusedParams.indexOf(param)
                     if (indexOfParam >= 0) unusedParams.splice(indexOfParam, 1)
                     specialArg = true
                 }
+            }
             const keyValue = arg.match(Command._REGEXES.KEY_VALUE)
             if (keyValue) {
                 args.arguments[keyValue[1]] = keyValue[2]
@@ -104,14 +118,14 @@ export class Command implements ICommand, ICommandData {
                 }
             }
         }
-        for (const [param, val] of this.parameters.defaults)
-            if (!(param in args.arguments)) {
-                args.arguments[param] = val
-            }
+        for (const param in this._parameters.defaults) {
+            const val = this._parameters.defaults[param]
+            if (!(param in args.arguments)) args.arguments[param] = val
+        }
         for (const arg in args.arguments)
             args.arguments[arg] = args.arguments[arg].replace(/\\=/g, '=')
         const notGiven: string[] = []
-        for (const param of this.parameters.required)
+        for (const param of this._parameters.required)
             if (!(param in args.arguments)) notGiven.push(param)
         if (notGiven.length) throw new CommandParseError('No enough required arguments', args, notGiven)
         debugVerbose('finish %s %o', command, args)

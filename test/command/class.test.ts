@@ -2,13 +2,14 @@
 import { Command } from '../../src/command'
 
 test('Command#is()', () => {
-    const instance = new Command('name')
+    const instance = new Command('name', 'name2')
     expect(instance.is('name')).toBe(true)
+    expect(instance.is('name2')).toBe(true)
     expect(instance.is('not_this')).toBe(false)
 })
 
 test('Command#parse() (required params)', () => {
-    const instance = new Command('name <param>')
+    const instance = new Command('name').param('param')
     expect(instance.parse('name arg')).toEqual({
         arguments: { param: 'arg' },
         options: [],
@@ -19,7 +20,7 @@ test('Command#parse() (required params)', () => {
 })
 
 test('Command#parse() (key-value-paired ordered params)', () => {
-    const instance = new Command('name <param1> <param2>')
+    const instance = new Command('name').param('param1').param('param2')
     expect(instance.parse('name param2=arg2 param1=arg1')).toEqual({
         arguments: {
             param1: 'arg1',
@@ -32,7 +33,7 @@ test('Command#parse() (key-value-paired ordered params)', () => {
 })
 
 test('Command#parse() (key-value-paired unordered params)', () => {
-    const instance = new Command('name [?param]')
+    const instance = new Command('name').param('param', { optional: true, unordered: true })
     expect(instance.parse('name param=arg')).toEqual({
         arguments: { param: 'arg' },
         options: [],
@@ -48,7 +49,7 @@ test('Command#parse() (key-value-paired unordered params)', () => {
 })
 
 test('Command#parse() (aliased params)', () => {
-    const instance = new Command('name <param1> <param2(#)>')
+    const instance = new Command('name').param('param1').param('param2', { alias: '#' })
     expect(instance.parse('name #arg2 arg1')).toEqual({
         arguments: {
             param1: 'arg1',
@@ -61,7 +62,7 @@ test('Command#parse() (aliased params)', () => {
 })
 
 test('Command#parse() (params with default values)', () => {
-    const instance = new Command('name <param>=defaultarg')
+    const instance = new Command('name').param('param', { defaultVal: 'defaultarg' })
     expect(instance.parse('name')).toEqual({
         arguments: { param: 'defaultarg' },
         options: [],
@@ -71,7 +72,7 @@ test('Command#parse() (params with default values)', () => {
 })
 
 test('Command#parse() (options)', () => {
-    const instance = new Command('name --opt')
+    const instance = new Command('name').option('--opt')
     expect(instance.parse('name --opt')).toEqual({
         arguments: {},
         options: ['--opt'],
@@ -87,7 +88,7 @@ test('Command#parse() (options)', () => {
 })
 
 test('Command#parse() (various delimiters)', () => {
-    const instance = new Command('name <param>')
+    const instance = new Command('name').param('param')
     expect(instance.parse('name escaped\\\\\\ \\\'\\"\\“\\”\\‘\\’')).toEqual({
         arguments: { param: 'escaped\\ \'"“”‘’' },
         options: [],
@@ -118,25 +119,4 @@ test('Command#parse() (various delimiters)', () => {
         rest: [],
         name: 'name',
     })
-})
-
-test('get Command#parameters', () => {
-    const instance = new Command(`name
-        <required>
-        <aliased(?)>
-        <default>=value
-        <?unordered>
-        [optional]
-        --opt
-    `)
-    expect(instance.parameters.aliases.get('aliased')).toBe('?')
-    expect(instance.parameters.defaults.get('default')).toBe('value')
-    expect(instance.parameters.ordered).toEqual(['required', 'aliased', 'default', 'optional'])
-    expect(instance.parameters.required).toEqual(['required', 'aliased', 'default', 'unordered'])
-})
-
-test('Command#toString', () => {
-    const desc = `name <required> <aliased(?)> <default>=value <?unordered> [optional] --opt`
-    const instance = new Command(desc)
-    expect(instance.toString()).toBe(desc)
 })
