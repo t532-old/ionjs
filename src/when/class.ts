@@ -1,5 +1,5 @@
 import { IValidator, IValidatorCallback, IParser } from './definition'
-import { MiddlewareManager, IMiddleware } from '../middleware'
+import { MiddlewareManager } from '../middleware'
 
 /** An object that represents a series of conditions and parsers */
 export interface IWhen<T> {
@@ -22,16 +22,17 @@ export class When<T = any> implements IWhen<T> {
     /** The middleware manager */
     private _manager: MiddlewareManager<IWhenMiddlewareManagerContext<T>> = new MiddlewareManager<IWhenMiddlewareManagerContext<T>>()
         .useLast(ctx => ctx.finished = true)
-    /** @param last construct from an existing instance */
-    constructor(last?: When<T>) {
-        if (last) this._manager = new MiddlewareManager(last._manager)
+    /** Construct from an existing instance */
+    static from<T>(last: When<T>) {
+        const next = new When<T>()
+        next._manager = MiddlewareManager.from(last._manager)
+        return next
     }
-    use(fn: IMiddleware<IWhenMiddlewareManagerContext<T>>) { this._manager.use(fn) }
     validate(fn: IValidator<T>, { success = () => {}, failure = () => {} }: {
         success?: IValidatorCallback<T>,
         failure?: IValidatorCallback<T>,
     } = {}): When<T> {
-        const next = new When(this)
+        const next = When.from(this)
         next._manager.use(async (ctx, next) => {
             const flag = await fn(ctx.data, ...ctx.extraArgs)
             if (flag) {
@@ -42,7 +43,7 @@ export class When<T = any> implements IWhen<T> {
         return next
     }
     parse(fn: IParser<T>): When<T> {
-        const next = new When(this)
+        const next = When.from(this)
         next._manager.use(async (ctx, next) => {
             await fn(ctx.data, ...ctx.extraArgs)
             await next()

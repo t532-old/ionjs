@@ -12,12 +12,11 @@ export class MiddlewareManager<T> {
     private _lastMiddlewares: IMiddleware<T>[] = []
     /** Returns how many middlewares there are */
     get length() { return this._middlewares.length + this._lastMiddlewares.length }
-    /** @param last construct from an existing instance */
-    constructor(last?: MiddlewareManager<T>) {
-        if (last) {
-            this._middlewares = Array.from(last._middlewares)
-            this._lastMiddlewares = Array.from(last._lastMiddlewares)
-        }
+    static from<T>(last: MiddlewareManager<T>) {
+        const next = new MiddlewareManager<T>()
+        next._middlewares = Array.from(last._middlewares)
+        next._lastMiddlewares = Array.from(last._lastMiddlewares)
+        return next
     }
     /**
      * add a middleware to the middleware list

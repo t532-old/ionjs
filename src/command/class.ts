@@ -1,5 +1,6 @@
 import { split } from './util'
-import { ICommandParameters, ICommandArguments } from './definition'
+import { ICommandParameters, ICommandArguments, ICommand, ICommandData } from './definition'
+import { default as ObjectFrom } from 'deepmerge'
 import Debug from 'debug'
 const debug = Debug('ionjs:command'),
       debugVerbose = Debug('verbose-ionjs:command')
@@ -14,10 +15,9 @@ export class CommandParseError extends Error {
     }
 }
 /** A class that represents a shell-like-command and is able to parse commands */
-export class Command {
+export class Command implements ICommand, ICommandData {
     /** The raw declaration of the command instance */
     private readonly _raw: string
-    /** The delcared parameters */
     parameters: ICommandParameters = {
         /** The keys are the aliases and the values are param names  */
         aliases: new Map(),
@@ -28,14 +28,8 @@ export class Command {
         /** An array of required params */
         required: [],
     }
-    /** An array of declared options */
     options: string[] = []
-    /** The command's name */
     name: string
-    /**
-     * Check if a command matches the name
-     * @param command the command for checking
-     */
     readonly is = (command: string) => split(command)[0] === this.name
     /** Regexps for parsing declarations and commands */
     private static readonly _REGEXES = {
@@ -43,6 +37,13 @@ export class Command {
         PARAMETER: /^([<\[])(\?)?(.+?)(?:\((.+?)\))?([>\]])(?:=(.+?))?$/,
         /** A regexp that matches a key-value pair in a command */
         KEY_VALUE: /^(.*[^\\])=(.+)$/,
+    }
+    /** Construct from existing instance */
+    static from(data: ICommandData) {
+        const next = new Command('placeholder')
+        next.name = data.name
+        next.options = ObjectFrom(data.options, {})
+        next.parameters = ObjectFrom(data.parameters, {})
     }
     /** @param declaration The command declaration */
     constructor(declaration: string) {
@@ -63,12 +64,7 @@ export class Command {
             }
         }
     }
-    /** Reloaded version of toString() that returns the raw declaration */
     toString() { return this._raw }
-    /**
-     * Parse a command
-     * @param command The command for parsing
-     */
     parse(command: string): ICommandArguments {
         let rawArgs = split(command)
         if (rawArgs[0] !== this.name) throw new CommandParseError('Wrong command name', null, null)

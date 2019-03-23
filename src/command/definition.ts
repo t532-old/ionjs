@@ -21,3 +21,29 @@ export interface ICommandArguments {
     /** The command name */
     name: string
 }
+
+/** A class that can parse shell-like commands */
+export interface ICommand {
+    /** Reloaded version of toString() that returns the raw declaration */
+    toString(): string
+    /**
+     * Check if a command matches the name
+     * @param command the command for checking
+     */
+    is(command: string): boolean
+    /**
+     * Parse a command
+     * @param command The command for parsing
+     */
+    parse(command: string): ICommandArguments
+}
+
+/** A class that represents data of a shell-like command */
+export interface ICommandData {
+    /** The command's name */
+    name: string
+    /** The delcared parameters */
+    parameters: ICommandParameters
+    /** An array of declared options */
+    options: string[]
+}
