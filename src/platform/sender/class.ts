@@ -2,8 +2,9 @@ import { post } from 'httpie'
 import Debug from 'debug'
 import { URL } from 'url'
 import { CQHTTP_API } from './api'
-import { Code, ICQCode } from '../cqcode'
+import { Code } from '../cqcode'
 import * as Result from './definition'
+import { MessageContent } from './definition'
 import { IMessage } from '../receiver'
 
 const debug = Debug('ionjs:sender'),
@@ -47,7 +48,7 @@ export class Sender {
         if (result.status === 'failed') throw new SenderError(args, url, result.retcode)
         else return result
     }
-    send(...mixedMessage: (string|ICQCode)[]): Promise<Result.ISendResult> {
+    send(...mixedMessage: MessageContent): Promise<Result.ISendResult> {
         const message = []
         for (const i of mixedMessage) {
             if (typeof i === 'string') message.push(Code.Text(i))

@@ -1,3 +1,5 @@
+import { ICQCode } from '../cqcode'
+
 export interface IBaseResult {
     status: 'ok'|'async'|'failed'
     retcode: number
@@ -70,3 +72,5 @@ export interface IPluginVersionInfoResult extends IBaseResult {
         plugin_build_configuration: string,
     }
 }
+
+export type MessageContent = (string|ICQCode)[]
