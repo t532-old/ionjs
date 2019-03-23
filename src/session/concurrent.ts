@@ -1,10 +1,6 @@
 import { ISessionManager } from './base'
 import { MessageStream } from './stream'
 import { ISessionFn, ISessionMatcher, ISessionTemplate, ISessionIdentifier } from './definition'
-import Debug from 'debug'
-const debug = Debug('ionjs:session'),
-      debugVerbose = Debug('verbose-ionjs:session'),
-      debugExVerbose = Debug('ex-verbose-ionjs:session')
 
 export interface IConcurrentSessionTemplate<T> extends ISessionTemplate<T> {
     /**
@@ -56,7 +52,6 @@ export class ConcurrentSessionManager<T = any> implements ISessionManager<T> {
         const symbol = Symbol()
         this._streams.set(symbol, new Map())
         this._templates.push({ session, match, symbol })
-        debug('use (+%d)', this._templates.length)
         return this
     }
     /**
@@ -65,7 +60,6 @@ export class ConcurrentSessionManager<T = any> implements ISessionManager<T> {
      * @param ctx the context
      */
     async run(ctx: T) {
-        debugVerbose('start %o', ctx)
         let template: IConcurrentSessionTemplate<T>
         for (template of this._templates) {
             const templateSymbol = template.symbol,
@@ -84,16 +78,13 @@ export class ConcurrentSessionManager<T = any> implements ISessionManager<T> {
                 for (const i of inUse) i.references--
             }
             if (originalStream && originalStream.writable) {
-                debugExVerbose('next(exist)')
                 if (!originalStream.write(ctx))
                     originalStream.once('drain', () => originalStream.write(ctx))
             } else if (await template.match(ctx)) {
-                debugExVerbose('next(new)')
                 stream.setter()
                 stream.getter().write(ctx)
                 execute()
             }
         }
-        debugVerbose('finish')
     }
 }

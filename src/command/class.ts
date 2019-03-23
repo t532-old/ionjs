@@ -1,9 +1,6 @@
 import { split } from './util'
 import { ICommandParameters, ICommandArguments } from './definition'
 import * as ObjectFrom from 'deepmerge'
-import Debug from 'debug'
-const debug = Debug('ionjs:command'),
-      debugVerbose = Debug('verbose-ionjs:command')
 
 export class CommandParseError extends Error {
     args: ICommandArguments
@@ -128,7 +125,6 @@ export class Command {
         for (const param of this._parameters.required)
             if (!(param in args.arguments)) notGiven.push(param)
         if (notGiven.length) throw new CommandParseError('No enough required arguments', args, notGiven)
-        debugVerbose('finish %s %o', command, args)
         return args
     }
 }

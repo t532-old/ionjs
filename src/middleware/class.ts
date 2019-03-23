@@ -1,8 +1,5 @@
 import { nextExecutor } from './util'
 import { IMiddleware } from './definition'
-import Debug from 'debug'
-const debug = Debug('ionjs:middleware'),
-      debugVerbose = Debug('verbose-ionjs:middleware')
 
 /** A middleware manager */
 export class MiddlewareManager<T> {
@@ -24,7 +21,6 @@ export class MiddlewareManager<T> {
      */
     use(middleware: IMiddleware<T>) {
         this._middlewares = [...(this._middlewares || []), middleware]
-        debug('use (+%d)', this._middlewares.length)
         return this
     }
     /**
@@ -33,7 +29,6 @@ export class MiddlewareManager<T> {
      */
     useLast(middleware: IMiddleware<T>) {
         this._lastMiddlewares = [...(this._lastMiddlewares || []), middleware]
-        debug('use last (+%d)', this._lastMiddlewares.length)
         return this
     }
     /**
@@ -41,9 +36,7 @@ export class MiddlewareManager<T> {
      * @param ctx the context
      */
     async run(ctx: T) {
-        debugVerbose('start %o', ctx)
         if (this._middlewares.length)
             await nextExecutor<T>([...this._middlewares, ...this._lastMiddlewares][Symbol.iterator](), ctx)()
-        debugVerbose('finish')
     }
 }

@@ -1,15 +1,10 @@
 import { post } from 'httpie'
-import Debug from 'debug'
 import { URL } from 'url'
 import { CQHTTP_API } from './api'
 import { Code } from '../cqcode'
 import * as Result from './definition'
 import { MessageContent } from './definition'
 import { IMessage } from '../receiver'
-
-const debug = Debug('ionjs:sender'),
-      debugVerbose = Debug('verbose-ionjs:sender'),
-      debugExVerbose = Debug('ex-verbose-ionjs:sender')
 
 export class SenderError extends Error {
     readonly post: { [x: string]: any }
@@ -28,8 +23,6 @@ export class Sender {
     private readonly _sendURL: string
     private readonly _token?: string
     constructor(sendURL: string, token?: string, context: IMessage = {}) {
-        debugVerbose('init')
-        debugExVerbose(`set ${sendURL}(Token ${token || null}) %o`, context)
         this._sendURL = sendURL
         this._token = token
         this._context = context
@@ -43,7 +36,6 @@ export class Sender {
         for (const param of params)
             if (!(param in args))
                 args[param] = this._context[param]
-        debug('post %s %o', url, args)
         const result = (await post(url, { body: args, headers: this._token ? { 'Authorization': `Token ${this._token}` } : {} })).data
         if (result.status === 'failed') throw new SenderError(args, url, result.retcode)
         else return result

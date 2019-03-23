@@ -1,10 +1,6 @@
 import { ISessionManager, SessionManagerError } from './base'
 import { MessageStream } from './stream'
 import { ISessionFn, ISessionMatcher, ISessionTemplate, ISessionIdentifier } from './definition'
-import Debug from 'debug'
-const debug = Debug('ionjs:session'),
-      debugVerbose = Debug('verbose-ionjs:session'),
-      debugExVerbose = Debug('ex-verbose-ionjs:session')
 
 export interface ISingleSessionTemplate<T> extends ISessionTemplate<T> {
     /**
@@ -63,7 +59,6 @@ export class SingleSessionManager<T = any> implements ISessionManager<T> {
      */
     use(session: ISessionFn<T>, match: ISessionMatcher<T>, override: boolean = false) {
         this._templates.push({ session, match, override })
-        debug('use (+%d)', this._templates.length)
         return this
     }
     /**
@@ -73,7 +68,6 @@ export class SingleSessionManager<T = any> implements ISessionManager<T> {
      * @param ctx the context
      */
     async run(ctx: T) {
-        debugVerbose('start %o', ctx)
         const msgId = await this._identifier(ctx)
         let finalBehavior: ISingleSessionTemplate<T>
         const stream = this._operate(msgId),
@@ -94,16 +88,13 @@ export class SingleSessionManager<T = any> implements ISessionManager<T> {
             if (await template.match(ctx) && (!originalStream || template.override))
                 finalBehavior = template
         if (finalBehavior) {
-            debugExVerbose('next (new)')
             if (originalStream) originalStream.references--
             stream.setter()
             stream.getter().write(ctx)
             execute()
         } else if (originalStream) {
-            debugExVerbose('next (exist)')
             if (!originalStream.write(ctx))
                 originalStream.once('drain', () => originalStream.write(ctx))
         }
-        debugVerbose('finish')
     }
 }
