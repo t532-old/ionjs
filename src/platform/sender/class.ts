@@ -19,16 +19,17 @@ export class SenderError extends Error {
 }
 
 export class Sender {
-    private readonly _context: IMessage
+    private _context: IMessage
     private readonly _sendURL: string
     private readonly _token?: string
-    constructor(sendURL: string, token?: string, context: IMessage = {}) {
+    static from(last: Sender) { return new Sender(last._sendURL, last._token) }
+    constructor(sendURL: string, token?: string) {
         this._sendURL = sendURL
         this._token = token
-        this._context = context
     }
     to(context) {
-        const next = new Sender(this._sendURL, this._token, context)
+        const next = Sender.from(this)
+        next._context = context
         return next
     }
     private async _post({ api, params = [] }: { api: string, params?: string[] }, args: { [x: string]: any } = {}) {
