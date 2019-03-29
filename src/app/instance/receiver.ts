@@ -9,7 +9,10 @@ let receivePort: number
  * @param port The port the receiver'll listen to
  * @param secret CQHTTP's secret
  */
-export function init(port: number, secret?: string) {
+export function init({ port, secret }: {
+    port: number,
+    secret?: string
+}) {
     receivePort = port
     receiver = new Receiver(secret)
     console.log(`[INFO] Receiver initialized with port ${port}, ${secret ? `secret '${secret}'` : 'no secret'}`)
