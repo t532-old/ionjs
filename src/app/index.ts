@@ -1,36 +1,27 @@
+import * as middleware from './instance/middleware'
+import * as session from './instance/session'
+import * as receiver from './instance/receiver'
 import { Util, ICQCode } from '../platform/cqcode'
-import { init as initWhen } from './instance/when'
-import { init as initSender } from './instance/sender'
-import { init as initReceiver, receiver } from './instance/receiver'
-import { use as useMiddleware, useLast as useMiddlewareLast, run as runMiddleware } from './instance/middleware'
-import { init as initSession, run as runSession } from './instance/session'
+
+declare module './definition' {
+    interface IExtensibleMessage {
+        message_array: ICQCode[]
+        raw_message: string
+    }
+}
 
 let queue = new Promise(resolve => resolve())
-/**
- * Initialize the bot
- * @param config the bot's configuration
- */
-export function init({ receivePort = 8080, receiveSecret, sendURL = 'http://127.0.0.1:5700', sendToken, operators = [], prefixes = [], self, middlewareTimeout = 10000, sessionTimeout = Infinity }: {
-    receivePort: number,
-    receiveSecret?: string,
-    sendURL: string,
-    sendToken?: string,
-    operators?: number[],
-    prefixes?: string[],
-    self: number,
-    middlewareTimeout?: number,
-    sessionTimeout?: number,
-}) {
-    initReceiver(receivePort, receiveSecret)
-    initSender(sendURL, sendToken)
-    initSession(sessionTimeout)
-    initWhen({ operators, prefixes, self })
-    useMiddleware(async (ctx, next) => {
-        if (ctx.message instanceof Array) ctx.message = Util.arrayToString(ctx.message as ICQCode[])
+
+export function start(middlewareTimeout = 10000) {
+    middleware.use(async (ctx, next) => {
+        if (ctx.message as any instanceof Array) 
+            ctx.message = Util.arrayToString(ctx.message as any as ICQCode[])
+        ctx.message_array = Util.stringToArray(ctx.message)
+        ctx.raw_message = Util.decodePlainText(ctx.message)
         await next()
     })
-    useMiddlewareLast(async ctx => runSession(ctx))
-    receiver.on('post', ctx =>
+    middleware.useLast(session.run)
+    receiver.receiver.on('post', ctx =>
         queue = queue.then(() => new Promise(async resolve => {
             let finished = false
             setTimeout(() => {
@@ -39,9 +30,10 @@ export function init({ receivePort = 8080, receiveSecret, sendURL = 'http://127.
                     resolve()
                 }
             }, middlewareTimeout)
-            await runMiddleware(ctx)
+            await middleware.run(ctx)
             finished = true
             resolve()
         }))
     )
+    receiver.start()
 }

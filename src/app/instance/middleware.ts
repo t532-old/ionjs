@@ -28,7 +28,7 @@ export function useLast(...middlewares: IMiddleware<IExtensibleMessage>[]) {
  * Let a context go through the middlewares
  * @param ctx the context
  */
-export async function run(ctx: IMessage) {
+export async function run(ctx: IExtensibleMessage) {
     try { await manager.run(ctx) }
     catch (err) {
         console.error('[ERROR] An error was thrown by one of the middlewares:')

@@ -7,7 +7,7 @@ export interface IMessage {
     sub_type?: 'friend'|'group'|'discuss'|'other'|'normal'|'anonymous'|'notice'|'approve'|'invite'|'add'|'enable'|'disable'
     message_id?: number
     user_id?: number
-    message?: any
+    message?: string
     raw_message?: string
     font?: number
     sender?: IInfoResult
