@@ -82,7 +82,7 @@ export class ConcurrentSessionManager<T = any> implements ISessionManager<T> {
                     const streamObj = streamOf(ctx)
                     inUse.push(streamObj)
                     return streamObj
-                })
+                }, ctx)
                 for (const i of inUse) i.references--
             }
             if (originalStream && originalStream.writable) {
