@@ -14,10 +14,15 @@ export interface ISingleSessionTemplate<T> extends ISessionTemplate<T> {
 
 /** A session manager that is single-process for each user */
 export class SingleSessionManager<T = any> implements ISessionManager<T> {
+    static from<T>(last: SingleSessionManager<T>) {
+        const next = new SingleSessionManager<T>(last.identifier)
+        next._templates = Array.from(last._templates)
+        return next
+    }
     /** Stores streams of active sessions */
     private readonly _streams: Map<any, MessageStream<T>> = new Map()
     /** Stores session templates */
-    private readonly _templates: ISingleSessionTemplate<T>[] = []
+    private _templates: ISingleSessionTemplate<T>[] = []
     /** The identifier generator */
     private readonly _identifier: ISessionIdentifier<T>
     get length() { return this._templates.length }
@@ -58,8 +63,9 @@ export class SingleSessionManager<T = any> implements ISessionManager<T> {
      *                 or ignore this context (false or not determined)
      */
     use(session: ISessionFn<T>, match: ISessionMatcher<T>, override: boolean = false) {
-        this._templates.push({ session, match, override })
-        return this
+        const next = SingleSessionManager.from(this)
+        next._templates.push({ session, match, override })
+        return next
     }
     /**
      * Pass a context to current active session

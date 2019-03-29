@@ -12,10 +12,17 @@ export interface IConcurrentSessionTemplate<T> extends ISessionTemplate<T> {
 
 /** A session manager that allows multi processes */
 export class ConcurrentSessionManager<T = any> implements ISessionManager<T> {
+    static from<T>(last: ConcurrentSessionManager<T>) {
+        const next = new ConcurrentSessionManager<T>(last.identifier)
+        next._templates = Array.from(last._templates)
+        for (const { symbol } of next._templates)
+            next._streams.set(symbol, new Map())
+        return next
+    }
     /** Stores streams of active sessions */
     private readonly _streams: Map<symbol, Map<any, MessageStream<T>>> = new Map()
     /** Stores session templates */
-    private readonly _templates: IConcurrentSessionTemplate<T>[] = []
+    private _templates: IConcurrentSessionTemplate<T>[] = []
     /** The identifier generator */
     private readonly _identifier: ISessionIdentifier<T>
     get length() { return this._templates.length }
@@ -49,10 +56,11 @@ export class ConcurrentSessionManager<T = any> implements ISessionManager<T> {
      * @param match determines whether the session should be created or not
      */
     use(session: ISessionFn<T>, match: ISessionMatcher<T>) {
+        const next = ConcurrentSessionManager.from(this)
         const symbol = Symbol()
-        this._streams.set(symbol, new Map())
-        this._templates.push({ session, match, symbol })
-        return this
+        next._streams.set(symbol, new Map())
+        next._templates.push({ session, match, symbol })
+        return next
     }
     /**
      * Pass a context to every active session that matches the session id
