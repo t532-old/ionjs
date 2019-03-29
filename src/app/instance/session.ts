@@ -1,11 +1,11 @@
 import { SingleSessionManager, ConcurrentSessionManager, MessageStream, IStreamGetter } from '../../session'
 import { contextTypeOf, unionIdOf, IMessage } from '../../platform/receiver'
-import { IWhen, IBotWhenParseResult } from '../../when'
 import { IExtensibleMessage } from '../definition'
 import { SessionContext } from '../context'
+import { ITransform } from '../transform'
+import { sender } from './sender'
 
-let _sessionCount = 0
-export function sessionCount() { return _sessionCount }
+export let sessionCount = 0
 
 function defaultIdentifier(ctx: IExtensibleMessage) {
     const contextType = contextTypeOf(ctx)
@@ -24,54 +24,32 @@ const managers: Map<string, { single: SingleSessionManager<IExtensibleMessage>, 
     .set('group', { single: new SingleSessionManager<IExtensibleMessage>(groupIdentifier), concurrent: new ConcurrentSessionManager<IExtensibleMessage>(groupIdentifier) })
     .set('user', { single: new SingleSessionManager<IExtensibleMessage>(userIdentifier), concurrent: new ConcurrentSessionManager<IExtensibleMessage>(userIdentifier) })
 
-let timeout: number
-
-/**
- * Initialize with default session timout
- * @param sessionTimeout the default session timeout
- */
-export function init(sessionTimeout: number) { timeout = sessionTimeout }
-
 /**
  * Use a session template
  * @param when when to start the session
  * @param params Another info of the session template
  */
-export function use(when: IWhen, { override = false, identifier = 'default', concurrent = false } = {}) {
+export function use(transform: ITransform, { override = false, identifier = 'default', concurrent = false } = {}) {
     return function useHandler(session: (ctx: SessionContext) => void) {
         const manager = concurrent ? managers.get(identifier).concurrent : managers.get(identifier).single
-        async function wrapper(stream: MessageStream<IExtensibleMessage>, streamOf: IStreamGetter<IExtensibleMessage>) {
-            let raw: IExtensibleMessage,
-                init: IBotWhenParseResult
-            try { raw = await stream.get() }
-            catch (err) {
-                console.warn('[WARN] Failed when trying to get initial message:')
-                console.warn(err)
-                return
-            }
-            try { init = await when.parse(raw, stream) }
-            catch (err) {
-                console.error('[ERROR] Error when parsing initial message:')
-                console.error(err)
-                return
-            }
+        async function wrapper(stream: MessageStream<IExtensibleMessage>, streamOf: IStreamGetter<IExtensibleMessage>, trigger: IExtensibleMessage) {
             try {
-                _sessionCount++
+                sessionCount++
                 await session(new SessionContext({
                     stream,
                     streamOf,
-                    rawInit: raw,
-                    init,
-                    timeout,
+                    trigger,
+                    sender,
+                    transform,
                 }))
             }
             catch (err) {
                 console.error('[ERROR] An uncaught error is thrown by your session code:')
                 console.error(err)
-            } finally { _sessionCount-- }
+            } finally { sessionCount-- }
         }
-        if (manager instanceof SingleSessionManager) manager.use(wrapper, ctx => when.validate(ctx), override)
-        else if (manager instanceof ConcurrentSessionManager) manager.use(wrapper, ctx => when.validate(ctx))
+        if (manager instanceof SingleSessionManager) manager.use(wrapper, async ctx => await transform.transform(ctx) ? true : false, override)
+        else if (manager instanceof ConcurrentSessionManager) manager.use(wrapper, async ctx => await transform.transform(ctx) ? true : false)
         else throw new Error(`Session manager '${identifier}' does not exist`)
         console.log(`[INFO] ${manager.length} Session templates loaded on session manager '${identifier}'`)
     }

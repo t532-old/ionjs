@@ -1,74 +1,77 @@
 import { IExtensibleMessage } from './definition'
 import { MessageStream, IStreamGetter } from '../session'
-import { IBotWhenParseResult } from '../when'
-import { ICQCode, Util } from '../platform/cqcode'
-import { sender } from './instance/sender'
+import { Util } from '../platform/cqcode'
 import { run } from './instance/session'
+import { Sender, MessageContent } from '../platform/sender'
+import { ITransform, PlainTransform } from './transform'
+import * as ObjectFrom from 'deepmerge'
 
 export class SessionContext {
-    static deepCopy(obj: { [x: string]: any }): { [x: string]: any } {
-        const newObj = {}
-        for (const i in obj) {
-            if (typeof obj[i] === 'object' && obj[i] && obj[i] !== obj) newObj[i] = SessionContext.deepCopy(obj[i])
-            else newObj[i] = obj[i]
-        }
-        return newObj
-    }
-    /** Stream of messages */
-    stream: MessageStream<IExtensibleMessage>
-    streamOf: IStreamGetter<IExtensibleMessage>
-    /** Sender bound to the first context */
-    sender: ReturnType<typeof sender>
-    /** The first context (parsed) */
-    init: IBotWhenParseResult
-    private _initialTimeout: number
-    private _timeout: NodeJS.Timeout
-    private _rawInit: IExtensibleMessage
-    constructor({ stream, streamOf, rawInit, init, timeout }: {
-        stream: SessionContext['stream'],
-        streamOf: SessionContext['streamOf'],
-        rawInit: IExtensibleMessage,
-        init: SessionContext['init'],
-        timeout: number
+    private static readonly _transformPlaceholder = new PlainTransform()
+    private readonly _stream: MessageStream<IExtensibleMessage>
+    private readonly _streamOf: IStreamGetter<IExtensibleMessage>
+    private readonly _trigger: IExtensibleMessage
+    private readonly _sender: Sender
+    private _firstRead = false
+    private readonly _transform: ITransform
+    public get stream() { return this._stream }
+    public get sender() { return this._sender }
+    public constructor({ stream, streamOf, trigger, sender, transform }: {
+        stream: MessageStream<IExtensibleMessage>
+        streamOf: IStreamGetter<IExtensibleMessage>
+        trigger: IExtensibleMessage
+        sender: Sender
+        transform: ITransform
     }) {
-        this.stream = stream
-        this.streamOf = streamOf
-        this.sender = sender().to(rawInit)
-        this._rawInit = rawInit
-        this.init = SessionContext.deepCopy(init || {})
-        this._initialTimeout = timeout
-        if (timeout <= Number.MAX_SAFE_INTEGER) this._timeout = setTimeout(() => stream.free(), timeout)
-        for (const i of ['get', 'reply', 'question', 'forward', 'sessionOf']) this[i] = this[i].bind(this)
+        this._stream = stream
+        this._streamOf = streamOf
+        this._trigger = trigger
+        this._sender = sender.to(trigger)
+        this._transform = transform
     }
-    /** Get a copy of the next message from this.stream */
-    async get(condition: (ctx: IExtensibleMessage) => boolean = () => true) { return SessionContext.deepCopy(await this.stream.get(condition)) as IExtensibleMessage }
-    /** Reply to the user */
-    reply(...message: (string|ICQCode)[]) { return this.sender.send(...message) }
-    /** Question the user and get an answer */
-    async question(...prompt: (string|ICQCode)[]) {
-        await this.reply(...prompt)
-        return this.get()
+    public async get({
+        transform = this._firstRead ? this._transform : SessionContext._transformPlaceholder,
+        timeout = Infinity
+    } = {}) {
+        let resolved = false
+        if (timeout <= Number.MAX_SAFE_INTEGER)
+            setTimeout(() => {
+                if (!resolved)
+                    throw new Error('Time limit exceeded')
+            }, timeout)
+        let result: IExtensibleMessage
+        await this.stream.get(async ctx => {
+            result = await transform.transform(ctx)
+            if (result) return true
+            else return false
+        })
+        this._firstRead = resolved = true
+        return result
+    }
+    public reply(...message: MessageContent) { return this.sender.send(...message) }
+    public async question(quote: string, {
+        transform = this._firstRead ? this._transform : SessionContext._transformPlaceholder,
+        timeout = Infinity
+    } = {}) {
+        await this.reply(quote)
+        return this.get({ transform, timeout })
     }
     /** Forward to other sessions */
-    async forward(...message: (string|ICQCode)[]) {
-        const ctx = SessionContext.deepCopy(this._rawInit)
-        ctx.message = Util.arrayToString(message.map(i => typeof i === 'string' ? { type: 'text', data: { text: i } } : i))
+    public forward(...message: MessageContent) {
+        const ctx = ObjectFrom({}, this._trigger)
+        ctx.message = Util.arrayToString(message)
         return run(ctx)
     }
     /** Get a session of another user */
-    async sessionOf(nextCtx: IExtensibleMessage, timeout = this._initialTimeout) {
-        const stream = this.streamOf(nextCtx)
+    public sessionOf(nextCtx: IExtensibleMessage) {
+        nextCtx = ObjectFrom(this._trigger, nextCtx)
+        const stream = this._streamOf(nextCtx)
         return new SessionContext({
             stream,
-            streamOf: this.streamOf,
-            rawInit: nextCtx,
-            init: null,
-            timeout: timeout,
+            streamOf: this._streamOf,
+            trigger: nextCtx,
+            sender: this._sender,
+            transform: SessionContext._transformPlaceholder,
         })
-    }
-    /** Reset the stream deletion timeout */
-    set timeout(timeout: number) {
-        clearTimeout(this._timeout)
-        if (timeout <= Number.MAX_SAFE_INTEGER) this._timeout = setTimeout(() => this.stream.free(), timeout)
     }
 }
