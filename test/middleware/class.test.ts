@@ -4,14 +4,14 @@ import { spy as Spy } from 'sinon'
 
 test('MiddlewareManager.from() (construct from existing instance)', async () => {
     expect.assertions(2)
-    const mgr = new MiddlewareManager<{ processed: boolean }>()
-    mgr.use(async (ctx, next) => {
-        await next()
-    })
-    const nextMgr = MiddlewareManager.from(mgr)
-    nextMgr.use(async (ctx, next) => {
-        ctx.processed = true
-    })
+    let mgr = new MiddlewareManager<{ processed: boolean }>()
+        .use(async (ctx, next) => {
+            await next()
+        })
+    let nextMgr = MiddlewareManager.from(mgr)
+        .use(async (ctx, next) => {
+            ctx.processed = true
+        })
     const ctx = { processed: false }
     await mgr.run(ctx)
     expect(ctx.processed).toBe(false)
@@ -21,9 +21,9 @@ test('MiddlewareManager.from() (construct from existing instance)', async () => 
 
 test('MiddlewareManager#use() (flow control)', async () => {
     expect.assertions(2)
-    const mgr = new MiddlewareManager<number>()
+    let mgr = new MiddlewareManager<number>()
     const spy = Spy()
-    mgr.use(async (ctx, next) => {
+    mgr = mgr.use(async (ctx, next) => {
         if (ctx) await next()
     }).use(spy)
     await mgr.run(0)
@@ -34,9 +34,9 @@ test('MiddlewareManager#use() (flow control)', async () => {
 
 test('MiddlewareManager#use() (properties modifying)', async () => {
     expect.assertions(1)
-    const mgr = new MiddlewareManager<{ processed: boolean }>(),
-        ctx = { processed: false }
-    mgr.use(async (ctx, next) => {
+    let mgr = new MiddlewareManager<{ processed: boolean }>()
+    const ctx = { processed: false }
+    mgr = mgr.use(async (ctx, next) => {
         ctx.processed = true
     })
     await mgr.run(ctx)
@@ -45,9 +45,9 @@ test('MiddlewareManager#use() (properties modifying)', async () => {
 
 test('MiddlewareManager#useLast()', async () => {
     expect.assertions(2)
-    const mgr = new MiddlewareManager<number>()
+    let mgr = new MiddlewareManager<number>()
     const spy = Spy()
-    mgr.useLast(spy).use(async (ctx, next) => {
+    mgr = mgr.useLast(spy).use(async (ctx, next) => {
         if (ctx) await next()
     })
     await mgr.run(0)
@@ -57,8 +57,8 @@ test('MiddlewareManager#useLast()', async () => {
 })
 
 test('get MiddlewareManager#length', () => {
-    const mgr = new MiddlewareManager<void>()
+    let mgr = new MiddlewareManager<void>()
     expect(mgr.length).toBe(0)
-    mgr.use(() => {}).useLast(() => {})
+    mgr = mgr.use(() => {}).useLast(() => {})
     expect(mgr.length).toBe(2)
 })
