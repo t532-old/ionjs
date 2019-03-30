@@ -1,8 +1,7 @@
 import { MiddlewareManager, IMiddleware } from '../../middleware'
-import { IMessage } from '../../platform/receiver'
 import { IExtensibleMessage } from '../definition'
 
-const manager = new MiddlewareManager<IExtensibleMessage>()
+let manager = new MiddlewareManager<IExtensibleMessage>()
 
 /**
  * Use a list of middlewares (or only one)
@@ -10,7 +9,7 @@ const manager = new MiddlewareManager<IExtensibleMessage>()
  */
 export function use(...middlewares: IMiddleware<IExtensibleMessage>[]) {
     for (const mw of middlewares)
-        manager.use(mw)
+        manager = manager.use(mw)
     console.log(`[INFO] ${manager.length} Middlewares loaded`)
 }
 
@@ -20,7 +19,7 @@ export function use(...middlewares: IMiddleware<IExtensibleMessage>[]) {
  */
 export function useLast(...middlewares: IMiddleware<IExtensibleMessage>[]) {
     for (const mw of middlewares)
-        manager.useLast(mw)
+        manager = manager.useLast(mw)
     console.log(`[INFO] ${manager.length} Middlewares loaded`)
 }
 

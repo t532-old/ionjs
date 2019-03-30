@@ -31,27 +31,28 @@ const managers: Map<string, { single: SingleSessionManager<IExtensibleMessage>, 
  */
 export function use(transform: ITransform, { override = false, identifier = 'default', concurrent = false } = {}) {
     return function useHandler(session: (ctx: SessionContext) => void) {
-        const manager = concurrent ? managers.get(identifier).concurrent : managers.get(identifier).single
-        async function wrapper(stream: MessageStream<IExtensibleMessage>, streamOf: IStreamGetter<IExtensibleMessage>, trigger: IExtensibleMessage) {
-            try {
-                sessionCount++
-                await session(new SessionContext({
-                    stream,
-                    streamOf,
-                    trigger,
-                    sender,
-                    transform,
-                }))
+        const manager = managers.get(identifier)
+        if (manager) {
+            async function wrapper(stream: MessageStream<IExtensibleMessage>, streamOf: IStreamGetter<IExtensibleMessage>, trigger: IExtensibleMessage) {
+                try {
+                    sessionCount++
+                    await session(new SessionContext({
+                        stream,
+                        streamOf,
+                        trigger,
+                        sender,
+                        transform,
+                    }))
+                }
+                catch (err) {
+                    console.error('[ERROR] An uncaught error is thrown by your session code:')
+                    console.error(err)
+                } finally { sessionCount-- }
             }
-            catch (err) {
-                console.error('[ERROR] An uncaught error is thrown by your session code:')
-                console.error(err)
-            } finally { sessionCount-- }
-        }
-        if (manager instanceof SingleSessionManager) manager.use(wrapper, async ctx => await transform.transform(ctx) ? true : false, override)
-        else if (manager instanceof ConcurrentSessionManager) manager.use(wrapper, async ctx => await transform.transform(ctx) ? true : false)
-        else throw new Error(`Session manager '${identifier}' does not exist`)
-        console.log(`[INFO] ${manager.length} Session templates loaded on session manager '${identifier}'`)
+            if (concurrent) manager.concurrent = manager.concurrent.use(wrapper, async ctx => await transform.transform(ctx) ? true : false)  
+            else manager.single = manager.single.use(wrapper, async ctx => await transform.transform(ctx) ? true : false, override)
+            console.log(`[INFO] ${manager[concurrent ? 'concurrent' : 'single'].length} Session templates loaded on session manager '${identifier}'`)
+        } else throw new Error(`Session manager '${identifier}' does not exist`)
     }
 }
 
