@@ -1,9 +1,9 @@
 import { post } from 'httpie'
 import { URL } from 'url'
 import { CQHTTP_API } from './api'
-import { Code } from '../cqcode'
+import { ICQCodeArray } from '../cqcode'
+import { Text } from '../cqcode/code'
 import * as Result from './definition'
-import { MessageContent } from './definition'
 import { IMessage } from '../receiver'
 
 export class SenderError extends Error {
@@ -41,10 +41,10 @@ export class Sender {
         if (result.status === 'failed') throw new SenderError(args, url, result.retcode)
         else return result
     }
-    send(...mixedMessage: MessageContent): Promise<Result.ISendResult> {
+    send(...mixedMessage: ICQCodeArray): Promise<Result.ISendResult> {
         const message = []
         for (const i of mixedMessage) {
-            if (typeof i === 'string') message.push(Code.Text(i))
+            if (typeof i === 'string') message.push(Text(i))
             else message.push(i)
         }
         if (this._context.message_type) return this._post(CQHTTP_API.send[this._context.message_type], { message })

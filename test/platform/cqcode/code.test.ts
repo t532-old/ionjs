@@ -1,5 +1,5 @@
 /// <reference types="jest" />
-import { Code } from '../../../src/platform/cqcode'
+import * as Code from '../../../src/platform/cqcode/code'
 
 const cases = {
     Text: {

@@ -1,8 +1,9 @@
 import { IExtensibleMessage } from './definition'
 import { MessageStream, IStreamGetter } from '../session'
-import { Util } from '../platform/cqcode'
+import { ICQCodeArray } from '../platform/cqcode'
+import { toString } from '../platform/cqcode/util'
 import { run } from './instance/session'
-import { Sender, MessageContent } from '../platform/sender'
+import { Sender } from '../platform/sender'
 import { ITransform, PlainTransform } from './transform'
 import * as ObjectFrom from 'deepmerge'
 
@@ -48,7 +49,7 @@ export class SessionContext {
         this._firstRead = resolved = true
         return result
     }
-    public reply(...message: MessageContent) { return this.sender.send(...message) }
+    public reply(...message: ICQCodeArray) { return this.sender.send(...message) }
     public async question(quote: string, {
         transform = this._firstRead ? this._transform : SessionContext._transformPlaceholder,
         timeout = Infinity
@@ -57,9 +58,9 @@ export class SessionContext {
         return this.get({ transform, timeout })
     }
     /** Forward to other sessions */
-    public forward(...message: MessageContent) {
+    public forward(...message: ICQCodeArray) {
         const ctx = ObjectFrom({}, this._trigger)
-        ctx.message = Util.arrayToString(message)
+        ctx.message = toString(message)
         return run(ctx)
     }
     /** Get a session of another user */

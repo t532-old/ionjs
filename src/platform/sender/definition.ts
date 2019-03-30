@@ -72,5 +72,3 @@ export interface IPluginVersionInfoResult extends IBaseResult {
         plugin_build_configuration: string,
     }
 }
-
-export type MessageContent = (string|ICQCode)[]
