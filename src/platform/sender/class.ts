@@ -47,11 +47,12 @@ export class Sender {
             if (typeof i === 'string') message.push(Code.Text(i))
             else message.push(i)
         }
-        if (this._context.group_id) return this._post(CQHTTP_API.send.group, { message })
+        if (this._context.message_type) return this._post(CQHTTP_API.send[this._context.message_type], { message })
+        else if (this._context.group_id) return this._post(CQHTTP_API.send.group, { message })
         else if (this._context.discuss_id) return this._post(CQHTTP_API.send.discuss, { message })
         else return this._post(CQHTTP_API.send.private, { message })
     }
-    'delete'(message_id: number): Promise<Result.INoneResult> { return this._post(CQHTTP_API.delete, { message_id }) }
+    delete(message_id: number): Promise<Result.INoneResult> { return this._post(CQHTTP_API.delete, { message_id }) }
     sendLike(times: number): Promise<Result.INoneResult> { return this._post(CQHTTP_API.sendLike, { times }) }
     kick(reject_add_request: boolean = false): Promise<Result.INoneResult> { return this._post(CQHTTP_API.kick, { reject_add_request }) }
     ban(duration: number = 30 * 60): Promise<Result.INoneResult> {
