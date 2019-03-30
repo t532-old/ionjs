@@ -12,22 +12,22 @@ export interface IConcurrentSessionTemplate<T> extends ISessionTemplate<T> {
 
 /** A session manager that allows multi processes */
 export class ConcurrentSessionManager<T = any> implements ISessionManager<T> {
-    static from<T>(last: ConcurrentSessionManager<T>) {
+    public static from<T>(last: ConcurrentSessionManager<T>) {
         const next = new ConcurrentSessionManager<T>(last.identifier)
         next._templates = Array.from(last._templates)
         for (const { symbol } of next._templates)
             next._streams.set(symbol, new Map())
         return next
     }
+    public constructor(identifier: ISessionIdentifier<T>) { this._identifier = identifier }
     /** Stores streams of active sessions */
     private readonly _streams: Map<symbol, Map<any, MessageStream<T>>> = new Map()
     /** Stores session templates */
     private _templates: IConcurrentSessionTemplate<T>[] = []
     /** The identifier generator */
     private readonly _identifier: ISessionIdentifier<T>
-    get length() { return this._templates.length }
-    get identifier() { return this._identifier }
-    constructor(identifier: ISessionIdentifier<T>) { this._identifier = identifier }
+    public get length() { return this._templates.length }
+    public get identifier() { return this._identifier }
     /**
      * Get a set of operations on a particular MessageStream
      * @param symbol the symbol of the session template
@@ -56,7 +56,7 @@ export class ConcurrentSessionManager<T = any> implements ISessionManager<T> {
      * @param session the function for generating sessions
      * @param match determines whether the session should be created or not
      */
-    use(session: ISessionFn<T>, match: ISessionMatcher<T>) {
+    public use(session: ISessionFn<T>, match: ISessionMatcher<T>) {
         const next = ConcurrentSessionManager.from(this)
         const symbol = Symbol()
         next._streams.set(symbol, new Map())
@@ -68,7 +68,7 @@ export class ConcurrentSessionManager<T = any> implements ISessionManager<T> {
      * Or create sessions if the context matches the conditions of them
      * @param ctx the context
      */
-    async run(ctx: T) {
+    public async run(ctx: T) {
         let template: IConcurrentSessionTemplate<T>
         for (template of this._templates) {
             const templateSymbol = template.symbol,

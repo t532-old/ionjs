@@ -49,7 +49,7 @@ export function use(transform: ITransform, { override = false, identifier = 'def
                     console.error(err)
                 } finally { sessionCount-- }
             }
-            if (concurrent) manager.concurrent = manager.concurrent.use(wrapper, async ctx => await transform.transform(ctx) ? true : false)  
+            if (concurrent) manager.concurrent = manager.concurrent.use(wrapper, async ctx => await transform.transform(ctx) ? true : false)
             else manager.single = manager.single.use(wrapper, async ctx => await transform.transform(ctx) ? true : false, override)
             console.log(`[INFO] ${manager[concurrent ? 'concurrent' : 'single'].length} Session templates loaded on session manager '${identifier}'`)
         } else throw new Error(`Session manager '${identifier}' does not exist`)

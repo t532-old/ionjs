@@ -48,7 +48,7 @@ export class CommandTransform implements ITransform {
     private _deriveCommand(command: Command) {
         const next = CommandTransform.from(this)
         next._command = command
-        return next 
+        return next
     }
     public name(...names: string[]) { return this._deriveCommand(new Command(...names)) }
     public param(name: string, { optional = false, unordered = false, defaultVal, alias }: {

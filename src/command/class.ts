@@ -3,16 +3,32 @@ import { ICommandParameters, ICommandArguments } from './definition'
 import * as ObjectFrom from 'deepmerge'
 
 export class CommandParseError extends Error {
-    args: ICommandArguments
-    notGiven: string[]
-    constructor(message: string, result?: ICommandArguments, notGiven?: string[]) {
+    public constructor(message: string, result?: ICommandArguments, notGiven?: string[]) {
         super(message)
         this.args = result
         this.notGiven = notGiven
     }
+    public args: ICommandArguments
+    public notGiven: string[]
 }
 /** A class that represents a shell-like-command and is able to parse commands */
 export class Command {
+    /** Regexps for parsing declarations and commands */
+    private static readonly _REGEXES = {
+        /** A regexp that matches a parameter in the declaration */
+        PARAMETER: /^([<\[])(\?)?(.+?)(?:\((.+?)\))?([>\]])(?:=(.+?))?$/,
+        /** A regexp that matches a key-value pair in a command */
+        KEY_VALUE: /^(.*[^\\])=(.+)$/,
+    }
+    /** Construct from existing instance */
+    public static from(data: Command) {
+        const next = new Command(...data._names)
+        next._options = Array.from(data._options)
+        next._parameters = ObjectFrom(data._parameters, {})
+        return next
+    }
+    /** @param names The command names */
+    public constructor(...names: string[]) { this._names = names }
     private _parameters: ICommandParameters = {
         /** The keys are the param names and the values are aliases  */
         aliases: {},
@@ -29,25 +45,9 @@ export class Command {
      * Check if a command matches the name
      * @param command the command for checking
      */
-    readonly is = (command: string) => this._names.includes(split(command)[0])
-    /** Regexps for parsing declarations and commands */
-    private static readonly _REGEXES = {
-        /** A regexp that matches a parameter in the declaration */
-        PARAMETER: /^([<\[])(\?)?(.+?)(?:\((.+?)\))?([>\]])(?:=(.+?))?$/,
-        /** A regexp that matches a key-value pair in a command */
-        KEY_VALUE: /^(.*[^\\])=(.+)$/,
-    }
-    /** Construct from existing instance */
-    static from(data: Command) {
-        const next = new Command(...data._names)
-        next._options = Array.from(data._options)
-        next._parameters = ObjectFrom(data._parameters, {})
-        return next
-    }
-    /** @param names The command names */
-    constructor(...names: string[]) { this._names = names }
+    public readonly is = (command: string) => this._names.includes(split(command)[0])
     /** Add an option to the command declaration */
-    option(opt: string) {
+    public option(opt: string) {
         const next = Command.from(this)
         next._options.push(opt)
         return next
@@ -57,7 +57,7 @@ export class Command {
      * @param name the param name
      * @param options options of the parameter
      */
-    param(name: string, { optional = false, unordered = false, defaultVal, alias }: {
+    public param(name: string, { optional = false, unordered = false, defaultVal, alias }: {
         optional?: boolean
         unordered?: boolean
         defaultVal?: string
@@ -74,7 +74,7 @@ export class Command {
      * Parse a command
      * @param command The command for parsing
      */
-    parse(command: string): ICommandArguments {
+    public parse(command: string): ICommandArguments {
         let rawArgs = split(command)
         if (!this._names.includes(rawArgs[0])) throw new CommandParseError('Wrong command name', null, null)
         const args = {

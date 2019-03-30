@@ -12,9 +12,9 @@ export class OriginTransform implements ITransform {
         next._manager = MiddlewareManager.from(last._manager)
         return next
     }
+    public constructor(operators: number[] = []) { this._operators = operators }
     private _manager = new MiddlewareManager<IExtensibleMessage>()
     private readonly _operators: number[]
-    public constructor(operators: number[] = []) { this._operators = operators }
     private _derive(mw: IMiddleware<IExtensibleMessage>) {
         const next = OriginTransform.from(this)
         next._manager = this._manager.use(mw)

@@ -21,7 +21,7 @@ export function toString(message: ICQCodeArray|string) {
     }
 }
 export function toArray(message: ICQCodeArray|string): ICQCode[] {
-    if (message instanceof Array) 
+    if (message instanceof Array)
         return Array.from(message)
             .map(i => typeof i === 'string' ? Text(i) : i)
             .filter(i => isCQCodeObject(i))

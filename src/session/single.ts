@@ -14,22 +14,20 @@ export interface ISingleSessionTemplate<T> extends ISessionTemplate<T> {
 
 /** A session manager that is single-process for each user */
 export class SingleSessionManager<T = any> implements ISessionManager<T> {
-    static from<T>(last: SingleSessionManager<T>) {
+    public static from<T>(last: SingleSessionManager<T>) {
         const next = new SingleSessionManager<T>(last.identifier)
         next._templates = Array.from(last._templates)
         return next
     }
+    public constructor(identifier: ISessionIdentifier<T>) { this._identifier = identifier }
     /** Stores streams of active sessions */
     private readonly _streams: Map<any, MessageStream<T>> = new Map()
     /** Stores session templates */
     private _templates: ISingleSessionTemplate<T>[] = []
     /** The identifier generator */
     private readonly _identifier: ISessionIdentifier<T>
-    get length() { return this._templates.length }
-    get identifier() { return this._identifier }
-    constructor(identifier: ISessionIdentifier<T>) {
-        this._identifier = identifier
-    }
+    public get length() { return this._templates.length }
+    public get identifier() { return this._identifier }
     /**
      * Get a set of operations on a particular MessageStream
      * @param symbol the symbol of the session template
@@ -63,7 +61,7 @@ export class SingleSessionManager<T = any> implements ISessionManager<T> {
      *                 whether to force end the previous session (true)
      *                 or ignore this context (false or not determined)
      */
-    use(session: ISessionFn<T>, match: ISessionMatcher<T>, override: boolean = false) {
+    public use(session: ISessionFn<T>, match: ISessionMatcher<T>, override: boolean = false) {
         const next = SingleSessionManager.from(this)
         next._templates.push({ session, match, override })
         return next
@@ -74,7 +72,7 @@ export class SingleSessionManager<T = any> implements ISessionManager<T> {
      * Additionally, override templates will take over even when there's a session running
      * @param ctx the context
      */
-    async run(ctx: T) {
+    public async run(ctx: T) {
         const msgId = await this._identifier(ctx)
         let finalBehavior: ISingleSessionTemplate<T>
         const stream = this._operate(msgId),
