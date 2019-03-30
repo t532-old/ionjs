@@ -18,7 +18,7 @@ export class CommandTransform implements ITransform {
     public static from(last: CommandTransform) {
         const next = new CommandTransform()
         next._manager = MiddlewareManager.from(last._manager)
-        next._command = Command.from(last._command)
+        if (last._command) next._command = Command.from(last._command)
         next._prompts = ObjectFrom({}, last._prompts)
         return next
     }
@@ -39,7 +39,7 @@ export class CommandTransform implements ITransform {
             await next()
         })
     private _command: Command
-    private _prompts: { [param: string]: string }
+    private _prompts: { [param: string]: string } = {}
     private _derive(mw: IMiddleware<IExtensibleMessage>) {
         const next = CommandTransform.from(this)
         next._manager = this._manager.use(mw)
@@ -48,7 +48,7 @@ export class CommandTransform implements ITransform {
     private _deriveCommand(command: Command) {
         const next = CommandTransform.from(this)
         next._command = command
-        return next
+        return next 
     }
     public name(...names: string[]) { return this._deriveCommand(new Command(...names)) }
     public param(name: string, { optional = false, unordered = false, defaultVal, alias }: {
