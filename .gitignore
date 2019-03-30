@@ -63,6 +63,4 @@ typings/
 /middleware/
 /platform/
 /session/
-/when/
-index.*
 dist/
