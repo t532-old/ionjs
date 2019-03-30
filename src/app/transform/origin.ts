@@ -21,27 +21,27 @@ export class OriginTransform implements ITransform {
         return next
     }
     public isFromGroup(...id: number[]) {
-        return this._derive(async (ctx, next) => {
+        return this._derive(async function (ctx, next) {
             if (id.includes(ctx.group_id)) await next()
         })
     }
     public isFromDiscuss(...id: number[]) {
-        return this._derive(async (ctx, next) => {
+        return this._derive(async function (ctx, next) {
             if (id.includes(ctx.discuss_id)) await next()
         })
     }
     public isFromUser(...id: number[]) {
-        return this._derive(async (ctx, next) => {
+        return this._derive(async function (ctx, next) {
             if (id.includes(ctx.user_id)) await next()
         })
     }
     public isType(...types: string[]) {
-        return this._derive(async (ctx, next) => {
+        return this._derive(async function (ctx, next) {
             if (types.some(i => contextTypeOf(ctx).includes(i))) await next()
         })
     }
     public hasPermission(level: OriginPermission) {
-        return this._derive(async (ctx, next) => {
+        return this._derive(async function (ctx, next) {
             switch (level) {
                 case OriginPermission.EVERYONE:
                     await next()
@@ -60,7 +60,7 @@ export class OriginTransform implements ITransform {
     }
     public async transform(msg: IExtensibleMessage) {
         let finished = false
-        const man = this._manager.use(async (ctx, next) => {
+        const man = this._manager.use(async function (ctx, next) {
             finished = true
             await next()
         })

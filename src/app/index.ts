@@ -13,7 +13,7 @@ declare module './definition' {
 let queue = new Promise(resolve => resolve())
 
 export function start(middlewareTimeout = 10000) {
-    middleware.use(async (ctx, next) => {
+    middleware.use(async function (ctx, next) {
         if ((ctx.message as any) instanceof Array)
             ctx.message = Util.arrayToString(ctx.message as any as ICQCode[])
         ctx.message_array = Util.stringToArray(ctx.message)
@@ -21,7 +21,7 @@ export function start(middlewareTimeout = 10000) {
         await next()
     })
     middleware.useLast(session.run)
-    receiver.receiver.on('post', ctx =>
+    receiver.receiver.on('post', function (ctx) {
         queue = queue.then(() => new Promise(async resolve => {
             let finished = false
             setTimeout(() => {
@@ -34,6 +34,6 @@ export function start(middlewareTimeout = 10000) {
             finished = true
             resolve()
         }))
-    )
+    })
     receiver.start()
 }

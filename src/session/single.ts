@@ -36,10 +36,11 @@ export class SingleSessionManager<T = any> implements ISessionManager<T> {
      * @param identifier the identifier of the stream
      */
     private _operate(identifier: any) {
-        const getter = () => this._streams.get(identifier),
-              exists = () => this._streams.has(identifier),
-              setter = () => this._streams.set(identifier, new MessageStream<T>(deleter.bind(this))),
-              deleter = () => this._streams.delete(identifier)
+        const thisRef = this
+        const getter = () => thisRef._streams.get(identifier),
+              exists = () => thisRef._streams.has(identifier),
+              setter = () => thisRef._streams.set(identifier, new MessageStream<T>(deleter.bind(this))),
+              deleter = () => thisRef._streams.delete(identifier)
         return { getter, setter, deleter, exists }
     }
     /**

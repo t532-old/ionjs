@@ -1,12 +1,11 @@
 import { ICQCode } from './definition'
-export const Util = {
-    isCQCodeObject(obj: any): obj is ICQCode { return typeof obj === 'object' && typeof obj.type === 'string' && typeof obj.data === 'object' && obj.data },
-    isRealCQCodeObject(obj: any) { return Util.isCQCodeObject(obj) && obj.type !== 'text' },
-    encodePlainText(str: string) { return str.replace(/&/g, '&amp;').replace(/\[/g, '&#91;').replace(/\]/g, '&#93;') },
-    decodePlainText(str: string) { return str.replace(/&amp;/g, '&').replace(/&#91;/g, '[').replace(/&#93;/g, ']') }, // lgtm [js/double-escaping]
-    encodeCQCodeText(str: string) { return Util.encodePlainText(str).replace(/,/g, '&#44;') },
-    decodeCQCodeText(str: string) { return Util.decodePlainText(str).replace(/&#44;/g, ',') },
-    arrayToString(message: (ICQCode|string)[]) {
+export namespace Util {
+    export function isCQCodeObject(obj: any): obj is ICQCode { return typeof obj === 'object' && typeof obj.type === 'string' && typeof obj.data === 'object' && obj.data }
+    export function isRealCQCodeObject(obj: any) { return Util.isCQCodeObject(obj) && obj.type !== 'text' }
+    export function encodePlainText(str: string) { return str.replace(/&/g, '&amp;').replace(/\[/g, '&#91;').replace(/\]/g, '&#93;') }
+    export function decodePlainText(str: string) { return str.replace(/&amp;/g, '&').replace(/&#91;/g, '[').replace(/&#93;/g, ']') } // lgtm [js/double-escaping]
+    export function encodeCQCodeText(str: string) { return Util.encodePlainText(str).replace(/,/g, '&#44;') }export function decodeCQCodeText(str: string) { return Util.decodePlainText(str).replace(/&#44;/g, ',') }
+    export function arrayToString(message: (ICQCode|string)[]) {
         let converted = ''
         for (const i of message) {
             if (Util.isCQCodeObject(i)) {
@@ -16,8 +15,8 @@ export const Util = {
             else converted += Util.encodePlainText(i.toString())
         }
         return converted
-    },
-    stringToArray(message: string) {
+    }
+    export function stringToArray(message: string) {
         const splitted = message.split(/(?=\[)|(?<=\])/)
         const converted = []
         for (const i of splitted) {
@@ -33,8 +32,8 @@ export const Util = {
             } else converted.push({ type: 'text', data: { text: Util.decodePlainText(i) } })
         }
         return converted
-    },
-    filterType(message: ICQCode[], type: string) {
+    }
+    export function filterType(message: ICQCode[], type: string) {
         if (type === 'rawstring') return Util.arrayToString(message)
         else if (type === 'string') return Util.decodePlainText(Util.arrayToString(message))
         else if (type === 'any') return message

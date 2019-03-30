@@ -23,9 +23,9 @@ export class CommandTransform implements ITransform {
         return next
     }
     private _manager = new MiddlewareManager<IExtensibleMessage>()
-        .use(async (ctx, next) => {
+        .use(async function (ctx, next) {
             if (this._command.is(ctx.message)) await next()
-        }).use(async (ctx, next) => {
+        }).use(async function (ctx, next) {
             try { ctx.command = this._command.parse(ctx.message) }
             catch (err) {
                 if (err instanceof CommandParseError) {
@@ -35,7 +35,7 @@ export class CommandTransform implements ITransform {
                     ctx.command.$notGiven = [...ctx.command.$notGiven, ...err.notGiven]
                 } else return
             }
-            ctx.$prompts = this._prompts
+            ctx.command.$prompts = this._prompts
             await next()
         })
     private _command: Command
@@ -69,7 +69,7 @@ export class CommandTransform implements ITransform {
         return next
     }
     public validate(name: string, validator: (arg: any) => boolean|Promise<boolean>, prompt = true) {
-        return this._derive(async (ctx, next) => {
+        return this._derive(async function (ctx, next) {
             if (await validator(ctx.command.arguments[name]))
                 await next()
             else if (prompt && (this._prompts[name] || this._prompts.$all)) {
@@ -79,19 +79,19 @@ export class CommandTransform implements ITransform {
         })
     }
     public parse(name: string, parser: (arg: any) => any) {
-        return this._derive(async (ctx, next) => {
+        return this._derive(async function (ctx, next) {
             ctx.command.arguments[name] = parser(ctx.command.arguments[name])
             await next()
         })
     }
     public async transform(msg: IExtensibleMessage) {
         let finished = false
-        const man = this._manager.use(async (ctx, next) => {
+        const man = this._manager.use(async function (ctx, next) {
             finished = true
             await next()
         })
         const copy = ObjectFrom({}, msg)
-        await man.run(copy)
+        await man.run(copy, this)
         if (finished) return copy
         else return null
     }

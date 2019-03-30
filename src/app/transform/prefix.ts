@@ -22,14 +22,14 @@ export class PrefixTransform implements ITransform {
         return next
     }
     public withString(...strings: string[]) {
-        return this._derive(async (ctx, next) => {
+        return this._derive(async function (ctx, next) {
             const sliceLen = (strings.find(i => ctx.message.startsWith(i)) || '').length
             ctx.message = ctx.message.slice(sliceLen)
             await next()
         })
     }
     public mustWithString(...strings: string[]) {
-        return this._derive(async (ctx, next) => {
+        return this._derive(async function (ctx, next) {
             const sliceLen = (strings.find(i => ctx.message.startsWith(i)) || '').length
             if (sliceLen) {
                 ctx.message = ctx.message.slice(sliceLen)
@@ -38,7 +38,7 @@ export class PrefixTransform implements ITransform {
         })
     }
     public withRegex(regex: RegExp) {
-        return this._derive(async (ctx, next) => {
+        return this._derive(async function (ctx, next) {
             const matched = ctx.message.match(regex)
             if (matched && matched.index === 0)
                 ctx.message = ctx.message.slice(matched[0].length)
@@ -46,7 +46,7 @@ export class PrefixTransform implements ITransform {
         })
     }
     public mustWithRegex(regex: RegExp) {
-        return this._derive(async (ctx, next) => {
+        return this._derive(async function (ctx, next) {
             const matched = ctx.message.match(regex)
             if (matched && matched.index === 0) {
                 ctx.message = ctx.message.slice(matched[0].length)
@@ -55,14 +55,14 @@ export class PrefixTransform implements ITransform {
         })
     }
     public withAt() {
-        return this._derive(async (ctx, next) => {
+        return this._derive(async function (ctx, next) {
             if (ctx.message.startsWith(this._atStr))
                 ctx.message = ctx.message.slice(this._atStr.length)
             await next()
         })
     }
     public mustWithAt() {
-        return this._derive(async (ctx, next) => {
+        return this._derive(async function (ctx, next) {
             if (ctx.message.startsWith(this._atStr)) {
                 ctx.message = ctx.message.slice(this._atStr.length)
                 await next()
@@ -71,7 +71,7 @@ export class PrefixTransform implements ITransform {
     }
     public async transform(msg: IExtensibleMessage) {
         let finished = false
-        const man = this._manager.use(async (ctx, next) => {
+        const man = this._manager.use(async function (ctx, next) {
             finished = true
             await next()
         })

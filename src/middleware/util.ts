@@ -6,10 +6,10 @@ import { IMiddleware } from './definition'
  * @param iter the iterator of the function array
  * @param context the context that'll be passed to the function
  */
-export function nextExecutor<T>(iter: IterableIterator<IMiddleware<T>>, context: any) {
+export function nextExecutor<T>(iter: IterableIterator<IMiddleware<T>>, context: any, thisRef: any) {
     const next = iter.next().value
     return async function executeNext() {
         if (next instanceof Function)
-            await next(context, nextExecutor(iter, context))
+            await next.bind(thisRef)(context, nextExecutor(iter, context, thisRef))
     }
 }

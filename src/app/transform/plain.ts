@@ -17,13 +17,13 @@ export class PlainTransform implements ITransform {
         return next
     }
     public validate(fn: ISessionMatcher<IExtensibleMessage>) {
-        return this.use(async (ctx, next) => {
+        return this.use(async function (ctx, next) {
             if (await fn(ctx)) next()
         })
     }
     public async transform(msg: IExtensibleMessage) {
         let finished = false
-        const man = this._manager.use(async (ctx, next) => {
+        const man = this._manager.use(async function (ctx, next) {
             finished = true
             await next()
         })

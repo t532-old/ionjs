@@ -37,8 +37,8 @@ export class MiddlewareManager<T> {
      * Let context go through the middlewares
      * @param ctx the context
      */
-    async run(ctx: T) {
+    async run(ctx: T, thisRef: any = this) {
         if (this._middlewares.length || this._lastMiddlewares.length)
-            await nextExecutor<T>([...this._middlewares, ...this._lastMiddlewares][Symbol.iterator](), ctx)()
+            await nextExecutor<T>([...this._middlewares, ...this._lastMiddlewares][Symbol.iterator](), ctx, thisRef)()
     }
 }

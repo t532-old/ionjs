@@ -23,7 +23,7 @@ export class MessageTransform implements ITransform {
         return next
     }
     public matchesRegex(regex: RegExp) {
-        return this._derive(async (ctx, next) => {
+        return this._derive(async function (ctx, next) {
             const matched = ctx.message.match(regex)
             if (matched) {
                 ctx.match = matched
@@ -32,7 +32,7 @@ export class MessageTransform implements ITransform {
         })
     }
     public contains(...strings: string[]) {
-        return this._derive(async (ctx, next) => {
+        return this._derive(async function (ctx, next) {
             const contained = strings.filter(i => ctx.message.indexOf(i) >= 0)
             if (contained.length) {
                 ctx.contain = contained
@@ -41,14 +41,14 @@ export class MessageTransform implements ITransform {
         })
     }
     public matches(validator: (msg: string) => boolean|Promise<boolean>) {
-        return this._derive(async (ctx, next) => {
+        return this._derive(async function (ctx, next) {
             if (await validator(ctx.message))
                 await next()
         })
     }
     public async transform(msg: IExtensibleMessage) {
         let finished = false
-        const man = this._manager.use(async (ctx, next) => {
+        const man = this._manager.use(async function (ctx, next) {
             finished = true
             await next()
         })
