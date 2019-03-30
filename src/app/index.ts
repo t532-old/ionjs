@@ -5,8 +5,8 @@ import { Util, ICQCode } from '../platform/cqcode'
 
 declare module './definition' {
     interface IExtensibleMessage {
-        message_array: ICQCode[]
-        raw_message: string
+        message_array?: ICQCode[]
+        raw_message?: string
     }
 }
 
@@ -14,7 +14,7 @@ let queue = new Promise(resolve => resolve())
 
 export function start(middlewareTimeout = 10000) {
     middleware.use(async (ctx, next) => {
-        if (ctx.message as any instanceof Array) 
+        if ((ctx.message as any) instanceof Array)
             ctx.message = Util.arrayToString(ctx.message as any as ICQCode[])
         ctx.message_array = Util.stringToArray(ctx.message)
         ctx.raw_message = Util.decodePlainText(ctx.message)
