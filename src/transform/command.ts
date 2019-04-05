@@ -91,7 +91,7 @@ export class CommandTransform implements ITransform {
             await next()
         })
         const copy = ObjectFrom({}, msg)
-        await man.run(copy, this)
+        await man.runBound(copy, this)
         if (finished) return copy
         else return null
     }

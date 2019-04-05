@@ -1,5 +1,5 @@
 /// <reference types="jest" />
-import { MiddlewareManager } from '../../src/middleware'
+import { MiddlewareManager } from '../../../src/core/middleware'
 import { spy as Spy } from 'sinon'
 
 test('MiddlewareManager.from() (construct from existing instance)', async () => {
@@ -54,6 +54,17 @@ test('MiddlewareManager#useLast()', async () => {
     expect(spy.notCalled).toBe(true)
     await mgr.run(1)
     expect (spy.calledOnce).toBe(true)
+})
+
+test('MiddlewareManager#runBound()', async () => {
+    expect.assertions(1)
+    let mgr = new MiddlewareManager<void>()
+    mgr = mgr.use(async function (ctx, next) {
+        this.processed = true
+    })
+    const thisRef = { processed: false }
+    await mgr.runBound(null, thisRef)
+    expect(thisRef.processed).toBe(true)
 })
 
 test('get MiddlewareManager#length', () => {

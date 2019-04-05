@@ -28,7 +28,7 @@ export class PlainTransform implements ITransform {
             await next()
         })
         const copy = ObjectFrom({}, msg)
-        await man.run(copy)
+        await man.runBound(copy, this)
         if (finished) return copy
         else return null
     }

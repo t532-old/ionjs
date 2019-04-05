@@ -1,4 +1,4 @@
-import { nextExecutor } from './util'
+import { nextExecutor, boundNextExecutor } from './util'
 import { IMiddleware } from './definition'
 
 /** A middleware manager */
@@ -37,8 +37,12 @@ export class MiddlewareManager<T> {
      * Let context go through the middlewares
      * @param ctx the context
      */
-    public async run(ctx: T, thisRef: any = this) {
+    public async run(ctx: T) {
         if (this._middlewares.length || this._lastMiddlewares.length)
-            await nextExecutor<T>([...this._middlewares, ...this._lastMiddlewares][Symbol.iterator](), ctx, thisRef)()
+            await nextExecutor<T>([...this._middlewares, ...this._lastMiddlewares][Symbol.iterator](), ctx)()
+    }
+    public async runBound(ctx: T, thisRef: any) {
+        if (this._middlewares.length || this._lastMiddlewares.length)
+            await boundNextExecutor<T>([...this._middlewares, ...this._lastMiddlewares][Symbol.iterator](), ctx, thisRef)()
     }
 }

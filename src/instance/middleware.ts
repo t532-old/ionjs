@@ -34,3 +34,11 @@ export async function run(ctx: IExtensibleMessage) {
         console.error(err)
     }
 }
+
+export async function runBound(ctx: IExtensibleMessage, thisRef: any) {
+    try { await manager.runBound(ctx, thisRef) }
+    catch (err) {
+        console.error('[ERROR] An error was thrown by one of the middlewares:')
+        console.error(err)
+    }
+}

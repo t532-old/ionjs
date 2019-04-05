@@ -1,5 +1,5 @@
 /// <reference types="jest" />
-import { Command } from '../../src/command'
+import { Command } from '../../../src/util/command'
 
 test('Command#is()', () => {
     const instance = new Command('name', 'name2')
