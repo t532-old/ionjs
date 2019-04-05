@@ -1,5 +1,5 @@
-import { SingleSessionManager, ConcurrentSessionManager, MessageStream, IStreamGetter } from '../../session'
-import { contextTypeOf, unionIdOf, IMessage } from '../../platform/receiver'
+import { SingleSessionManager, ConcurrentSessionManager, MessageStream, IStreamGetter } from '../core/session'
+import { contextTypeOf, unionIdOf, IMessage } from '../platform/receiver'
 import { IExtensibleMessage } from '../definition'
 import { SessionContext } from '../context'
 import { ITransform } from '../transform'

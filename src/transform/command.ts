@@ -1,10 +1,10 @@
-import { MiddlewareManager, IMiddleware } from '../../middleware'
+import { MiddlewareManager, IMiddleware } from '../core/middleware'
 import { IExtensibleMessage } from '../definition'
-import { Command, ICommandArguments, CommandParseError } from '../../command'
+import { Command, ICommandArguments, CommandParseError } from '../util/command'
 import * as ObjectFrom from 'deepmerge'
 import { ITransform } from './definition'
 
-declare module "../definition" {
+declare module '../definition' {
     interface IExtensibleMessage {
         command?: ICommandArguments & {
             arguments: Record<string, any>

@@ -1,4 +1,4 @@
-import { MiddlewareManager, IMiddleware } from '../../middleware'
+import { MiddlewareManager, IMiddleware } from '../core/middleware'
 import { IExtensibleMessage } from '../definition'
 
 let manager = new MiddlewareManager<IExtensibleMessage>()

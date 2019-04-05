@@ -1,7 +1,7 @@
-import { MiddlewareManager, IMiddleware } from '../../middleware'
+import { MiddlewareManager, IMiddleware } from '../core/middleware'
 import { IExtensibleMessage } from '../definition'
 import * as ObjectFrom from 'deepmerge'
-import { contextTypeOf } from '../../platform/receiver'
+import { contextTypeOf } from '../platform/receiver'
 import { ITransform } from './definition'
 
 export enum OriginPermission { EVERYONE, ADMIN, OWNER, OPERATOR }

@@ -1,9 +1,9 @@
 import { IExtensibleMessage } from './definition'
-import { MessageStream, IStreamGetter } from '../session'
-import { ICQCodeArray } from '../platform/cqcode'
-import { toString } from '../platform/cqcode/util'
+import { MessageStream, IStreamGetter } from './core/session'
+import { ICQCodeArray } from './platform/cqcode'
+import { toString } from './platform/cqcode/util'
 import { run } from './instance/session'
-import { Sender } from '../platform/sender'
+import { Sender } from './platform/sender'
 import { ITransform, PlainTransform } from './transform'
 import * as ObjectFrom from 'deepmerge'
 

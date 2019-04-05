@@ -58,9 +58,11 @@ typings/
 .env
 
 # compiled files
-/app/
-/command/
-/middleware/
+/core/
+/instance/
 /platform/
-/session/
+/transform/
+/util/
+/*.js
+/*.d.ts
 dist/

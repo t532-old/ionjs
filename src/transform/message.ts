@@ -1,9 +1,9 @@
-import { MiddlewareManager, IMiddleware } from '../../middleware'
+import { MiddlewareManager, IMiddleware } from '../core/middleware'
 import { IExtensibleMessage } from '../definition'
 import * as ObjectFrom from 'deepmerge'
 import { ITransform } from './definition'
 
-declare module "../definition" {
+declare module '../definition' {
     interface IExtensibleMessage {
         match?: RegExpMatchArray
         contain?: string[]

@@ -1,8 +1,8 @@
 import * as middleware from './instance/middleware'
 import * as session from './instance/session'
 import * as receiver from './instance/receiver'
-import { ICQCode } from '../platform/cqcode'
-import * as Util from '../platform/cqcode/util'
+import { ICQCode } from './platform/cqcode'
+import * as Util from './platform/cqcode/util'
 
 declare module './definition' {
     interface IExtensibleMessage {

@@ -1,8 +1,8 @@
-import { MiddlewareManager, IMiddleware } from '../../middleware'
+import { MiddlewareManager, IMiddleware } from '../core/middleware'
 import { IExtensibleMessage } from '../definition'
 import * as ObjectFrom from 'deepmerge'
 import { ITransform } from './definition'
-import { ISessionMatcher } from '../../session'
+import { ISessionMatcher } from '../core/session'
 
 export class PlainTransform implements ITransform {
     public static from(last: PlainTransform) {

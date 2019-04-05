@@ -1,4 +1,4 @@
-import { Receiver } from '../../platform/receiver'
+import { Receiver } from '../platform/receiver'
 
 /** The raw receiver */
 export let receiver: Receiver

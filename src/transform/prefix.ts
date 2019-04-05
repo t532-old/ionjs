@@ -1,4 +1,4 @@
-import { MiddlewareManager, IMiddleware } from '../../middleware'
+import { MiddlewareManager, IMiddleware } from '../core/middleware'
 import { IExtensibleMessage } from '../definition'
 import * as ObjectFrom from 'deepmerge'
 import { ITransform } from './definition'
