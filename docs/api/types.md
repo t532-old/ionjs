@@ -65,4 +65,3 @@ type TValidator<T = any> = (ctx: T, ...extraArgs: any[]) => boolean | Promise<bo
 /** A type alias for a validator callback function */
 type TValidatorCallback<T = any> = (ctx: T, ...extraArgs: any[]) => void
 ```
-

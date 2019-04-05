@@ -20,4 +20,3 @@ receiver.on('request/group', async ctx => {
     if (ctx.group_id === 672076603)
         await sender.to(ctx).solveRequest(true)
 })
-
