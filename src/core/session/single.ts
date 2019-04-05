@@ -14,45 +14,20 @@ export interface ISingleSessionTemplate<T> extends ISessionTemplate<T> {
 
 /** A session manager that is single-process for each user */
 export class SingleSessionManager<T = any> implements ISessionManager<T> {
-    public static from<T>(last: SingleSessionManager<T>) {
-        const next = new SingleSessionManager<T>(last.identifier)
-        next._templates = Array.from(last._templates)
-        return next
-    }
-    public constructor(identifier: ISessionIdentifier<T>) { this._identifier = identifier }
     /** Stores streams of active sessions */
     private readonly _streams: Map<any, MessageStream<T>> = new Map()
     /** Stores session templates */
     private _templates: ISingleSessionTemplate<T>[] = []
     /** The identifier generator */
     private readonly _identifier: ISessionIdentifier<T>
+    public constructor(identifier: ISessionIdentifier<T>) { this._identifier = identifier }
+    public static from<T>(last: SingleSessionManager<T>) {
+        const next = new SingleSessionManager<T>(last.identifier)
+        next._templates = Array.from(last._templates)
+        return next
+    }
     public get length() { return this._templates.length }
     public get identifier() { return this._identifier }
-    /**
-     * Get a set of operations on a particular MessageStream
-     * @param symbol the symbol of the session template
-     * @param identifier the identifier of the stream
-     */
-    private _operate(identifier: any) {
-        const thisRef = this
-        const getter = () => thisRef._streams.get(identifier),
-              exists = () => thisRef._streams.has(identifier),
-              setter = () => thisRef._streams.set(identifier, new MessageStream<T>(deleter.bind(this))),
-              deleter = () => thisRef._streams.delete(identifier)
-        return { getter, setter, deleter, exists }
-    }
-    /**
-     * Get a stream from a context (wraps this._operate())
-     * @param override whether to override or not
-     * @param ctx the context
-     */
-    private _streamOf(override: boolean, ctx: T) {
-        const stream = this._operate(this._identifier(ctx)),
-              streamObj = stream.getter()
-        if (!streamObj) stream.setter()
-        if (override || !streamObj) return stream.getter()
-        else throw new SessionManagerError('stream is currently locked by another session')
-    }
     /**
      * set an empty Stream Map and the symbol when new template is added
      * @param session the function for generating sessions
@@ -101,5 +76,30 @@ export class SingleSessionManager<T = any> implements ISessionManager<T> {
             if (!originalStream.write(ctx))
                 originalStream.once('drain', () => originalStream.write(ctx))
         }
+    }
+    /**
+     * Get a set of operations on a particular MessageStream
+     * @param symbol the symbol of the session template
+     * @param identifier the identifier of the stream
+     */
+    private _operate(identifier: any) {
+        const thisRef = this
+        const getter = () => thisRef._streams.get(identifier),
+              exists = () => thisRef._streams.has(identifier),
+              setter = () => thisRef._streams.set(identifier, new MessageStream<T>(deleter.bind(this))),
+              deleter = () => thisRef._streams.delete(identifier)
+        return { getter, setter, deleter, exists }
+    }
+    /**
+     * Get a stream from a context (wraps this._operate())
+     * @param override whether to override or not
+     * @param ctx the context
+     */
+    private _streamOf(override: boolean, ctx: T) {
+        const stream = this._operate(this._identifier(ctx)),
+              streamObj = stream.getter()
+        if (!streamObj) stream.setter()
+        if (override || !streamObj) return stream.getter()
+        else throw new SessionManagerError('stream is currently locked by another session')
     }
 }

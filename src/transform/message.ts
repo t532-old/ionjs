@@ -11,15 +11,10 @@ declare module '../definition' {
 }
 
 export class MessageTransform implements ITransform {
+    private _manager = new MiddlewareManager<IExtensibleMessage>()
     public static from(last: MessageTransform) {
         const next = new MessageTransform()
         next._manager = MiddlewareManager.from(last._manager)
-        return next
-    }
-    private _manager = new MiddlewareManager<IExtensibleMessage>()
-    private _derive(mw: IMiddleware<IExtensibleMessage>) {
-        const next = MessageTransform.from(this)
-        next._manager = this._manager.use(mw)
         return next
     }
     public matchesRegex(regex: RegExp) {
@@ -56,5 +51,10 @@ export class MessageTransform implements ITransform {
         await man.runBound(copy, this)
         if (finished) return copy
         else return null
+    }
+    private _derive(mw: IMiddleware<IExtensibleMessage>) {
+        const next = MessageTransform.from(this)
+        next._manager = this._manager.use(mw)
+        return next
     }
 }

@@ -19,23 +19,14 @@ export class SenderError extends Error {
 }
 
 export class Sender {
-    public static from(last: Sender) { return new Sender(last._sendURL, last._token) }
+    private _context: IMessage
+    private readonly _sendURL: string
+    private readonly _token?: string
     public constructor(sendURL: string, token?: string) {
         this._sendURL = sendURL
         this._token = token
     }
-    private _context: IMessage
-    private readonly _sendURL: string
-    private readonly _token?: string
-    private async _post({ api, params = [] }: { api: string, params?: string[] }, args: { [x: string]: any } = {}) {
-        const url = new URL(api, this._sendURL).toString()
-        for (const param of params)
-            if (!(param in args))
-                args[param] = this._context[param]
-        const result = (await post(url, { body: args, headers: this._token ? { 'Authorization': `Token ${this._token}` } : {} })).data
-        if (result.status === 'failed') throw new SenderError(args, url, result.retcode)
-        else return result
-    }
+    public static from(last: Sender) { return new Sender(last._sendURL, last._token) }
     public to(context) {
         const next = Sender.from(this)
         next._context = context
@@ -90,4 +81,13 @@ export class Sender {
     public restartPlugin(delay: number = 0): Promise<Result.INoneResult> { return this._post(CQHTTP_API.restartPlugin, { delay }) }
     public cleanDataDir(data_dir: string): Promise<Result.INoneResult> { return this._post(CQHTTP_API.cleanDataDir, { data_dir }) }
     public cleanPluginLog(): Promise<Result.INoneResult> { return this._post(CQHTTP_API.cleanPluginLog) }
+    private async _post({ api, params = [] }: { api: string, params?: string[] }, args: { [x: string]: any } = {}) {
+        const url = new URL(api, this._sendURL).toString()
+        for (const param of params)
+            if (!(param in args))
+                args[param] = this._context[param]
+        const result = (await post(url, { body: args, headers: this._token ? { 'Authorization': `Token ${this._token}` } : {} })).data
+        if (result.status === 'failed') throw new SenderError(args, url, result.retcode)
+        else return result
+    }
 }

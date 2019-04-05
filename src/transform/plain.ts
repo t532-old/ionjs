@@ -5,12 +5,12 @@ import { ITransform } from './definition'
 import { ISessionMatcher } from '../core/session'
 
 export class PlainTransform implements ITransform {
+    private _manager = new MiddlewareManager<IExtensibleMessage>()
     public static from(last: PlainTransform) {
         const next = new PlainTransform()
         next._manager = MiddlewareManager.from(last._manager)
         return next
     }
-    private _manager = new MiddlewareManager<IExtensibleMessage>()
     public use(mw: IMiddleware<IExtensibleMessage>) {
         const next = PlainTransform.from(this)
         next._manager = this._manager.use(mw)

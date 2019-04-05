@@ -5,6 +5,7 @@ import { EventEmitter } from 'events'
 import { contextTypeOf } from './util'
 
 export class Receiver extends EventEmitter {
+    private readonly _server = new Koa()
     public constructor(secret?: string) {
         super()
         const thisRef = this
@@ -24,7 +25,6 @@ export class Receiver extends EventEmitter {
             ctx.status = 200
         })
     }
-    private readonly _server = new Koa()
     public listen(port: number) {
         this._server.listen(port)
     }

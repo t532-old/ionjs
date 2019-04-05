@@ -7,17 +7,12 @@ import { ITransform } from './definition'
 export enum OriginPermission { EVERYONE, ADMIN, OWNER, OPERATOR }
 
 export class OriginTransform implements ITransform {
+    private _manager = new MiddlewareManager<IExtensibleMessage>()
+    private readonly _operators: number[]
+    public constructor(operators: number[] = []) { this._operators = operators }
     public static from(last: OriginTransform) {
         const next = new OriginTransform(last._operators)
         next._manager = MiddlewareManager.from(last._manager)
-        return next
-    }
-    public constructor(operators: number[] = []) { this._operators = operators }
-    private _manager = new MiddlewareManager<IExtensibleMessage>()
-    private readonly _operators: number[]
-    private _derive(mw: IMiddleware<IExtensibleMessage>) {
-        const next = OriginTransform.from(this)
-        next._manager = this._manager.use(mw)
         return next
     }
     public isFromGroup(...id: number[]) {
@@ -68,5 +63,10 @@ export class OriginTransform implements ITransform {
         await man.runBound(copy, this)
         if (finished) return copy
         else return null
+    }
+    private _derive(mw: IMiddleware<IExtensibleMessage>) {
+        const next = OriginTransform.from(this)
+        next._manager = this._manager.use(mw)
+        return next
     }
 }

@@ -3,16 +3,16 @@ import { IMiddleware } from './definition'
 
 /** A middleware manager */
 export class MiddlewareManager<T> {
-    static from<T>(last: MiddlewareManager<T>) {
+    /** The list of middlewares */
+    private _middlewares: IMiddleware<T>[] = []
+    /** The list of middlewares that runs at last */
+    private _lastMiddlewares: IMiddleware<T>[] = []
+    public static from<T>(last: MiddlewareManager<T>) {
         const next = new MiddlewareManager<T>()
         next._middlewares = Array.from(last._middlewares)
         next._lastMiddlewares = Array.from(last._lastMiddlewares)
         return next
     }
-    /** The list of middlewares */
-    private _middlewares: IMiddleware<T>[] = []
-    /** The list of middlewares that runs at last */
-    private _lastMiddlewares: IMiddleware<T>[] = []
     /** Returns how many middlewares there are */
     public get length() { return this._middlewares.length + this._lastMiddlewares.length }
     /**

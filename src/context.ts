@@ -9,6 +9,14 @@ import * as ObjectFrom from 'deepmerge'
 
 export class SessionContext {
     private static readonly _transformPlaceholder = new PlainTransform()
+    public get stream() { return this._stream }
+    public get sender() { return this._sender }
+    private readonly _stream: MessageStream<IExtensibleMessage>
+    private readonly _streamOf: IStreamGetter<IExtensibleMessage>
+    private readonly _trigger: IExtensibleMessage
+    private readonly _sender: Sender
+    private _firstRead = false
+    private readonly _transform: ITransform
     public constructor({ stream, streamOf, trigger, sender, transform }: {
         stream: MessageStream<IExtensibleMessage>
         streamOf: IStreamGetter<IExtensibleMessage>
@@ -22,14 +30,6 @@ export class SessionContext {
         this._sender = sender.to(trigger)
         this._transform = transform
     }
-    private readonly _stream: MessageStream<IExtensibleMessage>
-    private readonly _streamOf: IStreamGetter<IExtensibleMessage>
-    private readonly _trigger: IExtensibleMessage
-    private readonly _sender: Sender
-    private _firstRead = false
-    private readonly _transform: ITransform
-    public get stream() { return this._stream }
-    public get sender() { return this._sender }
     public async get({
         transform = this._firstRead ? this._transform : SessionContext._transformPlaceholder,
         timeout = Infinity

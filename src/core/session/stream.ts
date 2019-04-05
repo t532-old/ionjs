@@ -3,16 +3,16 @@ import { PassThrough } from 'stream'
 export class MessageStreamError extends Error {}
 /** A class that extends PassThrough stream, supports async message fetching */
 export class MessageStream<T> extends PassThrough {
-    public constructor(deleter: () => void) {
-        super({ objectMode: true })
-        this._deleter = deleter
-    }
     /** Deleter is a function that'll called by free() */
     private readonly _deleter: () => void
     /** Whether this.free() has been called */
     private _isFree = false
     /** Number of references */
     private _references = 1
+    public constructor(deleter: () => void) {
+        super({ objectMode: true })
+        this._deleter = deleter
+    }
     /**
      * get an object asynchronously.
      * if there is an object in the stream, it'll be directly resolved;

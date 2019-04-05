@@ -15,13 +15,6 @@ declare module '../definition' {
 }
 
 export class CommandTransform implements ITransform {
-    public static from(last: CommandTransform) {
-        const next = new CommandTransform()
-        next._manager = MiddlewareManager.from(last._manager)
-        if (last._command) next._command = Command.from(last._command)
-        next._prompts = ObjectFrom({}, last._prompts)
-        return next
-    }
     private _manager = new MiddlewareManager<IExtensibleMessage>()
         .use(async function (ctx, next) {
             if (this._command.is(ctx.message)) await next()
@@ -40,14 +33,11 @@ export class CommandTransform implements ITransform {
         })
     private _command: Command
     private _prompts: { [param: string]: string } = {}
-    private _derive(mw: IMiddleware<IExtensibleMessage>) {
-        const next = CommandTransform.from(this)
-        next._manager = this._manager.use(mw)
-        return next
-    }
-    private _deriveCommand(command: Command) {
-        const next = CommandTransform.from(this)
-        next._command = command
+    public static from(last: CommandTransform) {
+        const next = new CommandTransform()
+        next._manager = MiddlewareManager.from(last._manager)
+        if (last._command) next._command = Command.from(last._command)
+        next._prompts = ObjectFrom({}, last._prompts)
         return next
     }
     public name(...names: string[]) { return this._deriveCommand(new Command(...names)) }
@@ -94,6 +84,16 @@ export class CommandTransform implements ITransform {
         await man.runBound(copy, this)
         if (finished) return copy
         else return null
+    }
+    private _derive(mw: IMiddleware<IExtensibleMessage>) {
+        const next = CommandTransform.from(this)
+        next._manager = this._manager.use(mw)
+        return next
+    }
+    private _deriveCommand(command: Command) {
+        const next = CommandTransform.from(this)
+        next._command = command
+        return next
     }
 }
 

@@ -3,13 +3,13 @@ import { ICommandParameters, ICommandArguments } from './definition'
 import * as ObjectFrom from 'deepmerge'
 
 export class CommandParseError extends Error {
+    public args: ICommandArguments
+    public notGiven: string[]
     public constructor(message: string, result?: ICommandArguments, notGiven?: string[]) {
         super(message)
         this.args = result
         this.notGiven = notGiven
     }
-    public args: ICommandArguments
-    public notGiven: string[]
 }
 /** A class that represents a shell-like-command and is able to parse commands */
 export class Command {
@@ -20,15 +20,6 @@ export class Command {
         /** A regexp that matches a key-value pair in a command */
         KEY_VALUE: /^(.*[^\\])=(.+)$/,
     }
-    /** Construct from existing instance */
-    public static from(data: Command) {
-        const next = new Command(...data._names)
-        next._options = Array.from(data._options)
-        next._parameters = ObjectFrom(data._parameters, {})
-        return next
-    }
-    /** @param names The command names */
-    public constructor(...names: string[]) { this._names = names }
     private _parameters: ICommandParameters = {
         /** The keys are the param names and the values are aliases  */
         aliases: {},
@@ -41,6 +32,15 @@ export class Command {
     }
     private _options: string[] = []
     private _names: string[]
+    /** @param names The command names */
+    public constructor(...names: string[]) { this._names = names }
+    /** Construct from existing instance */
+    public static from(data: Command) {
+        const next = new Command(...data._names)
+        next._options = Array.from(data._options)
+        next._parameters = ObjectFrom(data._parameters, {})
+        return next
+    }
     /**
      * Check if a command matches the name
      * @param command the command for checking

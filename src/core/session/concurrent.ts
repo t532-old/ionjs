@@ -12,6 +12,13 @@ export interface IConcurrentSessionTemplate<T> extends ISessionTemplate<T> {
 
 /** A session manager that allows multi processes */
 export class ConcurrentSessionManager<T = any> implements ISessionManager<T> {
+    /** Stores streams of active sessions */
+    private readonly _streams: Map<symbol, Map<any, MessageStream<T>>> = new Map()
+    /** Stores session templates */
+    private _templates: IConcurrentSessionTemplate<T>[] = []
+    /** The identifier generator */
+    private readonly _identifier: ISessionIdentifier<T>
+    public constructor(identifier: ISessionIdentifier<T>) { this._identifier = identifier }
     public static from<T>(last: ConcurrentSessionManager<T>) {
         const next = new ConcurrentSessionManager<T>(last.identifier)
         next._templates = Array.from(last._templates)
@@ -19,38 +26,8 @@ export class ConcurrentSessionManager<T = any> implements ISessionManager<T> {
             next._streams.set(symbol, new Map())
         return next
     }
-    public constructor(identifier: ISessionIdentifier<T>) { this._identifier = identifier }
-    /** Stores streams of active sessions */
-    private readonly _streams: Map<symbol, Map<any, MessageStream<T>>> = new Map()
-    /** Stores session templates */
-    private _templates: IConcurrentSessionTemplate<T>[] = []
-    /** The identifier generator */
-    private readonly _identifier: ISessionIdentifier<T>
     public get length() { return this._templates.length }
     public get identifier() { return this._identifier }
-    /**
-     * Get a set of operations on a particular MessageStream
-     * @param symbol the symbol of the session template
-     * @param identifier the identifier of the stream
-     */
-    private _operate(symbol: symbol, identifier: any) {
-        const thisRef = this
-        const getter = () => thisRef._streams.get(symbol).get(identifier),
-              exists = () => thisRef._streams.get(symbol).has(identifier),
-              setter = () => thisRef._streams.get(symbol).set(identifier, new MessageStream<T>(deleter.bind(this))),
-              deleter = () => thisRef._streams.get(symbol).delete(identifier)
-        return { getter, setter, deleter, exists }
-    }
-    /**
-     * Get a stream from a session template and a context (wraps this._operate())
-     * @param symbol the symbol of the session template
-     * @param ctx the context
-     */
-    private _streamOf(symbol: symbol, ctx: T) {
-        const stream = this._operate(symbol, this._identifier(ctx))
-        if (!stream.exists()) stream.setter()
-        return stream.getter()
-    }
     /**
      * set an empty Stream Map and the symbol when new template is added
      * @param session the function for generating sessions
@@ -95,5 +72,28 @@ export class ConcurrentSessionManager<T = any> implements ISessionManager<T> {
                 execute()
             }
         }
+    }
+    /**
+     * Get a set of operations on a particular MessageStream
+     * @param symbol the symbol of the session template
+     * @param identifier the identifier of the stream
+     */
+    private _operate(symbol: symbol, identifier: any) {
+        const thisRef = this
+        const getter = () => thisRef._streams.get(symbol).get(identifier),
+              exists = () => thisRef._streams.get(symbol).has(identifier),
+              setter = () => thisRef._streams.get(symbol).set(identifier, new MessageStream<T>(deleter.bind(this))),
+              deleter = () => thisRef._streams.get(symbol).delete(identifier)
+        return { getter, setter, deleter, exists }
+    }
+    /**
+     * Get a stream from a session template and a context (wraps this._operate())
+     * @param symbol the symbol of the session template
+     * @param ctx the context
+     */
+    private _streamOf(symbol: symbol, ctx: T) {
+        const stream = this._operate(symbol, this._identifier(ctx))
+        if (!stream.exists()) stream.setter()
+        return stream.getter()
     }
 }

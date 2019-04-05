@@ -4,21 +4,16 @@ import * as ObjectFrom from 'deepmerge'
 import { ITransform } from './definition'
 
 export class PrefixTransform implements ITransform {
-    public static from(last: PrefixTransform) {
-        const next = new PrefixTransform(last._qqid)
-        next._manager = MiddlewareManager.from(last._manager)
-        return next
-    }
+    private readonly _qqid: number
+    private readonly _atStr: string
+    private _manager = new MiddlewareManager<IExtensibleMessage>()
     public constructor(qqid: number) {
         this._qqid = qqid
         this._atStr = `[CQ:at,qq=${qqid}]`
     }
-    private readonly _qqid: number
-    private readonly _atStr: string
-    private _manager = new MiddlewareManager<IExtensibleMessage>()
-    private _derive(mw: IMiddleware<IExtensibleMessage>) {
-        const next = PrefixTransform.from(this)
-        next._manager = this._manager.use(mw)
+    public static from(last: PrefixTransform) {
+        const next = new PrefixTransform(last._qqid)
+        next._manager = MiddlewareManager.from(last._manager)
         return next
     }
     public withString(...strings: string[]) {
@@ -79,5 +74,10 @@ export class PrefixTransform implements ITransform {
         await man.runBound(copy, this)
         if (finished) return copy
         else return null
+    }
+    private _derive(mw: IMiddleware<IExtensibleMessage>) {
+        const next = PrefixTransform.from(this)
+        next._manager = this._manager.use(mw)
+        return next
     }
 }
