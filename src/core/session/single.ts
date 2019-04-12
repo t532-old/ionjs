@@ -15,7 +15,7 @@ export interface ISingleSessionTemplate<T> extends ISessionTemplate<T> {
 /** A session manager that is single-process for each user */
 export class SingleSessionManager<T = any> implements ISessionManager<T> {
     /** Stores streams of active sessions */
-    private readonly _streams: Map<any, MessageStream<T>> = new Map()
+    private readonly _streams: Map<any, MessageStream<T>[]> = new Map()
     /** Stores session templates */
     private _templates: ISingleSessionTemplate<T>[] = []
     /** The identifier generator */
@@ -68,7 +68,6 @@ export class SingleSessionManager<T = any> implements ISessionManager<T> {
             if (await template.match(ctx) && (!originalStream || template.override))
                 finalBehavior = template
         if (finalBehavior) {
-            if (originalStream) originalStream.references--
             stream.setter()
             stream.getter().write(ctx)
             execute()
@@ -84,10 +83,15 @@ export class SingleSessionManager<T = any> implements ISessionManager<T> {
      */
     private _operate(identifier: any) {
         const thisRef = this
-        const getter = () => thisRef._streams.get(identifier),
+        const getter = () => thisRef._streams.get(identifier)[0],
               exists = () => thisRef._streams.has(identifier),
-              setter = () => thisRef._streams.set(identifier, new MessageStream<T>(deleter.bind(this))),
-              deleter = () => thisRef._streams.delete(identifier)
+              setter = () => thisRef._streams.get(identifier).unshift(new MessageStream<T>(deleter.bind(this))),
+              deleter = () => {
+                  const arr = thisRef._streams.get(identifier)
+                  arr.shift()
+                  if (!arr.length) return thisRef._streams.delete(identifier)
+                  else return true
+              }
         return { getter, setter, deleter, exists }
     }
     /**
