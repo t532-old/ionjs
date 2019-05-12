@@ -33,3 +33,16 @@ export function someOf(...transform: ITransform[]): ITransform {
         }
     }
 }
+
+export function shortCircuitSomeOf(...transform: ITransform[]): ITransform {
+    return {
+        async transform(ctx: IExtensibleMessage) {
+            let result = ctx
+            for (const i of transform) {
+                const curr = await i.transform(ctx)
+                if (curr) return ObjectFrom(result, curr)
+            }
+            return null
+        }
+    }
+}
