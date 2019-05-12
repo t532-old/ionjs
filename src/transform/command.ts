@@ -19,13 +19,19 @@ export class CommandTransform implements ITransform {
         .use(async function (ctx, next) {
             if (this._command.is(ctx.message)) await next()
         }).use(async function (ctx, next) {
-            try { ctx.command = this._command.parse(ctx.message) }
-            catch (err) {
+            try {
+                ctx.command = {
+                    ...this._command.parse(ctx.message),
+                    $notGiven: [],
+                }
+            } catch (err) {
                 if (err instanceof CommandParseError) {
                     if (!this._prompts.$all)
                         if (err.notGiven.some(i => !this._prompts[i])) return
-                    ctx.command = err.args
-                    ctx.command.$notGiven = [...ctx.command.$notGiven, ...err.notGiven]
+                    ctx.command = {
+                        ...err.args,
+                        $notGiven: err.notGiven,
+                    }
                 } else return
             }
             ctx.command.$prompts = this._prompts
@@ -40,7 +46,7 @@ export class CommandTransform implements ITransform {
         next._prompts = ObjectFrom({}, last._prompts)
         return next
     }
-    public name(...names: string[]) { return this._deriveCommand(new Command(...names)) }
+    public constructor(...names: string[]) { this._command = new Command(...names) }
     public param(name: string, { optional = false, unordered = false, defaultVal, alias }: {
         optional?: boolean
         unordered?: boolean
@@ -63,14 +69,16 @@ export class CommandTransform implements ITransform {
             if (await validator(ctx.command.arguments[name]))
                 await next()
             else if (prompt && (this._prompts[name] || this._prompts.$all)) {
-                ctx.command.$notGiven.push(name)
+                if (ctx.command.$notGiven.indexOf(name) < 0)
+                    ctx.command.$notGiven.push(name)
                 await next()
             }
         })
     }
     public parse(name: string, parser: (arg: any) => any) {
         return this._derive(async function (ctx, next) {
-            ctx.command.arguments[name] = parser(ctx.command.arguments[name])
+            if (ctx.command.arguments[name])
+                ctx.command.arguments[name] = parser(ctx.command.arguments[name])
             await next()
         })
     }
