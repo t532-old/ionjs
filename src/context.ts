@@ -7,6 +7,12 @@ import { Sender } from './platform/sender'
 import { ITransform, PlainTransform } from './transform'
 import * as ObjectFrom from 'deepmerge'
 
+declare module './definition' {
+    interface IExtensibleMessage {
+        $session: SessionContext
+    }
+}
+
 export class SessionContext {
     private static readonly _transformPlaceholder = new PlainTransform()
     public get stream() { return this._stream }
@@ -35,6 +41,7 @@ export class SessionContext {
         timeout = Infinity
     } = {}) {
         let resolved = false
+        const thisRef = this
         if (timeout <= Number.MAX_SAFE_INTEGER)
             setTimeout(() => {
                 if (!resolved)
@@ -42,6 +49,7 @@ export class SessionContext {
             }, timeout)
         let result: IExtensibleMessage
         await this.stream.get(async ctx => {
+            ctx.$session = thisRef
             result = await transform.transform(ctx)
             if (result) return true
             else return false
