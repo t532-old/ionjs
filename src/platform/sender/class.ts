@@ -32,12 +32,7 @@ export class Sender {
         next._context = context
         return next
     }
-    public send(...mixedMessage: ICQCodeArray): Promise<Result.ISendResult> {
-        const message = []
-        for (const i of mixedMessage) {
-            if (typeof i === 'string') message.push(Text(i))
-            else message.push(i)
-        }
+    public send(message: ICQCodeArray): Promise<Result.ISendResult> {
         if (this._context.message_type) return this._post(CQHTTP_API.send[this._context.message_type], { message })
         else if (this._context.group_id) return this._post(CQHTTP_API.send.group, { message })
         else if (this._context.discuss_id) return this._post(CQHTTP_API.send.discuss, { message })

@@ -57,16 +57,16 @@ export class SessionContext {
         this._firstRead = resolved = true
         return result
     }
-    public reply(...message: ICQCodeArray) { return this.sender.send(...message) }
-    public async question(quote: string, {
+    public reply(message: ICQCodeArray) { return this.sender.send(message) }
+    public async question(message: ICQCodeArray, {
         transform = this._firstRead ? this._transform : SessionContext._transformPlaceholder,
         timeout = Infinity
     } = {}) {
-        await this.reply(quote)
+        await this.reply(message)
         return this.get({ transform, timeout })
     }
     /** Forward to other sessions */
-    public forward(...message: ICQCodeArray) {
+    public forward(message: ICQCodeArray) {
         const ctx = ObjectFrom({}, this._trigger)
         ctx.message = toString(message)
         return run(ctx)
