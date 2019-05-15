@@ -14,9 +14,9 @@ const str = '123&#91;&#93;[CQ:image,file=/path/to/image]456',
     }],
     arr = [strictArr[0], strictArr[1], strictArr[2].data.text]
 
-test('Util.toString()', () => {
-    expect(Util.toString(str)).toBe(str)
-    expect(Util.toString(arr)).toBe(str)
+test('Util.toTest()', () => {
+    expect(Util.toText(str)).toBe(str)
+    expect(Util.toText(arr)).toBe(str)
 })
 
 test('Util.toArray()', () => {

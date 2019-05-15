@@ -6,7 +6,7 @@ export function isRealCQCodeObject(obj: any) { return isCQCodeObject(obj) && obj
 export function encodePlainText(str: string) { return str.replace(/&/g, '&amp;').replace(/\[/g, '&#91;').replace(/\]/g, '&#93;') }
 export function decodePlainText(str: string) { return str.replace(/&amp;/g, '&').replace(/&#91;/g, '[').replace(/&#93;/g, ']') } // lgtm [js/double-escaping]
 export function encodeCQCodeText(str: string) { return encodePlainText(str).replace(/,/g, '&#44;') }export function decodeCQCodeText(str: string) { return decodePlainText(str).replace(/&#44;/g, ',') }
-export function toString(message: ICQCodeArray|string) {
+export function toText(message: ICQCodeArray|string) {
     if (typeof message === 'string') return message
     else {
         let converted = ''
