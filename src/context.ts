@@ -1,11 +1,12 @@
 import { IExtensibleMessage } from './definition'
 import { MessageStream, IStreamGetter } from './core/session'
 import { ICQCodeArray } from './platform/cqcode'
-import { toString } from './platform/cqcode/util'
+import { toText } from './platform/cqcode/util'
 import { run } from './instance/session'
 import { Sender } from './platform/sender'
 import { ITransform, PlainTransform } from './transform'
 import * as ObjectFrom from 'deepmerge'
+import { waitMilliseconds } from './util/general'
 
 declare module './definition' {
     interface IExtensibleMessage {
@@ -38,37 +39,51 @@ export class SessionContext {
     }
     public async get({
         transform = this._firstRead ? this._transform : SessionContext._transformPlaceholder,
-        timeout = Infinity
+        timeout = Infinity,
+        attempt = Infinity,
     } = {}) {
-        let resolved = false
         const thisRef = this
-        if (timeout <= Number.MAX_SAFE_INTEGER)
-            setTimeout(() => {
-                if (!resolved)
-                    throw new Error('Time limit exceeded')
-            }, timeout)
-        let result: IExtensibleMessage
-        await this.stream.get(async ctx => {
-            ctx.$session = thisRef
-            result = await transform.transform(ctx)
-            if (result) return true
-            else return false
-        })
-        this._firstRead = resolved = true
-        return result
+        async function waitForTimeout() {
+            await waitMilliseconds(timeout)
+            throw new Error('Time limit exceeded')
+        }
+        async function getResult() {
+            let curAttempt = 0
+            let result: IExtensibleMessage
+            await thisRef.stream.get(async ctx => {
+                ctx.$session = thisRef
+                result = await transform.transform(ctx)
+                if (result) return true
+                else {
+                    curAttempt++
+                    if (curAttempt >= attempt) return true
+                    else return false
+                }
+            })
+            if (curAttempt >= attempt) throw new Error('Attempt limit exceeded')
+            thisRef._firstRead = true
+            return result
+        }
+        if (timeout <= Number.MAX_SAFE_INTEGER) {
+            return Promise.race([
+                getResult(),
+                waitForTimeout(),
+            ])
+        } else return getResult()
     }
     public reply(message: ICQCodeArray) { return this.sender.send(message) }
     public async question(message: ICQCodeArray, {
         transform = this._firstRead ? this._transform : SessionContext._transformPlaceholder,
-        timeout = Infinity
+        timeout = Infinity,
+        attempt = Infinity,
     } = {}) {
         await this.reply(message)
-        return this.get({ transform, timeout })
+        return this.get({ transform, timeout, attempt })
     }
     /** Forward to other sessions */
     public forward(message: ICQCodeArray) {
         const ctx = ObjectFrom({}, this._trigger)
-        ctx.message = toString(message)
+        ctx.message = toText(message)
         return run(ctx)
     }
     /** Get a session of another user */
