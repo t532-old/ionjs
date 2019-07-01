@@ -3,14 +3,11 @@ import { IExtensibleMessage } from '../definition'
 import { Command, ICommandArguments, CommandParseError } from '../util/command'
 import * as ObjectFrom from 'deepmerge'
 import { ITransform } from './definition'
+import { ICQCodeArray } from '../platform/cqcode'
 
 declare module '../definition' {
     interface IExtensibleMessage {
-        command?: ICommandArguments & {
-            arguments: Record<string, any>
-            $prompts?: CommandTransform['_prompts']
-            $notGiven?: CommandParseError['notGiven']
-        }
+        command?: ICommandArguments & { arguments: Record<string, any> }
     }
 }
 
@@ -19,26 +16,24 @@ export class CommandTransform implements ITransform {
         .use(async function (ctx, next) {
             if (this._command.is(ctx.message)) await next()
         }).use(async function (ctx, next) {
-            try {
-                ctx.command = {
-                    ...this._command.parse(ctx.message),
-                    $notGiven: [],
+            if (!ctx.$validation) {
+                try { ctx.command = this._command.parse(ctx.message) }
+                catch (err) {
+                    if (err instanceof CommandParseError) {
+                        if (!this._prompts.$all)
+                            if (err.notGiven.some(i => !this._prompts[i])) return
+                        ctx.command = err.args
+                        for (const i of err.notGiven) {
+                            await ctx.$session().reply(this._prompts[i] || this._prompts.$all)
+                            ctx.command.arguments[i] = (await ctx.$session().stream.get()).message
+                        }
+                    } else return
                 }
-            } catch (err) {
-                if (err instanceof CommandParseError) {
-                    if (!this._prompts.$all)
-                        if (err.notGiven.some(i => !this._prompts[i])) return
-                    ctx.command = {
-                        ...err.args,
-                        $notGiven: err.notGiven,
-                    }
-                } else return
             }
-            ctx.command.$prompts = this._prompts
             await next()
         })
     private _command: Command
-    private _prompts: { [param: string]: string } = {}
+    private _prompts: Record<string, ICQCodeArray> = {}
     public static from(last: CommandTransform) {
         const next = new CommandTransform()
         next._manager = MiddlewareManager.from(last._manager)
@@ -54,31 +49,29 @@ export class CommandTransform implements ITransform {
         alias?: string
     } = {}) { return this._deriveCommand(this._command.param(name, { optional, unordered, defaultVal, alias })) }
     public option(opt: string) { return this._deriveCommand(this._command.option(opt)) }
-    public promptAll(quote: string) {
+    public promptAll(quote: ICQCodeArray) {
         const next = CommandTransform.from(this)
         next._prompts.$all = quote
         return next
     }
-    public prompt(name: string, quote: string) {
+    public prompt(name: string, quote: ICQCodeArray) {
         const next = CommandTransform.from(this)
         next._prompts[name] = quote
         return next
     }
     public validate(name: string, validator: (arg: any) => boolean|Promise<boolean>, prompt = true) {
         return this._derive(async function (ctx, next) {
-            if (await validator(ctx.command.arguments[name]))
-                await next()
-            else if (prompt && (this._prompts[name] || this._prompts.$all)) {
-                if (ctx.command.$notGiven.indexOf(name) < 0)
-                    ctx.command.$notGiven.push(name)
-                await next()
-            }
+            if (!ctx.$validation) {
+                if (await validator(ctx.command.arguments[name]))
+                    await next()
+            } else await next()
         })
     }
     public parse(name: string, parser: (arg: any) => any) {
         return this._derive(async function (ctx, next) {
-            if (ctx.command.arguments[name])
-                ctx.command.arguments[name] = parser(ctx.command.arguments[name])
+            if (!ctx.$validation)
+                if (ctx.command.arguments[name])
+                    ctx.command.arguments[name] = parser(ctx.command.arguments[name])
             await next()
         })
     }
@@ -103,9 +96,4 @@ export class CommandTransform implements ITransform {
         next._command = command
         return next
     }
-}
-
-export async function promptFor(ctx: IExtensibleMessage, question: (quote: string) => Promise<string>) {
-    for (let i of ctx.command.$notGiven)
-        ctx.command.arguments[i] = await question(ctx.command.$prompts[i] || ctx.command.$prompts.$all)
 }

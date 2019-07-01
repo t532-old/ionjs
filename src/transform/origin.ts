@@ -45,10 +45,10 @@ export class OriginTransform implements ITransform {
                     if (this._operators.includes(ctx.user_id)) await next()
                     break
                 case OriginPermission.ADMIN:
-                    if (!ctx.sender.data.role || ctx.sender.data.role === 'admin' || ctx.sender.data.role === 'owner') await next()
+                    if (!ctx.sender.role || ctx.sender.role === 'admin' || ctx.sender.role === 'owner') await next()
                     break
                 case OriginPermission.OWNER:
-                    if (!ctx.sender.data.role || ctx.sender.data.role === 'owner') await next()
+                    if (!ctx.sender.role || ctx.sender.role === 'owner') await next()
                     break
             }
         })

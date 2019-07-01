@@ -10,7 +10,7 @@ import { waitMilliseconds } from './util/general'
 
 declare module './definition' {
     interface IExtensibleMessage {
-        $session: SessionContext
+        $session(): SessionContext
     }
 }
 
@@ -22,7 +22,7 @@ export class SessionContext {
     private readonly _streamOf: IStreamGetter<IExtensibleMessage>
     private readonly _trigger: IExtensibleMessage
     private readonly _sender: Sender
-    private _firstRead = false
+    private _firstRead = true
     private readonly _transform: ITransform
     public constructor({ stream, streamOf, trigger, sender, transform }: {
         stream: MessageStream<IExtensibleMessage>
@@ -43,7 +43,7 @@ export class SessionContext {
         attempt = Infinity,
     } = {}) {
         const thisRef = this
-        async function waitForTimeout() {
+        async function waitForTimeout(): Promise<never> {
             await waitMilliseconds(timeout)
             throw new Error('Time limit exceeded')
         }
@@ -51,7 +51,7 @@ export class SessionContext {
             let curAttempt = 0
             let result: IExtensibleMessage
             await thisRef.stream.get(async ctx => {
-                ctx.$session = thisRef
+                ctx.$session = () => thisRef
                 result = await transform.transform(ctx)
                 if (result) return true
                 else {
@@ -61,7 +61,7 @@ export class SessionContext {
                 }
             })
             if (curAttempt >= attempt) throw new Error('Attempt limit exceeded')
-            thisRef._firstRead = true
+            thisRef._firstRead = false
             return result
         }
         if (timeout <= Number.MAX_SAFE_INTEGER) {
@@ -72,13 +72,13 @@ export class SessionContext {
         } else return getResult()
     }
     public reply(message: ICQCodeArray) { return this.sender.send(message) }
-    public async question(message: ICQCodeArray, {
-        transform = this._firstRead ? this._transform : SessionContext._transformPlaceholder,
-        timeout = Infinity,
-        attempt = Infinity,
+    public async question(message: ICQCodeArray, config: {
+        transform?: ITransform
+        timeout?: number
+        attempt?: number
     } = {}) {
         await this.reply(message)
-        return this.get({ transform, timeout, attempt })
+        return this.get(config)
     }
     /** Forward to other sessions */
     public forward(message: ICQCodeArray) {

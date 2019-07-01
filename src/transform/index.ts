@@ -1,4 +1,4 @@
-export { CommandTransform, promptFor } from './command'
+export { CommandTransform } from './command'
 export { ITransform } from './definition'
 export { MessageTransform } from './message'
 export { OriginTransform, OriginPermission } from './origin'

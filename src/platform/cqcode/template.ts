@@ -2,7 +2,7 @@ import { ICQCodeArray } from './definition'
 import { isCQCodeObject } from './util'
 import { Text } from './code'
 
-export function cq(text: string[], ...codes: any[]) {
+export function cq(text: TemplateStringsArray, ...codes: any[]) {
     const result: ICQCodeArray = []
     for (const i in text) {
         if (text[i]) result.push(Text(text[i]))

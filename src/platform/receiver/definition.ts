@@ -10,7 +10,7 @@ export interface IMessage {
     message?: string
     raw_message?: string
     font?: number
-    sender?: IInfoResult
+    sender?: IInfoResult['data']
     group_id?: number
     anonymous?: {
         id: number,
@@ -30,5 +30,5 @@ export interface IMessage {
     comment?: string
     flag?: string
     meta_event_type?: 'lifecycle'|'heartbeat'
-    status?: IPluginStatusResult
+    status?: IPluginStatusResult['data']
 }
