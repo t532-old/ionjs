@@ -34,7 +34,7 @@ export class ConcurrentSessionManager<T = any> implements ISessionManager<T> {
      * @param match determines whether the session should be created or not
      */
     public use(session: ISessionFn<T>, match: ISessionMatcher<T>) {
-        const next = ConcurrentSessionManager.from(this)
+        const next = ConcurrentSessionManager.from<T>(this)
         const symbol = Symbol()
         next._streams.set(symbol, new Map())
         next._templates.push({ session, match, symbol })

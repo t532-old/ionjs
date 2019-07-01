@@ -37,7 +37,7 @@ export class SingleSessionManager<T = any> implements ISessionManager<T> {
      *                 or ignore this context (false or not determined)
      */
     public use(session: ISessionFn<T>, match: ISessionMatcher<T>, override: boolean = false) {
-        const next = SingleSessionManager.from(this)
+        const next = SingleSessionManager.from<T>(this)
         next._templates.push({ session, match, override })
         return next
     }

@@ -1,6 +1,6 @@
 import { MessageStream } from './stream'
 
-export interface IStreamGetter<T> { (ctx: T): MessageStream<T> }
+export interface IStreamGetter<T> { (ctx: Partial<T>): MessageStream<T> }
 
 export interface ISessionFn<T> { (stream: MessageStream<T>, streamOf: IStreamGetter<T>, triggerObj: T): void }
 
