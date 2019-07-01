@@ -52,7 +52,7 @@ export class SingleSessionManager<T = any> implements ISessionManager<T> {
         let finalBehavior: ISingleSessionTemplate<T>
         const stream = this._operate(msgId),
               originalStream = stream.getter(),
-              generateStreamOf = () => this._streamOf.bind(this, finalBehavior)
+              generateStreamOf = () => this._streamOf.bind(this, finalBehavior.override)
         async function execute() {
             const streamObj = stream.getter(),
                 streamOf = generateStreamOf(),
@@ -83,9 +83,16 @@ export class SingleSessionManager<T = any> implements ISessionManager<T> {
      */
     private _operate(identifier: any) {
         const thisRef = this
-        const getter = () => thisRef._streams.get(identifier)[0],
+        const getter = () => {
+                  const stack = thisRef._streams.get(identifier)
+                  if (stack) return stack[0]
+              },
               exists = () => thisRef._streams.has(identifier),
-              setter = () => thisRef._streams.get(identifier).unshift(new MessageStream<T>(deleter.bind(this))),
+              setter = () => {
+                  const stack = thisRef._streams.get(identifier)
+                  if (stack) stack.unshift(new MessageStream<T>(deleter.bind(this)))
+                  else thisRef._streams.set(identifier, [new MessageStream<T>(deleter.bind(this))])
+              },
               deleter = () => {
                   const arr = thisRef._streams.get(identifier)
                   arr.shift()
