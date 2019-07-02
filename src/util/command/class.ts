@@ -2,8 +2,11 @@ import { split } from './util'
 import { ICommandParameters, ICommandArguments } from './definition'
 import * as ObjectFrom from 'deepmerge'
 
+/** An error produced by Command.parse() */
 export class CommandParseError extends Error {
+    /** Parsed arguments */
     public args: ICommandArguments
+    /** Ungiven parameter names */
     public notGiven: string[]
     public constructor(message: string, result?: ICommandArguments, notGiven?: string[]) {
         super(message)

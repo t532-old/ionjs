@@ -2,7 +2,6 @@ import { post } from 'httpie'
 import { URL } from 'url'
 import { CQHTTP_API } from './api'
 import { ICQCodeArray } from '../cqcode'
-import { Text } from '../cqcode/code'
 import * as Result from './definition'
 import { IMessage } from '../receiver'
 

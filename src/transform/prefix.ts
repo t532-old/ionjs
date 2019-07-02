@@ -3,19 +3,25 @@ import { IExtensibleMessage } from '../definition'
 import * as ObjectFrom from 'deepmerge'
 import { ITransform } from './definition'
 
+/** Transformations for recognizing messages' prefixes */
 export class PrefixTransform implements ITransform {
     private readonly _qqid: number
     private readonly _atStr: string
     private _manager = new MiddlewareManager<IExtensibleMessage>()
+    /**
+     * @param qqid The bot itself's qqid
+     */
     public constructor(qqid: number) {
         this._qqid = qqid
         this._atStr = `[CQ:at,qq=${qqid}]`
     }
+    /** Deep-copy a Transform object */
     public static from(last: PrefixTransform) {
         const next = new PrefixTransform(last._qqid)
         next._manager = MiddlewareManager.from(last._manager)
         return next
     }
+    /** Strip string prefix(es) */
     public withString(...strings: string[]) {
         return this._derive(async function (ctx, next) {
             const sliceLen = (strings.find(i => ctx.message.startsWith(i)) || '').length
@@ -23,6 +29,7 @@ export class PrefixTransform implements ITransform {
             await next()
         })
     }
+    /** Require & strip string prefix(es) */
     public mustWithString(...strings: string[]) {
         return this._derive(async function (ctx, next) {
             const sliceLen = (strings.find(i => ctx.message.startsWith(i)) || '').length
@@ -32,6 +39,7 @@ export class PrefixTransform implements ITransform {
             }
         })
     }
+    /** Strip prefix matched with regex */
     public withRegex(regex: RegExp) {
         return this._derive(async function (ctx, next) {
             const matched = ctx.message.match(regex)
@@ -40,6 +48,7 @@ export class PrefixTransform implements ITransform {
             await next()
         })
     }
+    /** Require & strip regex-matched prefix */
     public mustWithRegex(regex: RegExp) {
         return this._derive(async function (ctx, next) {
             const matched = ctx.message.match(regex)
@@ -49,6 +58,7 @@ export class PrefixTransform implements ITransform {
             }
         })
     }
+    /** Strip at-mention of the bot */
     public withAt() {
         return this._derive(async function (ctx, next) {
             if (ctx.message.startsWith(this._atStr))
@@ -56,6 +66,7 @@ export class PrefixTransform implements ITransform {
             await next()
         })
     }
+    /** Require & strip at-mention of the bot */
     public mustWithAt() {
         return this._derive(async function (ctx, next) {
             if (ctx.message.startsWith(this._atStr)) {

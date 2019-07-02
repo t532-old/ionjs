@@ -1,5 +1,3 @@
-import { ICQCode } from '../cqcode'
-
 export interface IBaseResult {
     status: 'ok'|'async'|'failed'
     retcode: number

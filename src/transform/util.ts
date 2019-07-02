@@ -2,6 +2,7 @@ import { ITransform } from './definition'
 import { IExtensibleMessage } from '../definition'
 import * as ObjectFrom from 'deepmerge'
 
+/** Combine Transforms with logical AND */
 export function allOf(...transform: ITransform[]): ITransform {
     return {
         async transform(ctx: IExtensibleMessage) {
@@ -16,6 +17,7 @@ export function allOf(...transform: ITransform[]): ITransform {
     }
 }
 
+/** Combine Transforms with logical OR */
 export function someOf(...transform: ITransform[]): ITransform {
     return {
         async transform(ctx: IExtensibleMessage) {
@@ -34,6 +36,7 @@ export function someOf(...transform: ITransform[]): ITransform {
     }
 }
 
+/** Combine Transforms with logical OR, with short-circuiting */
 export function shortCircuitSomeOf(...transform: ITransform[]): ITransform {
     return {
         async transform(ctx: IExtensibleMessage) {

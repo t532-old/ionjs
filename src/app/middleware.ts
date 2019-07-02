@@ -34,6 +34,11 @@ export async function run(ctx: IExtensibleMessage) {
     catch (err) { logger.error('An error was thrown by one of the middlewares:\n', err) }
 }
 
+/**
+ * Let a context go through the middlewares, call middlewares with a specified this object
+ * @param ctx the context
+ * @param thisRef
+ */
 export async function runBound(ctx: IExtensibleMessage, thisRef: any) {
     try { await manager.runBound(ctx, thisRef) }
     catch (err) { logger.error('An error was thrown by one of the middlewares:\n', err) }

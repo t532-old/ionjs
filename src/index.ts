@@ -9,13 +9,19 @@ const logger = Signale.scope('main')
 
 declare module './definition' {
     interface IExtensibleMessage {
+        /** Array form of message content */
         message_array?: ICQCode[]
+        /** Message content decoded into plain text (without escaping) */
         raw_message?: string
     }
 }
 
 let queue = new Promise(resolve => resolve())
 
+/**
+ * Start the bot application
+ * @param middlewareTimeout The longest bearable time a middleware run can take. Excess will lead to warning
+ */
 export function start(middlewareTimeout = 10000) {
     middleware.use(async function (ctx, next) {
         if ('message' in ctx) {

@@ -10,13 +10,17 @@ import { waitMilliseconds } from './util/general'
 
 declare module './definition' {
     interface IExtensibleMessage {
+        /* Represents the session of this message. For internal use only */
         $session(): SessionContext
     }
 }
 
+/** Represents the context in a session */
 export class SessionContext {
     private static readonly _transformPlaceholder = new PlainTransform()
+    /** The raw MessageStream of current session */
     public get stream() { return this._stream }
+    /** The sender of current session, bound to the trigger object */
     public get sender() { return this._sender }
     private readonly _stream: MessageStream<IExtensibleMessage>
     private readonly _streamOf: IStreamGetter<IExtensibleMessage>
@@ -25,10 +29,15 @@ export class SessionContext {
     private _firstRead = true
     private readonly _transform: ITransform
     public constructor({ stream, streamOf, trigger, sender, transform }: {
+        /** The MessageStream of the session */
         stream: MessageStream<IExtensibleMessage>
+        /** The streamOf function passed to the session */
         streamOf: IStreamGetter<IExtensibleMessage>
+        /** The trigger object passed to the session */
         trigger: IExtensibleMessage
+        /** The sender object, bound to the trigger object */
         sender: Sender
+        /** The initial transform object passed to useSession */
         transform: ITransform
     }) {
         this._stream = stream
@@ -37,9 +46,13 @@ export class SessionContext {
         this._sender = sender.to(trigger)
         this._transform = transform
     }
+    /** Get a message from the target */
     public async get({
+        /** Message will be transformed with this. Also, if the message is transformed to null, it will be regarded as illegal and ignored */
         transform = this._firstRead ? this._transform : SessionContext._transformPlaceholder,
+        /** If no legal message is received in this time, it will lead to an error */
         timeout = Infinity,
+        /** If the first n [n = attempt] messages are illegal, it will lead to an error */
         attempt = Infinity,
     } = {}) {
         const thisRef = this
@@ -71,7 +84,12 @@ export class SessionContext {
             ])
         } else return getResult()
     }
+    /** Reply a message with the sender bound to the trigger object */
     public reply(message: ICQCodeArray) { return this.sender.send(message) }
+    /**
+     * Send a message and get the user's reply
+     * @param config The same as SessionContext.get(config)
+     */
     public async question(message: ICQCodeArray, config: {
         transform?: ITransform
         timeout?: number

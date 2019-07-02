@@ -5,18 +5,23 @@ import { ITransform } from './definition'
 
 declare module '../definition' {
     interface IExtensibleMessage {
+        /** The array matched with RegExp */
         match?: RegExpMatchArray
+        /** Words contained in the message */
         contain?: string[]
     }
 }
 
+/** Transformations related to message contents */
 export class MessageTransform implements ITransform {
     private _manager = new MiddlewareManager<IExtensibleMessage>()
+    /** Deep-copy a Transform object */
     public static from(last: MessageTransform) {
         const next = new MessageTransform()
         next._manager = MiddlewareManager.from(last._manager)
         return next
     }
+    /** Require the message to match a regex */
     public matchesRegex(regex: RegExp) {
         return this._derive(async function (ctx, next) {
             const matched = ctx.message.match(regex)
@@ -26,6 +31,7 @@ export class MessageTransform implements ITransform {
             }
         })
     }
+    /** Require the message to contain specific substrings */
     public contains(...strings: string[]) {
         return this._derive(async function (ctx, next) {
             const contained = strings.filter(i => ctx.message.indexOf(i) >= 0)
@@ -35,6 +41,7 @@ export class MessageTransform implements ITransform {
             }
         })
     }
+    /** Validate the message with a validator function */
     public matches(validator: (msg: string) => boolean|Promise<boolean>) {
         return this._derive(async function (ctx, next) {
             if (await validator(ctx.message))

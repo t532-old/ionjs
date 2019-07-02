@@ -15,7 +15,7 @@ export interface ICommandArguments {
     /** The specified options */
     options: string[]
     /** The specified arguments */
-    arguments: { [param: string]: string }
+    arguments: Record<string, string>
     /** Rest unparsed items */
     rest: string[]
     /** The command name */
