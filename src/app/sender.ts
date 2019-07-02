@@ -1,4 +1,6 @@
 import { Sender } from '../platform/sender'
+import * as Signale from 'signale'
+const logger = Signale.scope('sender')
 
 /** The raw sender */
 export let sender: Sender
@@ -9,5 +11,5 @@ export function init({ url, token }: {
     token?: string
 }) {
     sender = new Sender(url, token)
-    console.log(`[INFO] Sender initialized with post URL ${url}, ${token ? `token '${token}'` : 'no token'}`)
+    logger.info(`Sender initialized with post URL ${url}, ${token ? `token '${token}'` : 'no token'}`)
 }

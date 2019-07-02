@@ -1,4 +1,6 @@
 import { Receiver } from '../platform/receiver'
+import * as Signale from 'signale'
+const logger = Signale.scope('receiver')
 
 /** The raw receiver */
 export let receiver: Receiver
@@ -15,11 +17,11 @@ export function init({ port, secret }: {
 }) {
     receivePort = port
     receiver = new Receiver(secret)
-    console.log(`[INFO] Receiver initialized with port ${port}, ${secret ? `secret '${secret}'` : 'no secret'}`)
+    logger.info(`Receiver initialized with port ${port}, ${secret ? `secret '${secret}'` : 'no secret'}`)
 }
 
 /** Let the receiver start listening */
 export function start() {
     receiver.listen(receivePort)
-    console.log(`[INFO] Your application is running on http://localhost:${receivePort}`)
+    logger.start(`Your application is running on http://localhost:${receivePort}`)
 }

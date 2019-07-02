@@ -1,5 +1,7 @@
 import { MiddlewareManager, IMiddleware } from '../core/middleware'
 import { IExtensibleMessage } from '../definition'
+import * as Signale from 'signale'
+const logger = Signale.scope('middleware')
 
 let manager = new MiddlewareManager<IExtensibleMessage>()
 
@@ -10,7 +12,7 @@ let manager = new MiddlewareManager<IExtensibleMessage>()
 export function use(...middlewares: IMiddleware<IExtensibleMessage>[]) {
     for (const mw of middlewares)
         manager = manager.use(mw)
-    console.log(`[INFO] ${manager.length} Middlewares loaded`)
+    logger.info(`${manager.length} Middlewares loaded`)
 }
 
 /**
@@ -20,7 +22,7 @@ export function use(...middlewares: IMiddleware<IExtensibleMessage>[]) {
 export function useLast(...middlewares: IMiddleware<IExtensibleMessage>[]) {
     for (const mw of middlewares)
         manager = manager.useLast(mw)
-    console.log(`[INFO] ${manager.length} Middlewares loaded`)
+    logger.info(`${manager.length} Middlewares loaded`)
 }
 
 /**
@@ -29,16 +31,10 @@ export function useLast(...middlewares: IMiddleware<IExtensibleMessage>[]) {
  */
 export async function run(ctx: IExtensibleMessage) {
     try { await manager.run(ctx) }
-    catch (err) {
-        console.error('[ERROR] An error was thrown by one of the middlewares:')
-        console.error(err)
-    }
+    catch (err) { logger.error('An error was thrown by one of the middlewares:\n', err) }
 }
 
 export async function runBound(ctx: IExtensibleMessage, thisRef: any) {
     try { await manager.runBound(ctx, thisRef) }
-    catch (err) {
-        console.error('[ERROR] An error was thrown by one of the middlewares:')
-        console.error(err)
-    }
+    catch (err) { logger.error('An error was thrown by one of the middlewares:\n', err) }
 }

@@ -3,6 +3,9 @@ import * as session from './app/session'
 import * as receiver from './app/receiver'
 import { ICQCode } from './platform/cqcode'
 import * as Util from './platform/cqcode/util'
+import * as Signale from 'signale'
+import { unionIdOf, contextTypeOf } from './platform/receiver'
+const logger = Signale.scope('main')
 
 declare module './definition' {
     interface IExtensibleMessage {
@@ -21,6 +24,7 @@ export function start(middlewareTimeout = 10000) {
             ctx.message_array = Util.toArray(ctx.message)
             ctx.raw_message = Util.decodePlainText(ctx.message)
         }
+        logger.await(`Received message: ${unionIdOf(ctx)} -> ${contextTypeOf(ctx)} ${ctx.message || ''}`)
         await next()
     })
     middleware.useLast(session.run)
@@ -29,7 +33,7 @@ export function start(middlewareTimeout = 10000) {
             let finished = false
             setTimeout(() => {
                 if (!finished) {
-                    console.warn(`[WARN] Middlewares didn't finish processing message within ${middlewareTimeout} ms.`)
+                    logger.warn(`Middlewares didn't finish processing message within ${middlewareTimeout} ms.`)
                     resolve()
                 }
             }, middlewareTimeout)

@@ -5,6 +5,8 @@ import { SessionContext } from '../context'
 import { ITransform } from '../transform'
 import { sender } from './sender'
 import * as ObjectFrom from 'deepmerge'
+import * as Signale from 'signale'
+const logger = Signale.scope('session')
 
 export let sessionCount = 0
 
@@ -21,9 +23,9 @@ function userIdentifier(ctx: IExtensibleMessage) {
     return `${contextType[contextType.length - 1]}${ctx.user_id}`
 }
 const managers: Map<string, { single: SingleSessionManager<IExtensibleMessage>, concurrent: ConcurrentSessionManager<IExtensibleMessage> }> = new Map()
-    .set('default', { single: new SingleSessionManager<IExtensibleMessage>(defaultIdentifier), concurrent: new ConcurrentSessionManager<IExtensibleMessage>(defaultIdentifier) })
-    .set('group', { single: new SingleSessionManager<IExtensibleMessage>(groupIdentifier), concurrent: new ConcurrentSessionManager<IExtensibleMessage>(groupIdentifier) })
-    .set('user', { single: new SingleSessionManager<IExtensibleMessage>(userIdentifier), concurrent: new ConcurrentSessionManager<IExtensibleMessage>(userIdentifier) })
+create('default', defaultIdentifier)
+create('group', groupIdentifier)
+create('user', userIdentifier)
 
 /**
  * Use a session template
@@ -37,6 +39,7 @@ export function use(transform: ITransform, { override = false, identifier = 'def
             async function wrapper(stream: MessageStream<IExtensibleMessage>, streamOf: IStreamGetter<IExtensibleMessage>, trigger: IExtensibleMessage) {
                 try {
                     sessionCount++
+                    logger.pending(`${sessionCount} sessions running`)
                     await session(new SessionContext({
                         stream,
                         streamOf,
@@ -45,14 +48,15 @@ export function use(transform: ITransform, { override = false, identifier = 'def
                         transform,
                     }))
                 }
-                catch (err) {
-                    console.error('[ERROR] An uncaught error is thrown by your session code:')
-                    console.error(err)
-                } finally { sessionCount-- }
+                catch (err) { logger.error('An uncaught error was thrown by your session code:\n', err) }
+                finally {
+                    sessionCount--
+                    logger.complete(`${sessionCount} sessions running`)
+                }
             }
             if (concurrent) manager.concurrent = manager.concurrent.use(wrapper, async ctx => await transform.transform(ObjectFrom({ $validation: true }, ctx)) ? true : false)
             else manager.single = manager.single.use(wrapper, async ctx => await transform.transform(ObjectFrom({ $validation: true }, ctx)) ? true : false, override)
-            console.log(`[INFO] ${manager[concurrent ? 'concurrent' : 'single'].length} Session templates loaded on session manager '${identifier}'`)
+            logger.info(`${manager[concurrent ? 'concurrent' : 'single'].length} Session templates loaded on session manager '${identifier}'`)
         } else throw new Error(`Session manager '${identifier}' does not exist`)
     }
 }
@@ -67,6 +71,7 @@ export function create(name: string, identifier: (ctx: IMessage) => any) {
         single: new SingleSessionManager<IExtensibleMessage>(identifier),
         concurrent: new ConcurrentSessionManager<IExtensibleMessage>(identifier),
     })
+    logger.info(`Created session manager '${name}'`)
 }
 
 /**
@@ -80,8 +85,5 @@ export async function run(ctx: IExtensibleMessage) {
         promises.push(val.concurrent.run(ctx))
     }
     try { await Promise.all(promises) }
-    catch (err) {
-        console.error('[ERROR] An unknown error occured when running sessions.')
-        console.error(err)
-    }
+    catch (err) { logger.error('An unknown error occured when running sessions:\n', err) }
 }
