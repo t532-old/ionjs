@@ -59,7 +59,7 @@ typings/
 
 # compiled files
 /core/
-/instance/
+/app/
 /platform/
 /transform/
 /util/

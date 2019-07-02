@@ -1,6 +1,6 @@
-import * as middleware from './instance/middleware'
-import * as session from './instance/session'
-import * as receiver from './instance/receiver'
+import * as middleware from './app/middleware'
+import * as session from './app/session'
+import * as receiver from './app/receiver'
 import { ICQCode } from './platform/cqcode'
 import * as Util from './platform/cqcode/util'
 
