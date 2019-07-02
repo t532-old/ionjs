@@ -45,7 +45,6 @@
     "cqhttp"
   ],
   "dependencies": {
-    "@types/debug": "^0.0.31",
     "@types/koa": "^2.0.47",
     "@types/koa-bodyparser": "^4.2.1",
     "@types/node": "^10.12.15",
@@ -55,13 +54,10 @@
     "koa-bodyparser": "^4.2.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.2.2",
     "@semantic-release/changelog": "^3.0.2",
     "@semantic-release/git": "^7.0.8",
     "@types/jest": "^23.3.10",
     "@types/sinon": "^7.0.3",
-    "acorn": "^6.0.5",
-    "axios": "^0.18.0",
     "commitizen": "^3.0.5",
     "conventional-changelog-cli": "^2.0.11",
     "cz-conventional-changelog": "^2.1.0",
