@@ -15,10 +15,12 @@ let queue = new Promise(resolve => resolve())
 
 export function start(middlewareTimeout = 10000) {
     middleware.use(async function (ctx, next) {
-        if ((ctx.message as any) instanceof Array)
-            ctx.message = Util.toText(ctx.message as any as ICQCode[])
-        ctx.message_array = Util.toArray(ctx.message)
-        ctx.raw_message = Util.decodePlainText(ctx.message)
+        if ('message' in ctx) {
+            if ((ctx.message as any) instanceof Array)
+                ctx.message = Util.toText(ctx.message as any as ICQCode[])
+            ctx.message_array = Util.toArray(ctx.message)
+            ctx.raw_message = Util.decodePlainText(ctx.message)
+        }
         await next()
     })
     middleware.useLast(session.run)
