@@ -49,3 +49,9 @@ export function shortCircuitSomeOf(...transform: ITransform[]): ITransform {
         }
     }
 }
+
+export const always: ITransform = {
+    async transform(ctx: IExtensibleMessage) {
+        return ObjectFrom({}, ctx)
+    }
+}
