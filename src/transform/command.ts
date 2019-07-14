@@ -4,6 +4,7 @@ import { Command, ICommandArguments, CommandParseError } from '../util/command'
 import * as ObjectFrom from 'deepmerge'
 import { ITransform } from './definition'
 import { ICQCodeArray } from '../platform/cqcode'
+import { toArray } from '../platform/cqcode/util'
 
 declare module '../definition' {
     interface IExtensibleMessage {
@@ -65,15 +66,15 @@ export class CommandTransform implements ITransform {
     /** Add an option to the command. */
     public option(opt: string) { return this._deriveCommand(this._command.option(opt)) }
     /** Set the general prompt of ungiven required parameters */
-    public promptAll(quote: ICQCodeArray) {
+    public promptAll(quote: ICQCodeArray | string) {
         const next = CommandTransform.from(this)
-        next._prompts.$all = quote
+        next._prompts.$all = toArray(quote)
         return next
     }
     /** Set the prompt of an ungiven required parameter */
-    public prompt(name: string, quote: ICQCodeArray) {
+    public prompt(name: string, quote: ICQCodeArray | string) {
         const next = CommandTransform.from(this)
-        next._prompts[name] = quote
+        next._prompts[name] = toArray(quote)
         return next
     }
     /** Set a validator function for a parameter */

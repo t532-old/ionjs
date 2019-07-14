@@ -85,12 +85,12 @@ export class SessionContext {
         } else return getResult()
     }
     /** Reply a message with the sender bound to the trigger object */
-    public reply(message: ICQCodeArray) { return this.sender.send(message) }
+    public reply(message: ICQCodeArray | string) { return this.sender.send(message) }
     /**
      * Send a message and get the user's reply
      * @param config The same as SessionContext.get(config)
      */
-    public async question(message: ICQCodeArray, config: {
+    public async question(message: ICQCodeArray | string, config: {
         transform?: ITransform
         timeout?: number
         attempt?: number
@@ -99,7 +99,7 @@ export class SessionContext {
         return this.get(config)
     }
     /** Forward to other sessions */
-    public forward(message: ICQCodeArray) {
+    public forward(message: ICQCodeArray | string) {
         const ctx = ObjectFrom({}, this._trigger)
         ctx.message = toText(message)
         return run(ctx)

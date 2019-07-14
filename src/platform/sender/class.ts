@@ -4,6 +4,7 @@ import { CQHTTP_API } from './api'
 import { ICQCodeArray } from '../cqcode'
 import * as Result from './definition'
 import { IMessage } from '../receiver'
+import { toArray } from '../cqcode/util'
 
 export class SenderError extends Error {
     readonly post: { [x: string]: any }
@@ -31,7 +32,8 @@ export class Sender {
         next._context = context
         return next
     }
-    public send(message: ICQCodeArray): Promise<Result.ISendResult> {
+    public send(message: ICQCodeArray | string): Promise<Result.ISendResult> {
+        if (typeof message === 'string') message = toArray(message)
         if (this._context.message_type) return this._post(CQHTTP_API.send[this._context.message_type], { message })
         else if (this._context.group_id) return this._post(CQHTTP_API.send.group, { message })
         else if (this._context.discuss_id) return this._post(CQHTTP_API.send.discuss, { message })
