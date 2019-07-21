@@ -1,7 +1,7 @@
 import { MiddlewareManager, IMiddleware } from '../core/middleware'
 import { IExtensibleMessage } from '../definition'
 import { Command, ICommandArguments, CommandParseError } from '../util/command'
-import * as ObjectFrom from 'deepmerge'
+import merge from 'deepmerge'
 import { ITransform } from './definition'
 import { ICQCodeArray } from '../platform/cqcode'
 import { toArray } from '../platform/cqcode/util'
@@ -42,7 +42,7 @@ export class CommandTransform implements ITransform {
         const next = new CommandTransform()
         next._manager = MiddlewareManager.from(last._manager)
         if (last._command) next._command = Command.from(last._command)
-        next._prompts = ObjectFrom({}, last._prompts)
+        next._prompts = merge({}, last._prompts)
         return next
     }
     /**
@@ -101,7 +101,7 @@ export class CommandTransform implements ITransform {
             finished = true
             await next()
         })
-        const copy = ObjectFrom({}, msg)
+        const copy = merge({}, msg)
         await man.runBound(copy, this)
         if (finished) return copy
         else return null

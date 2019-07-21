@@ -4,8 +4,8 @@ import { IExtensibleMessage } from '../definition'
 import { SessionContext } from '../context'
 import { ITransform } from '../transform'
 import { sender } from './sender'
-import * as ObjectFrom from 'deepmerge'
-import * as Signale from 'signale'
+import merge from 'deepmerge'
+import Signale from 'signale'
 const logger = Signale.scope('session')
 
 export let sessionCount = 0
@@ -54,8 +54,8 @@ export function use(transform: ITransform, { override = false, identifier = 'def
                     logger.complete(`${sessionCount} sessions running`)
                 }
             }
-            if (concurrent) manager.concurrent = manager.concurrent.use(wrapper, async ctx => await transform.transform(ObjectFrom({ $validation: true }, ctx)) ? true : false)
-            else manager.single = manager.single.use(wrapper, async ctx => await transform.transform(ObjectFrom({ $validation: true }, ctx)) ? true : false, override)
+            if (concurrent) manager.concurrent = manager.concurrent.use(wrapper, async ctx => await transform.transform(merge({ $validation: true }, ctx)) ? true : false)
+            else manager.single = manager.single.use(wrapper, async ctx => await transform.transform(merge({ $validation: true }, ctx)) ? true : false, override)
             logger.info(`${manager[concurrent ? 'concurrent' : 'single'].length} Session templates loaded on session manager '${identifier}'`)
         } else throw new Error(`Session manager '${identifier}' does not exist`)
     }

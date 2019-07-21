@@ -3,7 +3,7 @@ import * as session from './app/session'
 import * as receiver from './app/receiver'
 import { ICQCode } from './platform/cqcode'
 import * as Util from './platform/cqcode/util'
-import * as Signale from 'signale'
+import Signale from 'signale'
 import { unionIdOf, contextTypeOf } from './platform/receiver'
 const logger = Signale.scope('main')
 

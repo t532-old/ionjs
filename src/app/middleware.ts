@@ -1,6 +1,6 @@
 import { MiddlewareManager, IMiddleware } from '../core/middleware'
 import { IExtensibleMessage } from '../definition'
-import * as Signale from 'signale'
+import Signale from 'signale'
 const logger = Signale.scope('middleware')
 
 let manager = new MiddlewareManager<IExtensibleMessage>()

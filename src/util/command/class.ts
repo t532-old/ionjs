@@ -1,6 +1,6 @@
 import { split } from './util'
 import { ICommandParameters, ICommandArguments } from './definition'
-import * as ObjectFrom from 'deepmerge'
+import merge from 'deepmerge'
 
 /** An error produced by Command.parse() */
 export class CommandParseError extends Error {
@@ -41,7 +41,7 @@ export class Command {
     public static from(data: Command) {
         const next = new Command(...data._names)
         next._options = Array.from(data._options)
-        next._parameters = ObjectFrom(data._parameters, {})
+        next._parameters = merge(data._parameters, {})
         return next
     }
     /**

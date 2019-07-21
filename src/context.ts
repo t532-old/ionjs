@@ -5,7 +5,7 @@ import { toText } from './platform/cqcode/util'
 import { run } from './app/session'
 import { Sender } from './platform/sender'
 import { ITransform, PlainTransform } from './transform'
-import * as ObjectFrom from 'deepmerge'
+import merge from 'deepmerge'
 import { waitMilliseconds } from './util/general'
 
 declare module './definition' {
@@ -100,13 +100,13 @@ export class SessionContext {
     }
     /** Forward to other sessions */
     public forward(message: ICQCodeArray | string) {
-        const ctx = ObjectFrom({}, this._trigger)
+        const ctx = merge({}, this._trigger)
         ctx.message = toText(message)
         return run(ctx)
     }
     /** Get a session of another user */
     public sessionOf(nextCtx: IExtensibleMessage) {
-        nextCtx = ObjectFrom(this._trigger, nextCtx)
+        nextCtx = merge(this._trigger, nextCtx)
         const stream = this._streamOf(nextCtx)
         return new SessionContext({
             stream,

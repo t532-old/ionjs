@@ -1,6 +1,6 @@
 import { ITransform } from './definition'
 import { IExtensibleMessage } from '../definition'
-import * as ObjectFrom from 'deepmerge'
+import merge from 'deepmerge'
 
 /** Combine Transforms with logical AND */
 export function allOf(...transform: ITransform[]): ITransform {
@@ -9,7 +9,7 @@ export function allOf(...transform: ITransform[]): ITransform {
             let result = ctx
             for (const i of transform) {
                 const curr = await i.transform(ctx)
-                if (curr) result = ObjectFrom(result, curr)
+                if (curr) result = merge(result, curr)
                 else return null
             }
             return result
@@ -27,7 +27,7 @@ export function someOf(...transform: ITransform[]): ITransform {
                 const curr = await i.transform(ctx)
                 if (curr) {
                     flag = true
-                    result = ObjectFrom(result, curr)
+                    result = merge(result, curr)
                 }
             }
             if (flag) return result
@@ -43,7 +43,7 @@ export function shortCircuitSomeOf(...transform: ITransform[]): ITransform {
             let result = ctx
             for (const i of transform) {
                 const curr = await i.transform(ctx)
-                if (curr) return ObjectFrom(result, curr)
+                if (curr) return merge(result, curr)
             }
             return null
         }
@@ -52,6 +52,6 @@ export function shortCircuitSomeOf(...transform: ITransform[]): ITransform {
 
 export const always: ITransform = {
     async transform(ctx: IExtensibleMessage) {
-        return ObjectFrom({}, ctx)
+        return merge({}, ctx)
     }
 }

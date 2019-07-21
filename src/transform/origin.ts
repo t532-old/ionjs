@@ -1,6 +1,6 @@
 import { MiddlewareManager, IMiddleware } from '../core/middleware'
 import { IExtensibleMessage } from '../definition'
-import * as ObjectFrom from 'deepmerge'
+import merge from 'deepmerge'
 import { contextTypeOf } from '../platform/receiver'
 import { ITransform } from './definition'
 
@@ -70,7 +70,7 @@ export class OriginTransform implements ITransform {
             finished = true
             await next()
         })
-        const copy = ObjectFrom({}, msg)
+        const copy = merge({}, msg)
         await man.runBound(copy, this)
         if (finished) return copy
         else return null

@@ -1,5 +1,5 @@
 import { Receiver } from '../platform/receiver'
-import * as Signale from 'signale'
+import Signale from 'signale'
 const logger = Signale.scope('receiver')
 
 /** The raw receiver */

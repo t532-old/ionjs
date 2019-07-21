@@ -1,5 +1,5 @@
-import * as Koa from 'koa'
-import * as koaBody from 'koa-bodyparser'
+import Koa from 'koa'
+import koaBody from 'koa-bodyparser'
 import { createHmac } from 'crypto'
 import { EventEmitter } from 'events'
 import { contextTypeOf } from './util'
