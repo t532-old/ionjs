@@ -10,8 +10,8 @@
 [![codecov](https://codecov.io/gh/ionjs-dev/ionjs/branch/master/graph/badge.svg)](https://codecov.io/gh/ionjs-dev/ionjs)
 [![CodeFactor](https://www.codefactor.io/repository/github/ionjs-dev/ionjs/badge/master)](https://www.codefactor.io/repository/github/ionjs-dev/ionjs/overview/master)
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/ionjs-dev/ionjs.svg)](https://lgtm.com/projects/g/ionjs-dev/ionjs/context:javascript)
-[![npm (scoped)](https://img.shields.io/npm/v/@ionjs/core.svg)](https://npmjs.org/package/@ionjs/core)
-[![install size](https://packagephobia.now.sh/badge?p=@ionjs/core)](https://packagephobia.now.sh/result?p=@ionjs/core)
+[![npm (scoped)](https://img.shields.io/npm/v/@ionj/s.svg)](https://npmjs.org/package/@ionj/s)
+[![install size](https://packagephobia.now.sh/badge?p=@ionj/s)](https://packagephobia.now.sh/result?p=@ionj/s)
 
 **Ion.js** 提供了从收发消息、流程控制到内容解析、会话管理的一系列工具，让你能够便捷地使用 TypeScript 开发完整的 QQ Bot 应用。
 
@@ -25,15 +25,21 @@
 > - **支持真正的中间件**，数据传至下游、控制传回上游；
 > - **框架各部分互相独立**，提供最高的自由度。
 
+## 安装
+Ion.js 的 npm 包名是 `@ionj/s`。😜
+```sh
+npm install @ionj/s
+```
+
 ## 介绍
 你可以通过几个简单的例子来初步了解 Ion.js 的结构。要深入了解，见[文档](https://ion.js.org)。
 
 ### 初始化
 各个部分的初始化是分离的；你可以分别初始化*接收端*、*发送端*和*应用*：
 ```js
-import { init as initReceiver } from '@ionjs/core/app/receiver'
-import { init as initSender } from '@ionjs/core/app/sender'
-import { start } from '@ionjs/core'
+import { init as initReceiver } from '@ionj/s/app/receiver'
+import { init as initSender } from '@ionj/s/app/sender'
+import { start } from '@ionj/s'
 
 initReceiver({ port: 8080 }) // 初始化接收端（Webhook）
 initSender({ url: 'http://localhost:5700' }) // 初始化发送端
@@ -46,8 +52,8 @@ Ion.js 的核心思想即是基于会话。它的理念是，开发者应该能�
 
 通过检测消息是否符合条件，Ion.js 可以决定什么时候创建会话。实现一个 Ping 功能很简单：
 ```js
-import { useSession } from '@ionjs/core/app/session'
-import { MessageTransform } from '@ionjs/core/transform/message'
+import { useSession } from '@ionj/s/app/session'
+import { MessageTransform } from '@ionj/s/transform/message'
 
 useSession(
     new MessageTransform()
@@ -75,8 +81,8 @@ Ion.js 在提供便利的同时也有极大的自由度，允许你随时获取�
 
 以下代码实现了复读功能，即，如果出现三条相同的消息，Bot 也会发送这条消息：
 ```js
-import { useSession } from '@ionjs/core/app/session'
-import { always } from '@ionjs/core/transform/util'
+import { useSession } from '@ionj/s/app/session'
+import { always } from '@ionj/s/transform/util'
 
 const REPEAT_COUNT = 3
 useSession(
