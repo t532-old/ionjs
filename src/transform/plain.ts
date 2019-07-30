@@ -1,12 +1,11 @@
 import { MiddlewareManager, IMiddleware } from '../core/middleware'
 import { IExtensibleMessage } from '../definition'
-import merge from 'deepmerge'
-import { ITransform } from './definition'
 import { ISessionMatcher } from '../core/session'
+import { BaseTransform } from './base'
 
 /** Basic transformations */
-export class PlainTransform implements ITransform {
-    private _manager = new MiddlewareManager<IExtensibleMessage>()
+export class PlainTransform extends BaseTransform {
+    protected _manager = new MiddlewareManager<IExtensibleMessage>()
     /** Deep-copy a Transform object */
     public static from(last: PlainTransform) {
         const next = new PlainTransform()
@@ -24,17 +23,5 @@ export class PlainTransform implements ITransform {
         return this.use(async function (ctx, next) {
             if (await fn(ctx)) next()
         })
-    }
-    /** Add a parser function */
-    public async transform(msg: IExtensibleMessage) {
-        let finished = false
-        const man = this._manager.use(async function (ctx, next) {
-            finished = true
-            await next()
-        })
-        const copy = merge({}, msg)
-        await man.runBound(copy, this)
-        if (finished) return copy
-        else return null
     }
 }

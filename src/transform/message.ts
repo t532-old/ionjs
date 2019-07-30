@@ -1,7 +1,6 @@
 import { MiddlewareManager, IMiddleware } from '../core/middleware'
 import { IExtensibleMessage } from '../definition'
-import merge from 'deepmerge'
-import { ITransform } from './definition'
+import { BaseTransform } from './base'
 
 declare module '../definition' {
     interface IExtensibleMessage {
@@ -13,8 +12,8 @@ declare module '../definition' {
 }
 
 /** Transformations related to message contents */
-export class MessageTransform implements ITransform {
-    private _manager = new MiddlewareManager<IExtensibleMessage>()
+export class MessageTransform extends BaseTransform {
+    protected _manager = new MiddlewareManager<IExtensibleMessage>()
     /** Deep-copy a Transform object */
     public static from(last: MessageTransform) {
         const next = new MessageTransform()
@@ -47,17 +46,6 @@ export class MessageTransform implements ITransform {
             if (await validator(ctx.message))
                 await next()
         })
-    }
-    public async transform(msg: IExtensibleMessage) {
-        let finished = false
-        const man = this._manager.use(async function (ctx, next) {
-            finished = true
-            await next()
-        })
-        const copy = merge({}, msg)
-        await man.runBound(copy, this)
-        if (finished) return copy
-        else return null
     }
     private _derive(mw: IMiddleware<IExtensibleMessage>) {
         const next = MessageTransform.from(this)

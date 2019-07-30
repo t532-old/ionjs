@@ -2,9 +2,9 @@ import { MiddlewareManager, IMiddleware } from '../core/middleware'
 import { IExtensibleMessage } from '../definition'
 import { Command, ICommandArguments, CommandParseError } from '../util/command'
 import merge from 'deepmerge'
-import { ITransform } from './definition'
 import { ICQCodeArray } from '../platform/cqcode'
 import { toArray } from '../platform/cqcode/util'
+import { BaseTransform } from './base'
 
 declare module '../definition' {
     interface IExtensibleMessage {
@@ -14,8 +14,8 @@ declare module '../definition' {
 }
 
 /** Transformations related to commands */
-export class CommandTransform implements ITransform {
-    private _manager = new MiddlewareManager<IExtensibleMessage>()
+export class CommandTransform extends BaseTransform {
+    protected _manager = new MiddlewareManager<IExtensibleMessage>()
         .use(async function (ctx, next) {
             if (this._command.is(ctx.message)) await next()
         }).use(async function (ctx, next) {
@@ -48,7 +48,10 @@ export class CommandTransform implements ITransform {
     /**
      * @param names The command's names
      */
-    public constructor(...names: string[]) { this._command = new Command(...names) }
+    public constructor(...names: string[]) {
+        super()
+        this._command = new Command(...names)
+    }
     /**
      * Add a parameter to the command
      * @param name The parameter's name
@@ -94,17 +97,6 @@ export class CommandTransform implements ITransform {
                     ctx.command.arguments[name] = parser(ctx.command.arguments[name])
             await next()
         })
-    }
-    public async transform(msg: IExtensibleMessage) {
-        let finished = false
-        const man = this._manager.use(async function (ctx, next) {
-            finished = true
-            await next()
-        })
-        const copy = merge({}, msg)
-        await man.runBound(copy, this)
-        if (finished) return copy
-        else return null
     }
     private _derive(mw: IMiddleware<IExtensibleMessage>) {
         const next = CommandTransform.from(this)

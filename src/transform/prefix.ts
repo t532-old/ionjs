@@ -1,17 +1,17 @@
 import { MiddlewareManager, IMiddleware } from '../core/middleware'
 import { IExtensibleMessage } from '../definition'
-import merge from 'deepmerge'
-import { ITransform } from './definition'
+import { BaseTransform } from './base'
 
 /** Transformations for recognizing messages' prefixes */
-export class PrefixTransform implements ITransform {
+export class PrefixTransform extends BaseTransform {
     private readonly _qqid: number
     private readonly _atStr: string
-    private _manager = new MiddlewareManager<IExtensibleMessage>()
+    protected _manager = new MiddlewareManager<IExtensibleMessage>()
     /**
      * @param qqid The bot itself's qqid
      */
     public constructor(qqid: number) {
+        super()
         this._qqid = qqid
         this._atStr = `[CQ:at,qq=${qqid}]`
     }
@@ -74,17 +74,6 @@ export class PrefixTransform implements ITransform {
                 await next()
             }
         })
-    }
-    public async transform(msg: IExtensibleMessage) {
-        let finished = false
-        const man = this._manager.use(async function (ctx, next) {
-            finished = true
-            await next()
-        })
-        const copy = merge({}, msg)
-        await man.runBound(copy, this)
-        if (finished) return copy
-        else return null
     }
     private _derive(mw: IMiddleware<IExtensibleMessage>) {
         const next = PrefixTransform.from(this)
