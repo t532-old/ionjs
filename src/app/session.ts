@@ -4,6 +4,7 @@ import { IExtensibleMessage } from '../definition'
 import { SessionContext } from '../context'
 import { ITransform } from '../transform'
 import { sender } from './sender'
+import { allOf } from '../transform/util'
 import merge from 'deepmerge'
 import Signale from 'signale'
 const logger = Signale.scope('session')
@@ -32,8 +33,9 @@ create('user', userIdentifier)
  * @param when when to start the session
  * @param params Another info of the session template
  */
-export function use(transform: ITransform, { override = false, identifier = 'default', concurrent = false } = {}) {
-    return function useHandler(session: (ctx: SessionContext) => void) {
+export function use(...transforms: ITransform[]) {
+    const transform = allOf(...transforms)
+    return function useHandler(session: (ctx: SessionContext) => void, { override = false, identifier = 'default', concurrent = false } = {}) {
         const manager = managers.get(identifier)
         if (manager) {
             async function wrapper(stream: MessageStream<IExtensibleMessage>, streamOf: IStreamGetter<IExtensibleMessage>, trigger: IExtensibleMessage) {
