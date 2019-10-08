@@ -79,11 +79,10 @@ export class ConcurrentSessionManager<T = any> implements ISessionManager<T> {
      * @param identifier the identifier of the stream
      */
     private _operate(symbol: symbol, identifier: any) {
-        const thisRef = this
-        const getter = () => thisRef._streams.get(symbol).get(identifier),
-              exists = () => thisRef._streams.get(symbol).has(identifier),
-              setter = () => thisRef._streams.get(symbol).set(identifier, new MessageStream<T>(deleter.bind(this))),
-              deleter = () => thisRef._streams.get(symbol).delete(identifier)
+        const getter = () => this._streams.get(symbol).get(identifier),
+              exists = () => this._streams.get(symbol).has(identifier),
+              setter = () => this._streams.get(symbol).set(identifier, new MessageStream<T>(deleter.bind(this))),
+              deleter = () => this._streams.get(symbol).delete(identifier)
         return { getter, setter, deleter, exists }
     }
     /**

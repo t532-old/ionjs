@@ -8,7 +8,6 @@ export class Receiver extends EventEmitter {
     private readonly _server = new Koa()
     public constructor(secret?: string) {
         super()
-        const thisRef = this
         this._server.use(koaBody())
         if (secret) {
             this._server.use(async function (ctx, next) {
@@ -18,10 +17,10 @@ export class Receiver extends EventEmitter {
                 await next()
             })
         }
-        this._server.use(async function (ctx) {
+        this._server.use(async (ctx) => {
             const msg = ctx.request.body
             const events = contextTypeOf(msg)
-            for (const event of events) thisRef.emit(event, msg)
+            for (const event of events) this.emit(event, msg)
             ctx.status = 200
         })
     }

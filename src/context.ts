@@ -55,16 +55,15 @@ export class SessionContext {
         /** If the first n [n = attempt] messages are illegal, it will lead to an error */
         attempt = Infinity,
     } = {}) {
-        const thisRef = this
-        async function waitForTimeout(): Promise<never> {
+        const waitForTimeout: () => Promise<never> = async () => {
             await waitMilliseconds(timeout)
             throw new Error('Time limit exceeded')
         }
-        async function getResult() {
+        const getResult = async () => {
             let curAttempt = 0
             let result: IExtensibleMessage
-            await thisRef.stream.get(async ctx => {
-                ctx.$session = () => thisRef
+            await this.stream.get(async ctx => {
+                ctx.$session = () => this
                 result = await transform.transform(ctx)
                 if (result) return true
                 else {
@@ -74,7 +73,7 @@ export class SessionContext {
                 }
             })
             if (curAttempt >= attempt) throw new Error('Attempt limit exceeded')
-            thisRef._firstRead = false
+            this._firstRead = false
             return result
         }
         if (timeout <= Number.MAX_SAFE_INTEGER) {

@@ -82,21 +82,20 @@ export class SingleSessionManager<T = any> implements ISessionManager<T> {
      * @param identifier the identifier of the stream
      */
     private _operate(identifier: any) {
-        const thisRef = this
         const getter = () => {
-                  const stack = thisRef._streams.get(identifier)
+                  const stack = this._streams.get(identifier)
                   if (stack) return stack[0]
               },
-              exists = () => thisRef._streams.has(identifier),
+              exists = () => this._streams.has(identifier),
               setter = () => {
-                  const stack = thisRef._streams.get(identifier)
+                  const stack = this._streams.get(identifier)
                   if (stack) stack.unshift(new MessageStream<T>(deleter.bind(this)))
-                  else thisRef._streams.set(identifier, [new MessageStream<T>(deleter.bind(this))])
+                  else this._streams.set(identifier, [new MessageStream<T>(deleter.bind(this))])
               },
               deleter = () => {
-                  const arr = thisRef._streams.get(identifier)
+                  const arr = this._streams.get(identifier)
                   arr.shift()
-                  if (!arr.length) return thisRef._streams.delete(identifier)
+                  if (!arr.length) return this._streams.delete(identifier)
                   else return true
               }
         return { getter, setter, deleter, exists }
